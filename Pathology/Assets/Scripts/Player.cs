@@ -5,6 +5,8 @@ using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
+    private GameManager manager;
+
     private Vector2 keypad;
     private Vector2 joystick;
     public Vector2 direction;
@@ -13,15 +15,21 @@ public class Player : MonoBehaviour
 
     public bool sprinting;
     public bool invenOpen;
+    public bool dialogOpen;
     public bool paused;
     public bool confirm;
     public bool cancel;
 
     public bool colliding;
 
+    void Awake()
+    {
+        manager = GameObject.FindWithTag("GameController").GetComponent<GameManager>();
+    }
+
     void Update()
     {
-        if (!paused) {
+        if (!paused && !invenOpen && !dialogOpen) {
             direction = VectorGreater(keypad, joystick);
             offset = transform.position + new Vector3(direction.x, 0, direction.y);
 
@@ -44,6 +52,20 @@ public class Player : MonoBehaviour
             if (Mathf.Abs(A.y) > Mathf.Abs(B.y)) return new Vector2(B.x, A.y);
             else return B;
         }
+    }
+
+    //Get dialog
+    private void OnTriggerEnter(Collider collision)
+    {
+        manager.currentConvo = collision.GetComponent<CharacterText>();
+    }
+
+    //Converse
+    private void OnTriggerStay(Collider collision)
+    {
+        if (dialogOpen && cancel) dialogOpen = false;
+        if (!dialogOpen && confirm) dialogOpen = true;
+        if (dialogOpen && confirm) manager.Advance();
     }
 
     //Input action functions
