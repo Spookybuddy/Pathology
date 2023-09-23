@@ -4,6 +4,7 @@ Sample Dialog.
 First Option.
 @
 Second Option.
+Second Line of Second Option.
 @
 Repeat Line.
 @
