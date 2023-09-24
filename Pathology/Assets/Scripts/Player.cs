@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 public class Player : MonoBehaviour
 {
     private GameManager manager;
+    public GameObject dialogOverlay;
 
     private Vector2 keypad;
     private Vector2 joystick;
@@ -13,11 +14,12 @@ public class Player : MonoBehaviour
     private Vector3 direction;
     private Vector3 offset;
     public int moveSpd;
+    public float delay;
 
     public bool sprinting;
     public bool invenOpen;
     public bool dialogOpen;
-    public bool inputDelay;
+    public float inputDelay;
     public bool paused;
     public bool confirm;
     public bool cancel;
@@ -32,8 +34,12 @@ public class Player : MonoBehaviour
     void Update()
     {
         if (paused) {
-
+            Cursor.visible = true;
         } else {
+            //Decay input delay
+            inputDelay = Mathf.Clamp01(inputDelay - Time.deltaTime);
+            Cursor.visible = dialogOpen;
+            dialogOverlay.SetActive(dialogOpen);
             if (!invenOpen && !dialogOpen) {
                 _direction = VectorGreater(keypad, joystick);
                 direction = new Vector3(_direction.x, 0, _direction.y);
@@ -64,57 +70,45 @@ public class Player : MonoBehaviour
     //Get character you're talking to
     private void OnTriggerEnter(Collider trigger)
     {
-        manager.currentConvo = trigger.GetComponent<CharacterText>();
+        if (trigger.CompareTag("NPC")) manager.currentConvo = trigger.GetComponent<CharacterText>();
+        else if (trigger.CompareTag("Door")) Debug.Log("Load Interior Scene");
     }
 
     //Inputs switch to influence conversation
     private void OnTriggerStay(Collider collision)
     {
         //Open dialog when close enough
-        if (!dialogOpen && confirm && !inputDelay) {
+        if (!dialogOpen && confirm && inputDelay == 0) {
             dialogOpen = true;
             manager.Advance(1);
-            CallDelay(0.1f);
+            inputDelay = delay;
         }
         //SOUTH pressed
-        if (dialogOpen && cancel && !inputDelay) {
+        if (dialogOpen && cancel && inputDelay == 0) {
             manager.Decline();
-            CallDelay(0.1f);
+            inputDelay = delay;
         }
         //EAST pressed
-        if (dialogOpen && confirm && !inputDelay) {
+        if (dialogOpen && confirm && inputDelay == 0) {
             manager.Advance(1);
-            CallDelay(0.1f);
+            inputDelay = delay;
         }
         //NORTH pressed
-        if (dialogOpen && invenOpen && !inputDelay) {
+        if (dialogOpen && invenOpen && inputDelay == 0) {
             manager.Advance(2);
-            CallDelay(0.1f);
+            inputDelay = delay;
         }
         //WEST pressed
-        if (dialogOpen && sprinting && !inputDelay) {
+        if (dialogOpen && sprinting && inputDelay == 0) {
             manager.Advance(3);
-            CallDelay(0.1f);
+            inputDelay = delay;
         }
     }
 
     public void CloseDialog()
     {
         dialogOpen = false;
-        CallDelay(0.1f);
-    }
-
-    private void CallDelay(float time)
-    {
-        inputDelay = true;
-        StartCoroutine(DelayInputs(time));
-    }
-
-    //Prevent button spam
-    private IEnumerator DelayInputs(float time)
-    {
-        yield return new WaitForSeconds(time);
-        inputDelay = false;
+        inputDelay = delay;
     }
 
     //Input action functions
@@ -126,4 +120,5 @@ public class Player : MonoBehaviour
     public void Back(InputAction.CallbackContext ctx) { cancel = ctx.performed; }
     public void Pause() { paused = true; }
     public void Unpause() { paused = false; }
+    public void InvertPause() { paused = !paused; }
 }
