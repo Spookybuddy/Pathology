@@ -15,11 +15,11 @@ public class Player : MonoBehaviour
     private Vector3 offset;
     public int moveSpd;
     public float delay;
+    private float inputDelay;
 
     public bool sprinting;
     public bool invenOpen;
     public bool dialogOpen;
-    public float inputDelay;
     public bool paused;
     public bool confirm;
     public bool cancel;
@@ -33,6 +33,7 @@ public class Player : MonoBehaviour
 
     void Update()
     {
+        //Move only when unpaused & not in a menu
         if (paused) {
             Cursor.visible = true;
         } else {

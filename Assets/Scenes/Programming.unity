@@ -2743,7 +2743,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dialogOverlay: {fileID: 1703776202}
   moveSpd: 5
-  delay: 0.3
+  delay: 0.25
   sprinting: 0
   invenOpen: 0
   dialogOpen: 0
