@@ -903,7 +903,7 @@ GameObject:
   - component: {fileID: 516750820}
   - component: {fileID: 516750819}
   m_Layer: 0
-  m_Name: Doorway Test
+  m_Name: 0
   m_TagString: Door
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1828,9 +1828,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 2051061622}
+  innerCam: {fileID: 0}
   currentConvo: {fileID: 0}
   characterIDs:
   - {fileID: 1475246929}
+  interiorChars: []
+  cameraLocations: []
 --- !u!1 &1439958161
 GameObject:
   m_ObjectHideFlags: 0
@@ -1959,7 +1962,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   folder: 
   fileName: Test
-  characterID: 0
   person: {fileID: 137778659}
   display: {fileID: 1220429629}
   buttons:

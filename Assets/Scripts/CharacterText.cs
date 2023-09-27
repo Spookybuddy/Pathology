@@ -9,7 +9,6 @@ public class CharacterText : MonoBehaviour
     private GameManager manager;
     public string folder;
     public string fileName;
-    public int characterID;
 
     public TextMeshPro person;
     public TextMeshProUGUI display;
@@ -24,6 +23,7 @@ public class CharacterText : MonoBehaviour
     private int inputOptions;
     private bool confirmable;
     private bool cancelable;
+    private bool gathering;
     private bool printing;
 
     void Awake()
@@ -53,6 +53,21 @@ public class CharacterText : MonoBehaviour
             lineIndex++;
             PrintLine();
             return;
+        }
+
+        if (gathering) {
+            //Check if player has the specified items
+            string itemID = "";
+            for (int i = 0; i < dialog[lineIndex + 1].Length; i++) {
+                if (char.IsDigit(dialog[lineIndex + 1][i])) itemID += dialog[lineIndex + 1][i];
+                if (char.IsWhiteSpace(dialog[lineIndex + 1][i])) break;
+            }
+            if (manager.CheckInven(int.Parse(itemID))) {
+                gathering = false;
+                lineIndex++;
+                PrintLine();
+                return;
+            }
         }
 
         if (inputable && inputOptions >= EastNorthWest) {
@@ -141,6 +156,10 @@ public class CharacterText : MonoBehaviour
                 //End Conversation Button available
                 case '@':
                     cancelable = true;
+                    break;
+                //Ask player for a certain item
+                case '$':
+                    gathering = true;
                     break;
                 //Conversation will continue otherwise
                 default:

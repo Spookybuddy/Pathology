@@ -72,7 +72,10 @@ public class Player : MonoBehaviour
     private void OnTriggerEnter(Collider trigger)
     {
         if (trigger.CompareTag("NPC")) manager.currentConvo = trigger.GetComponent<CharacterText>();
-        else if (trigger.CompareTag("Door")) manager.Scene("Program Inner");
+        else if (trigger.CompareTag("Door")) {
+            manager.Locate(int.Parse(trigger.gameObject.name));
+            manager.Scene("Program Inner");
+        }
     }
 
     //Inputs switch to influence conversation

@@ -1,10 +1,15 @@
 Sample Dialog.
->3 Number 1.
->5 Number 2
-First Option.
+>3 I hate you. Die
+>5 I like frogs.
+How rude. I would like to speak to your manager!
 @
-Second Option.
-Second Line of Second Option.
+That's interesting.
+I do not know why you would share that information with me.
 @
-Repeat Line.
+This line is never reached.
+$13
+You have item. Can I has?
+>14
+@
+Thanks!
 @
