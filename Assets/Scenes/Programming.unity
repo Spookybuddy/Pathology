@@ -661,7 +661,7 @@ Transform:
   m_GameObject: {fileID: 372295132}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5, z: -10}
+  m_LocalPosition: {x: 0, y: 0, z: -10}
   m_LocalScale: {x: 2, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -989,7 +989,7 @@ Transform:
   m_GameObject: {fileID: 516750818}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 20}
+  m_LocalPosition: {x: 0, y: 0, z: 20}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1777,7 +1777,7 @@ Transform:
   m_GameObject: {fileID: 1314172385}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -1, z: 0}
   m_LocalScale: {x: 10, y: 1, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1829,6 +1829,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 2051061622}
   currentConvo: {fileID: 0}
+  characterIDs:
+  - {fileID: 1475246929}
 --- !u!1 &1439958161
 GameObject:
   m_ObjectHideFlags: 0
@@ -1957,6 +1959,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   folder: 
   fileName: Test
+  characterID: 0
   person: {fileID: 137778659}
   display: {fileID: 1220429629}
   buttons:
@@ -1978,7 +1981,7 @@ Transform:
   m_GameObject: {fileID: 1475246928}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10, y: 1, z: 0}
+  m_LocalPosition: {x: 10, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2535,7 +2538,7 @@ Transform:
   m_GameObject: {fileID: 2051061616}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2747,7 +2750,6 @@ MonoBehaviour:
   sprinting: 0
   invenOpen: 0
   dialogOpen: 0
-  inputDelay: 0
   paused: 0
   confirm: 0
   cancel: 0
