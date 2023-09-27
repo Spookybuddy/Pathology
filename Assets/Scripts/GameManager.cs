@@ -7,19 +7,27 @@ using System.IO;
 public class GameManager : MonoBehaviour
 {
     public Player player;
+    public Camera innerCam;
     public CharacterText currentConvo;
     public CharacterText[] characterIDs;
+    public CharacterText[] interiorChars;
+    public Vector3[] cameraLocations;
     private string filename;
     private string[] savedData;
     public static Vector3 position;
-    public static Vector3 location;
+    public static int location;
 
     void Start()
     {
-        if (player != null) player.transform.position = position + Vector3.back;
         filename = Application.streamingAssetsPath + "/SaveData.txt";
         savedData = File.ReadAllLines(filename);
-        ReadData();
+        if (player != null) {
+            player.transform.position = position + Vector3.back;
+            ReadData(characterIDs, 0);
+        } else {
+            //innerCam.position = cameraLocations[location];
+            //ReadData(interiorChars, 1);
+        }
     }
 
     void OnApplicationQuit()
@@ -28,25 +36,25 @@ public class GameManager : MonoBehaviour
     }
     
     //Convert all character indicies into chars
-    public void WriteData()
+    public void WriteData(CharacterText[] array, int line)
     {
         string newLine = "";
-        for (int i = 0; i < characterIDs.Length; i++) {
-            int x = characterIDs[i].WriteData();
+        for (int i = 0; i < array.Length; i++) {
+            int x = array[i].WriteData();
             char A = (char)(x / 95 + 32);
             char B = (char)(x % 95 + 32);
             newLine += (A + "" + B);
         }
-        savedData[0] = newLine;
+        savedData[line] = newLine;
         File.WriteAllLines(filename, savedData);
     }
 
     //Read the data from the saved file and record it into character indicies
-    public void ReadData()
+    public void ReadData(CharacterText[] array, int line)
     {
-        for (int i = 0; i < characterIDs.Length; i++) {
-            int x = ((int)savedData[0][2 * i] - 32) * 95 + ((int)savedData[0][2 * i + 1] - 32);
-            characterIDs[i].ReadData(x);
+        for (int i = 0; i < array.Length; i++) {
+            int x = ((int)savedData[line][2 * i] - 32) * 95 + ((int)savedData[line][2 * i + 1] - 32);
+            array[i].ReadData(x);
         }
     }
 
@@ -56,7 +64,18 @@ public class GameManager : MonoBehaviour
         string clearline = "";
         for (int i = 0; i < characterIDs.Length; i++) clearline += "  ";
         savedData[0] = clearline;
+        /*
+        clearline = "";
+        for (int i = 0; i < interiorChars.Length; i++) clearline += "  ";
+        savedData[1] = clearline;
+        */
         File.WriteAllLines(filename, savedData);
+    }
+
+    //Check player's inventory for item ID X
+    public bool CheckInven(int ID)
+    {
+        return false;
     }
 
     //Player inputs are translated into whatever the current conversation is
@@ -64,11 +83,18 @@ public class GameManager : MonoBehaviour
     public void Decline() { currentConvo.PlayerCancel(); }
     public void PlayerLeaves() { player.CloseDialog(); }
 
+    public void Locate(int loc) { location = loc; }
+
     //Record position for both scenes & load desired scene
     public void Scene(string scene)
     {
-        if (player != null) position = player.transform.position;
-        if (characterIDs.Length > 0) WriteData();
+        if (player != null) {
+            position = player.transform.position;
+            WriteData(characterIDs, 0);
+        } else {
+            Debug.Log(location);
+            //WriteData(interiorChars, 1);
+        }
         StartCoroutine(Load(scene));
     }
 
