@@ -9,6 +9,7 @@ public class CharacterText : MonoBehaviour
     private GameManager manager;
     public string folder;
     public string fileName;
+    public int characterID;
 
     public TextMeshPro person;
     public TextMeshProUGUI display;
@@ -171,6 +172,10 @@ public class CharacterText : MonoBehaviour
         //Display the leave button if the option is available
         if (cancelable) buttons[3].SetActive(true);
     }
+
+    //Transfer data to save
+    public int WriteData() { return lineIndex; }
+    public void ReadData(int index) { lineIndex = index; }
 
     //Slowly print each letter of the line
     private IEnumerator Typing(int i)
