@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviour
             player.transform.position = position + Vector3.back;
             ReadData(characterIDs, 0);
         } else {
-            //innerCam.position = cameraLocations[location];
+            innerCam.transform.position = cameraLocations[location];
             //ReadData(interiorChars, 1);
         }
     }
@@ -92,7 +92,6 @@ public class GameManager : MonoBehaviour
             position = player.transform.position;
             WriteData(characterIDs, 0);
         } else {
-            Debug.Log(location);
             //WriteData(interiorChars, 1);
         }
         StartCoroutine(Load(scene));

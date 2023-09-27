@@ -7,9 +7,9 @@ That's interesting.
 I do not know why you would share that information with me.
 @
 This line is never reached.
-$13
+$1
 You have item. Can I has?
->14
+>13
 @
 Thanks!
 @
