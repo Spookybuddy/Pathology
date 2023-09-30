@@ -1,15 +1,21 @@
-Sample Dialog.
->3 I hate you. Die
->5 I like frogs.
-How rude. I would like to speak to your manager!
+HALT! This house is under quarantine. No one is allowed to enter or exit this domain.
+>5 Ask Nicely...
+>11 I'm here to help. 
+>18 I'm the doctor.
 @
-That's interesting.
-I do not know why you would share that information with me.
+!Will you let me enter?
+No. Now leave.
+>9 No.
 @
-This line is never reached.
-$1
-You have item. Can I has?
->13
+You will leave now or I'll kill you.
 @
-Thanks!
+We have already called for a doctor. Your assistance is not required.
+>18 I'm the doctor.
+> Let me in...
+@
+!You need to let me in now.
+No. You will leave until the doctor arrives to cure the infected.
+@
+!I'm the doctor.
+Of course. I shall make sure you are not distrubed while you work.
 @

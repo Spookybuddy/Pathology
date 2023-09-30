@@ -10,6 +10,7 @@ public class Player : MonoBehaviour
 
     private Vector2 keypad;
     private Vector2 joystick;
+    private Vector2 dirPad;
     private Vector2 _direction;
     private Vector3 direction;
     private Vector3 offset;
@@ -88,22 +89,22 @@ public class Player : MonoBehaviour
             inputDelay = delay;
         }
         //SOUTH pressed
-        if (dialogOpen && cancel && inputDelay == 0) {
-            manager.Decline();
+        if (dialogOpen && (cancel || dirPad.Equals(Vector2.down)) && inputDelay == 0) {
+            manager.Advance(4);
             inputDelay = delay;
         }
         //EAST pressed
-        if (dialogOpen && confirm && inputDelay == 0) {
+        if (dialogOpen && (confirm || dirPad.Equals(Vector2.right)) && inputDelay == 0) {
             manager.Advance(1);
             inputDelay = delay;
         }
         //NORTH pressed
-        if (dialogOpen && invenOpen && inputDelay == 0) {
+        if (dialogOpen && (invenOpen || dirPad.Equals(Vector2.up)) && inputDelay == 0) {
             manager.Advance(2);
             inputDelay = delay;
         }
         //WEST pressed
-        if (dialogOpen && sprinting && inputDelay == 0) {
+        if (dialogOpen && (sprinting || dirPad.Equals(Vector2.left)) && inputDelay == 0) {
             manager.Advance(3);
             inputDelay = delay;
         }
@@ -116,12 +117,15 @@ public class Player : MonoBehaviour
     }
 
     //Input action functions
-    public void Arrows(InputAction.CallbackContext ctx) { keypad = ctx.ReadValue<Vector2>(); }
-    public void Stick(InputAction.CallbackContext ctx) { joystick = ctx.ReadValue<Vector2>(); }
-    public void Sprint(InputAction.CallbackContext ctx) { sprinting = ctx.performed; }
-    public void Inventory(InputAction.CallbackContext ctx) { invenOpen = ctx.performed; }
-    public void Next(InputAction.CallbackContext ctx) { confirm = ctx.performed; }
-    public void Back(InputAction.CallbackContext ctx) { cancel = ctx.performed; }
+    private void Check(InputAction.CallbackContext ctx) { manager.ControllerButtons(ctx.control.device.displayName); }
+    private void Veck(InputAction.CallbackContext ctx) { if (ctx.ReadValue<Vector2>() != Vector2.zero) Check(ctx); }
+    public void Arrows(InputAction.CallbackContext ctx) { keypad = ctx.ReadValue<Vector2>(); Veck(ctx); }
+    public void Stick(InputAction.CallbackContext ctx) { joystick = ctx.ReadValue<Vector2>(); Veck(ctx); }
+    public void Dpad(InputAction.CallbackContext ctx) { dirPad = ctx.ReadValue<Vector2>(); }
+    public void Sprint(InputAction.CallbackContext ctx) { sprinting = ctx.performed; Check(ctx); }
+    public void Inventory(InputAction.CallbackContext ctx) { invenOpen = ctx.performed; Check(ctx); }
+    public void Next(InputAction.CallbackContext ctx) { confirm = ctx.performed; Check(ctx); }
+    public void Back(InputAction.CallbackContext ctx) { cancel = ctx.performed; Check(ctx); }
     public void Pause() { paused = true; }
     public void Unpause() { paused = false; }
     public void InvertPause() { paused = !paused; }
