@@ -1831,6 +1831,7 @@ GameObject:
   - component: {fileID: 1314172389}
   - component: {fileID: 1314172388}
   - component: {fileID: 1314172387}
+  - component: {fileID: 1314172390}
   m_Layer: 0
   m_Name: Floor
   m_TagString: Untagged
@@ -1903,6 +1904,28 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &1314172390
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1314172385}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &1401290697
 GameObject:
   m_ObjectHideFlags: 0
@@ -2092,15 +2115,6 @@ MonoBehaviour:
   folder: 
   fileName: Test
   person: {fileID: 137778659}
-  lineIndex: 0
-  firstEncounter: 0
-  inputable: 0
-  inputOptions: 0
-  confirmable: 0
-  cancelable: 0
-  gathering: 0
-  eventFlag: 0
-  printing: 0
 --- !u!4 &1475246930
 Transform:
   m_ObjectHideFlags: 0
@@ -2867,7 +2881,19 @@ MonoBehaviour:
     m_ActionId: 0c15756a-eecc-460d-863a-17ab9d852e4d
     m_ActionName: Actions/Run[/Keyboard/leftShift,/SwitchProControllerHID/buttonWest]
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2051061622}
+        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+        m_MethodName: MousePos
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: 62b73f8f-a5e2-4a94-be64-e4bd18f009e4
     m_ActionName: Actions/Mouse[/Mouse/position]
   - m_PersistentCalls:
@@ -2946,6 +2972,38 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: f8114b8e-86c1-4ad0-b62c-7ad930dd2339
     m_ActionName: Actions/DPad[/SwitchProControllerHID/dpad]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2051061622}
+        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+        m_MethodName: Mouse
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: c3c06b8a-d237-4d77-9dc9-fd941ef99686
+    m_ActionName: Actions/MouseClick[/Mouse/leftButton]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2051061622}
+        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+        m_MethodName: MouseDelta
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: ee715125-3797-4fd1-b3b2-af6990b3e8c7
+    m_ActionName: Actions/MouseDelta[/Mouse/delta]
   m_NeverAutoSwitchControlSchemes: 1
   m_DefaultControlScheme: Layout
   m_DefaultActionMap: Actions
@@ -2963,17 +3021,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb362f6e0c2faee499e38062209a52a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainCam: {fileID: 1553662220}
   dialogOverlay: {fileID: 1703776202}
   moveSpd: 5
+  mouseSensitivity: 1
   delay: 0.25
-  sprinting: 0
-  invenOpen: 0
-  dialogOpen: 0
-  paused: 0
-  confirm: 0
-  cancel: 0
-  convoRange: 0
-  colliding: 0
+  canClick: 0
 --- !u!54 &2051061623
 Rigidbody:
   m_ObjectHideFlags: 0

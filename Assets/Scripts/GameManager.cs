@@ -105,18 +105,17 @@ public class GameManager : MonoBehaviour
     public void ControllerButtons(string controls)
     {
         //Xbox, Pro, Dual shock controllers
+        //Debug.Log(controls);
         switch (controls[0]) {
             case 'P':
                 //A X Y B
-                //Ndex = 4;
                 break;
             case 'X':
                 //B Y X A
-                //Ndex = 8;
                 break;
             case 'D':
                 //O ^ # X
-                //Ndex = 12;
+                Debug.Log("Playstation");
                 break;
             default:
                 break;
@@ -143,9 +142,10 @@ public class GameManager : MonoBehaviour
 
     //Player inputs are translated into whatever the current conversation is
     public void Advance(int EastNorthWest) { currentConvo.PlayerContinue(EastNorthWest); }
+    public void Decline() { currentConvo.PlayerCancel(); }
     public void PlayerLeaves() { player.CloseDialog(); }
     public void ClickButton(int EastNorthWest) { currentConvo.PlayerContinue(EastNorthWest); }
-
+    public void MouseClick(bool status) { player.canClick = status; }
     public void Locate(int loc) { location = loc; }
 
     //Record position for both scenes & load desired scene

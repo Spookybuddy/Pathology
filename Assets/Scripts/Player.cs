@@ -6,53 +6,66 @@ using UnityEngine.InputSystem;
 public class Player : MonoBehaviour
 {
     private GameManager manager;
+    public Camera mainCam;
     public GameObject dialogOverlay;
 
     private Vector2 keypad;
     private Vector2 joystick;
     private Vector2 dirPad;
+    private Vector3 mousition;
     private Vector2 _direction;
     private Vector3 direction;
+    private Vector3 targeted;
     private Vector3 offset;
+    private bool mouseControlled;
+    private bool mouseMoved;
+    private float mouseDecay;
     public int moveSpd;
+    public float mouseSensitivity;
     public float delay;
     private float inputDelay;
+    public bool canClick;
 
-    public bool sprinting;
-    public bool invenOpen;
-    public bool dialogOpen;
-    public bool paused;
-    public bool confirm;
-    public bool cancel;
-    public bool convoRange;
-    public bool colliding;
+    private bool sprinting;
+    private bool invenOpen;
+    private bool dialogOpen;
+    private bool paused;
+    private bool confirm;
+    private bool cancel;
+    private bool convoRange;
+    private bool colliding;
 
-    void Awake()
-    {
-        manager = GameObject.FindWithTag("GameController").GetComponent<GameManager>();
-    }
+    void Awake() { manager = GameObject.FindWithTag("GameController").GetComponent<GameManager>(); }
+
+    void Start() { canClick = true; }
 
     void Update()
     {
         //Move only when unpaused & not in a menu
         if (paused) {
             Cursor.visible = true;
+            mouseDecay = 0.4f;
         } else {
             //Decay input delay
             inputDelay = Mathf.Clamp01(inputDelay - Time.deltaTime);
-            Cursor.visible = dialogOpen;
+            Cursor.visible = (mouseMoved || mouseDecay > 0);
+            mouseDecay = Mathf.Clamp01(mouseDecay - Time.deltaTime);
             dialogOverlay.SetActive(dialogOpen);
             if (!invenOpen && !dialogOpen) {
+                //Inputting directions takes the highest magnitude, and overrides click navigation
                 _direction = VectorGreater(keypad, joystick);
                 direction = new Vector3(_direction.x, 0, _direction.y);
+                if (direction.magnitude > 0) mouseControlled = false;
                 offset = transform.position + direction;
+
+                if (mouseControlled) transform.position = Vector3.MoveTowards(transform.position, targeted, Time.deltaTime * moveSpd * (sprinting ? 2 : 1));
 
                 //Collision detection from 3 points
                 if (Physics.Raycast(transform.position + new Vector3(0.33f, 0, 0), direction, 1)) colliding = true;
                 else if (Physics.Raycast(transform.position - new Vector3(0.33f, 0, 0), direction, 1)) colliding = true;
                 else if (Physics.Raycast(transform.position + new Vector3(0, 0, 0.15f), direction, 1)) colliding = true;
                 else colliding = false;
-                if (!colliding) transform.position = Vector3.MoveTowards(transform.position, offset, Time.deltaTime * moveSpd * (sprinting ? 2 : 1));
+                if (!colliding && !mouseControlled) transform.position = Vector3.MoveTowards(transform.position, offset, Time.deltaTime * moveSpd * (sprinting ? 2 : 1));
             }
         }
     }
@@ -110,10 +123,25 @@ public class Player : MonoBehaviour
         }
     }
 
+    //Exit from the dialog screen
     public void CloseDialog()
     {
         dialogOpen = false;
         inputDelay = delay;
+    }
+
+    //Raycast a mouse click for click movement?
+    private void MouseClick()
+    {
+        if (dialogOpen && canClick && inputDelay == 0) {
+            manager.Advance(-1);
+            inputDelay = delay;
+        } else {
+            if (Physics.Raycast(mainCam.ScreenPointToRay(mousition), out RaycastHit hit, 100)) {
+                mouseControlled = true;
+                targeted = new Vector3(hit.point.x, 0, hit.point.z);
+            }
+        }
     }
 
     //Input action functions
@@ -129,4 +157,7 @@ public class Player : MonoBehaviour
     public void Pause() { paused = true; }
     public void Unpause() { paused = false; }
     public void InvertPause() { paused = !paused; }
+    public void Mouse(InputAction.CallbackContext ctx) { if (ctx.performed) MouseClick(); }
+    public void MousePos(InputAction.CallbackContext ctx) { mousition = ctx.ReadValue<Vector2>(); }
+    public void MouseDelta(InputAction.CallbackContext ctx) { mouseMoved = (ctx.ReadValue<Vector2>().magnitude > mouseSensitivity); mouseDecay = 0.4f; }
 }

@@ -24,6 +24,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "DPad",
+                    "type": "PassThrough",
+                    "id": "f8114b8e-86c1-4ad0-b62c-7ad930dd2339",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Inventory",
                     "type": "Button",
                     "id": "e689227a-9b37-4337-bfc2-433896a736da",
@@ -60,15 +69,6 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "MousePos",
-                    "type": "Value",
-                    "id": "62b73f8f-a5e2-4a94-be64-e4bd18f009e4",
-                    "expectedControlType": "Vector2",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                },
-                {
                     "name": "Pause",
                     "type": "Button",
                     "id": "f97ffdf5-da66-431b-802f-2f034815e434",
@@ -78,13 +78,31 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "DPad",
-                    "type": "PassThrough",
-                    "id": "f8114b8e-86c1-4ad0-b62c-7ad930dd2339",
+                    "name": "MousePos",
+                    "type": "Value",
+                    "id": "62b73f8f-a5e2-4a94-be64-e4bd18f009e4",
                     "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "MouseClick",
+                    "type": "Button",
+                    "id": "c3c06b8a-d237-4d77-9dc9-fd941ef99686",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "MouseDelta",
+                    "type": "Value",
+                    "id": "ee715125-3797-4fd1-b3b2-af6990b3e8c7",
+                    "expectedControlType": "Delta",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -299,6 +317,39 @@
                 },
                 {
                     "name": "",
+                    "id": "48646e16-7a63-4b0f-8f0a-e31701e9fa31",
+                    "path": "<Gamepad>/leftStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Layout",
+                    "action": "Joystick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6428315f-472f-4de7-ac05-62350fa2617c",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MouseClick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2dd6f4c2-434f-4529-ab3a-19de0a43602c",
+                    "path": "<Gamepad>/dpad",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DPad",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "b4538b98-4f4a-4dfe-aea8-cd007dbdd5d5",
                     "path": "<Keyboard>/escape",
                     "interactions": "",
@@ -321,23 +372,12 @@
                 },
                 {
                     "name": "",
-                    "id": "48646e16-7a63-4b0f-8f0a-e31701e9fa31",
-                    "path": "<Gamepad>/leftStick",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Layout",
-                    "action": "Joystick",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "2dd6f4c2-434f-4529-ab3a-19de0a43602c",
-                    "path": "<Gamepad>/dpad",
+                    "id": "55217f01-f4ec-4996-af32-d50d212d2c97",
+                    "path": "<Mouse>/delta",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "DPad",
+                    "action": "MouseDelta",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

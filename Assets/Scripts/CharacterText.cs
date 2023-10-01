@@ -12,16 +12,16 @@ public class CharacterText : MonoBehaviour
 
     public TextMeshPro person;
 
-    public int lineIndex;
+    private int lineIndex;
     private string[] dialog;
 
-    public bool inputable;
-    public int inputOptions;
-    public bool confirmable;
-    public bool cancelable;
-    public bool gathering;
-    public bool eventFlag;
-    public bool printing;
+    private bool inputable;
+    private int inputOptions;
+    private bool confirmable;
+    private bool cancelable;
+    private bool gathering;
+    private bool eventFlag;
+    private bool printing;
 
     void Awake() { manager = GameObject.FindWithTag("GameController").GetComponent<GameManager>(); }
 
@@ -36,7 +36,7 @@ public class CharacterText : MonoBehaviour
 
     //Player input button
     public void PlayerContinue(int EastNorthWest)
-    {        
+    {
         //Player continue
         if (confirmable) {
             confirmable = false;
@@ -61,7 +61,7 @@ public class CharacterText : MonoBehaviour
         }
         
         //Player input buttons
-        if (inputable && inputOptions >= EastNorthWest) {
+        if (inputable && inputOptions >= EastNorthWest && EastNorthWest > 0) {
             inputable = false;
             //Parse the line value to jump to
             string toLine = "";
@@ -76,24 +76,37 @@ public class CharacterText : MonoBehaviour
 
         //Player leave
         if (cancelable) {
-            cancelable = false;
-            inputable = false;
-            printing = false;
-            gathering = false;
-            confirmable = false;
-            manager.PlayerLeaves();
+            PlayerCancel();
             return;
         }
         
         //Skip typing and display full text
         if (printing) {
             printing = false;
+            manager.MouseClick(false);
             PrintAll();
             return;
         }
-        
+
+        //Mouse block
+        if (EastNorthWest < 0) {
+            return;
+        }
+
         //If all else fails, just print the current line
         PrintLine();
+    }
+
+    //Available function to cancel conversation
+    public void PlayerCancel()
+    {
+        cancelable = false;
+        inputable = false;
+        printing = false;
+        gathering = false;
+        confirmable = false;
+        manager.MouseClick(true);
+        manager.PlayerLeaves();
     }
 
     //Check who is talking and update portraits
@@ -123,6 +136,7 @@ public class CharacterText : MonoBehaviour
         cancelable = false;
         manager.ButtonDisplay(inputOptions, false, cancelable);
         manager.setDisplay("");
+        manager.MouseClick(true);
         printing = true;
         StartCoroutine(Typing(CheckTalk()));
     }
@@ -136,6 +150,7 @@ public class CharacterText : MonoBehaviour
                 //Player Responses
                 case '>':
                     inputable = true;
+                    manager.MouseClick(false);
                     inputOptions = 1;
                     if (lineIndex + 2 < dialog.Length) {
                         if (dialog[lineIndex + 2][0] == '>') inputOptions = 2;
@@ -155,6 +170,7 @@ public class CharacterText : MonoBehaviour
                 //End Conversation Button available
                 case '@':
                     cancelable = true;
+                    manager.MouseClick(false);
                     break;
                 //Ask player for a certain item
                 case '$':
@@ -162,11 +178,12 @@ public class CharacterText : MonoBehaviour
                     break;
                 //Check for event flag triggered
                 case '=':
-                    eventFlag = true;
+                    //eventFlag = true;
                     break;
                 //Conversation will continue otherwise
                 default:
                     confirmable = true;
+                    manager.MouseClick(true);
                     break;
             }
         }
