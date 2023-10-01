@@ -2,7 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using System.IO;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
@@ -12,10 +14,19 @@ public class GameManager : MonoBehaviour
     public CharacterText[] characterIDs;
     public CharacterText[] interiorChars;
     public Vector3[] cameraLocations;
+
+    public TextMeshProUGUI textbox;
+    public RawImage playerPortrait;
+    public RawImage otherPortrait;
+    private int Ndex;
+    public GameObject[] buttonIndicators;
+    public Button[] buttons;
+    private readonly Vector4 shade = new Vector4(0.3f, 0.3f, 0.3f, 1);
+
     private string filename;
     private string[] savedData;
-    public static Vector3 position;
-    public static int location;
+    private static Vector3 position;
+    private static int location;
 
     void Start()
     {
@@ -25,7 +36,7 @@ public class GameManager : MonoBehaviour
             player.transform.position = position + Vector3.back;
             ReadData(characterIDs, 0);
         } else {
-            //innerCam.position = cameraLocations[location];
+            innerCam.transform.position = cameraLocations[location];
             //ReadData(interiorChars, 1);
         }
     }
@@ -78,11 +89,63 @@ public class GameManager : MonoBehaviour
         return false;
     }
 
+    //Set the portraits, and grey out who is not talking
+    public void PortraitFront(bool player)
+    {
+        if (player) {
+            playerPortrait.color = Color.white;
+            otherPortrait.color = shade;
+        } else {
+            playerPortrait.color = shade;
+            otherPortrait.color = Color.white;
+        }
+    }
+
+    //Change the display buttons depending on what controller is currently in use
+    public void ControllerButtons(string controls)
+    {
+        //Xbox, Pro, Dual shock controllers
+        //Debug.Log(controls);
+        switch (controls[0]) {
+            case 'P':
+                //A X Y B
+                break;
+            case 'X':
+                //B Y X A
+                break;
+            case 'D':
+                //O ^ # X
+                Debug.Log("Playstation");
+                break;
+            default:
+                break;
+        }
+    }
+
+    //Display text
+    public void setDisplay(string txt) { textbox.text = txt; }
+    public void addDisplay(char chr) { textbox.text += chr; }
+
+    //Show/Hide buttons
+    public void ButtonDisplay(int amount, bool input, bool cancel)
+    {
+        for (int i = 0; i < 4; i++) buttons[i].gameObject.SetActive(false);
+        if (input) {
+            for (int i = 0; i < amount; i++) {
+                buttons[i].gameObject.SetActive(true);
+                buttons[i].transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = currentConvo.DialogLine(i + 1);
+            }
+        }
+        buttons[3].gameObject.SetActive(cancel);
+        buttons[3].transform.localPosition = new Vector3(-450, -60 * amount - 160, 0);
+    }
+
     //Player inputs are translated into whatever the current conversation is
     public void Advance(int EastNorthWest) { currentConvo.PlayerContinue(EastNorthWest); }
     public void Decline() { currentConvo.PlayerCancel(); }
     public void PlayerLeaves() { player.CloseDialog(); }
-
+    public void ClickButton(int EastNorthWest) { currentConvo.PlayerContinue(EastNorthWest); }
+    public void MouseClick(bool status) { player.canClick = status; }
     public void Locate(int loc) { location = loc; }
 
     //Record position for both scenes & load desired scene
@@ -92,7 +155,6 @@ public class GameManager : MonoBehaviour
             position = player.transform.position;
             WriteData(characterIDs, 0);
         } else {
-            Debug.Log(location);
             //WriteData(interiorChars, 1);
         }
         StartCoroutine(Load(scene));

@@ -11,25 +11,19 @@ public class CharacterText : MonoBehaviour
     public string fileName;
 
     public TextMeshPro person;
-    public TextMeshProUGUI display;
-    public GameObject[] buttons;
-    public TextMeshProUGUI[] responses;
 
     private int lineIndex;
     private string[] dialog;
 
-    private bool firstEncounter;
     private bool inputable;
     private int inputOptions;
     private bool confirmable;
     private bool cancelable;
     private bool gathering;
+    private bool eventFlag;
     private bool printing;
 
-    void Awake()
-    {
-        manager = GameObject.FindWithTag("GameController").GetComponent<GameManager>();
-    }
+    void Awake() { manager = GameObject.FindWithTag("GameController").GetComponent<GameManager>(); }
 
     void Start()
     {
@@ -40,23 +34,19 @@ public class CharacterText : MonoBehaviour
         dialog = File.ReadAllLines(fileName);
     }
 
-    //Player hit EAST
+    //Player input button
     public void PlayerContinue(int EastNorthWest)
     {
-        if (cancelable) {
-            PlayerCancel();
-            return;
-        }
-
+        //Player continue
         if (confirmable) {
             confirmable = false;
             lineIndex++;
             PrintLine();
             return;
         }
-
+        
+        //Check if player has the specified items
         if (gathering) {
-            //Check if player has the specified items
             string itemID = "";
             for (int i = 0; i < dialog[lineIndex + 1].Length; i++) {
                 if (char.IsDigit(dialog[lineIndex + 1][i])) itemID += dialog[lineIndex + 1][i];
@@ -69,8 +59,9 @@ public class CharacterText : MonoBehaviour
                 return;
             }
         }
-
-        if (inputable && inputOptions >= EastNorthWest) {
+        
+        //Player input buttons
+        if (inputable && inputOptions >= EastNorthWest && EastNorthWest > 0) {
             inputable = false;
             //Parse the line value to jump to
             string toLine = "";
@@ -83,17 +74,22 @@ public class CharacterText : MonoBehaviour
             return;
         }
 
-        //First time talking, so none of the booleans have values
-        if (firstEncounter) {
-            firstEncounter = false;
-            PrintLine();
+        //Player leave
+        if (cancelable) {
+            PlayerCancel();
             return;
         }
-
+        
         //Skip typing and display full text
         if (printing) {
             printing = false;
+            manager.MouseClick(false);
             PrintAll();
+            return;
+        }
+
+        //Mouse block
+        if (EastNorthWest < 0) {
             return;
         }
 
@@ -101,30 +97,48 @@ public class CharacterText : MonoBehaviour
         PrintLine();
     }
 
-    //Player hit SOUTH
+    //Available function to cancel conversation
     public void PlayerCancel()
     {
-        if (cancelable) {
-            cancelable = false;
-            manager.PlayerLeaves();
+        cancelable = false;
+        inputable = false;
+        printing = false;
+        gathering = false;
+        confirmable = false;
+        manager.MouseClick(true);
+        manager.PlayerLeaves();
+    }
+
+    //Check who is talking and update portraits
+    private int CheckTalk()
+    {
+        if (char.Equals(dialog[lineIndex][0], '!')) {
+            manager.PortraitFront(true);
+            return 1;
+        } else {
+            manager.PortraitFront(false);
+            return 0;
         }
     }
 
     //Fully print out the line
     private void PrintAll()
     {
-        display.text = dialog[lineIndex];
+        if (CheckTalk() == 1) manager.setDisplay(dialog[lineIndex].Substring(1));
+        else manager.setDisplay(dialog[lineIndex]);
         ReadNext();
-        ButtonDisplay();
+        manager.ButtonDisplay(inputOptions, inputable, cancelable);
     }
 
     //Clear line and began printing
     public void PrintLine()
     {
-        ButtonDisplay();
-        display.text = "";
+        cancelable = false;
+        manager.ButtonDisplay(inputOptions, false, cancelable);
+        manager.setDisplay("");
+        manager.MouseClick(true);
         printing = true;
-        StartCoroutine(Typing(0));
+        StartCoroutine(Typing(CheckTalk()));
     }
 
     //Check what the next line is
@@ -136,6 +150,7 @@ public class CharacterText : MonoBehaviour
                 //Player Responses
                 case '>':
                     inputable = true;
+                    manager.MouseClick(false);
                     inputOptions = 1;
                     if (lineIndex + 2 < dialog.Length) {
                         if (dialog[lineIndex + 2][0] == '>') inputOptions = 2;
@@ -148,48 +163,41 @@ public class CharacterText : MonoBehaviour
                         else return;
                     }
                     if (lineIndex + 4 < dialog.Length) {
-                        if (dialog[lineIndex + 4][0] == '>') inputOptions = 4;
-                        else if (dialog[lineIndex + 4][0] == '@') cancelable = true;
+                        if (dialog[lineIndex + 4][0] == '@') cancelable = true;
                         else return;
                     }
                     break;
                 //End Conversation Button available
                 case '@':
                     cancelable = true;
+                    manager.MouseClick(false);
                     break;
                 //Ask player for a certain item
                 case '$':
                     gathering = true;
                     break;
+                //Check for event flag triggered
+                case '=':
+                    //eventFlag = true;
+                    break;
                 //Conversation will continue otherwise
                 default:
                     confirmable = true;
+                    manager.MouseClick(true);
                     break;
             }
         }
     }
 
-    //Show the buttons with responses
-    private void ButtonDisplay()
+    //Return the dialog line after any whitespaces
+    public string DialogLine(int x)
     {
-        for (int i = 0; i < buttons.Length; i++) buttons[i].SetActive(false);
-
-        if (inputable) {
-            //Display proper number of buttons for the responses
-            for (int i = 0; i < inputOptions; i++) {
-                //Remove the indent & line id
-                for (int a = 1; a < dialog[lineIndex + i + 1].Length; a++) {
-                    if (char.IsWhiteSpace(dialog[lineIndex + i + 1][a])) {
-                        responses[i].text = dialog[lineIndex + i + 1].Remove(0, a);
-                        break;
-                    }
-                }
-                buttons[i].SetActive(true);
+        for (int i = 0; i < dialog[lineIndex + x].Length; i++) {
+            if (char.IsWhiteSpace(dialog[lineIndex + x][i])) {
+                return dialog[lineIndex + x].Substring(i);
             }
         }
-
-        //Display the leave button if the option is available
-        if (cancelable) buttons[3].SetActive(true);
+        return ":(";
     }
 
     //Transfer data to save
@@ -200,11 +208,11 @@ public class CharacterText : MonoBehaviour
     private IEnumerator Typing(int i)
     {
         yield return new WaitForSeconds(0.05f);
-        if (printing) display.text += dialog[lineIndex][i];
+        if (printing) manager.addDisplay(dialog[lineIndex][i]);
         if (i + 1 < dialog[lineIndex].Length && printing) StartCoroutine(Typing(i + 1));
         else {
             ReadNext();
-            ButtonDisplay();
+            manager.ButtonDisplay(inputOptions, inputable, cancelable);
         }
     }
 }
