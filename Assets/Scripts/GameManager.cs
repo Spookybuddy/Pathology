@@ -15,18 +15,23 @@ public class GameManager : MonoBehaviour
     public CharacterText[] interiorChars;
     public Vector3[] cameraLocations;
 
+    //Inventory data
     public Item nearbyItem;
     public List<Item> Inventory = new List<Item>();
     public TextMeshProUGUI inventoryListing;
-    private int topItem;
+    public GameObject pointer;
+    private int indexedItem;
     private int sortType;
 
+    //Dialog data
     public TextMeshProUGUI textbox;
     public RawImage playerPortrait;
     public RawImage otherPortrait;
     private int Ndex;
     public GameObject[] buttonIndicators;
     public Button[] buttons;
+    public GameObject[] nameplates;
+    public TextMeshProUGUI npcName;
     private readonly Vector4 shade = new Vector4(0.3f, 0.3f, 0.3f, 1);
 
     private string filename;
@@ -108,9 +113,14 @@ public class GameManager : MonoBehaviour
         if (player) {
             playerPortrait.color = Color.white;
             otherPortrait.color = shade;
+            nameplates[0].SetActive(false);
+            nameplates[1].SetActive(true);
         } else {
             playerPortrait.color = shade;
             otherPortrait.color = Color.white;
+            nameplates[0].SetActive(true);
+            nameplates[1].SetActive(false);
+            npcName.text = currentConvo.NameData();
         }
     }
 
@@ -118,7 +128,10 @@ public class GameManager : MonoBehaviour
     public void Scroll(int dir) 
     {
         if (Inventory.Count > 0) {
-            topItem = (topItem + dir + Inventory.Count) % Inventory.Count;
+            indexedItem = (indexedItem + dir + Inventory.Count) % Inventory.Count;
+            int limit = Mathf.Min(Mathf.Max(Inventory.Count - 10, 0), indexedItem);
+            if (indexedItem > limit) pointer.transform.localPosition = new Vector3(-375, 175 - (indexedItem - limit) * 45, 0);
+            else pointer.transform.localPosition = new Vector3(-375, 175, 0);
             InventoryText();
         }
     }
@@ -127,7 +140,7 @@ public class GameManager : MonoBehaviour
     private void InventoryText()
     {
         inventoryListing.text = "";
-        for (int i = topItem; i < Mathf.Min(Inventory.Count, topItem + 10); i++) {
+        for (int i = Mathf.Min(Mathf.Max(Inventory.Count - 10, 0), indexedItem); i < Mathf.Min(Inventory.Count, indexedItem + 10); i++) {
             inventoryListing.text += Inventory[i].Name + "\n";
         }
     }
@@ -204,7 +217,7 @@ public class GameManager : MonoBehaviour
     public void PlayerLeaves() { player.CloseDialog(); }
     public void ClickButton(int EastNorthWest) { currentConvo.PlayerContinue(EastNorthWest); }
     public void MouseClick(bool status) { player.ClickState(status); }
-    public void ReIndex() { topItem = 0; }
+    public void ReIndex() { indexedItem = 0; }
     public void Locate(int loc) { location = loc; }
 
     //Record position for both scenes & load desired scene

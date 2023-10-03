@@ -203,6 +203,7 @@ public class CharacterText : MonoBehaviour
     //Transfer data to save
     public int WriteData() { return lineIndex; }
     public void ReadData(int index) { lineIndex = index; }
+    public string NameData() { return person.text; }
 
     //Slowly print each letter of the line
     private IEnumerator Typing(int i)
