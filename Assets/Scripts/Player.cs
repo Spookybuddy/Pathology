@@ -7,7 +7,9 @@ public class Player : MonoBehaviour
 {
     private GameManager manager;
     public Camera mainCam;
+    public Camera miniCam;
     public GameObject dialogOverlay;
+    public GameObject inventoryOverlay;
 
     private Vector2 keypad;
     private Vector2 joystick;
@@ -20,15 +22,21 @@ public class Player : MonoBehaviour
     private bool mouseControlled;
     private bool mouseMoved;
     private float mouseDecay;
+    private float inputDelay;
+    private bool canClick;
+
+    //Settings
     public int moveSpd;
     public float mouseSensitivity;
     public float delay;
-    private float inputDelay;
-    public bool canClick;
+    private int mapScale = 2;
 
+    //Player states
     private bool sprinting;
+    private bool opening;
     private bool invenOpen;
     private bool dialogOpen;
+    private bool hoverItem;
     private bool paused;
     private bool confirm;
     private bool cancel;
@@ -51,7 +59,9 @@ public class Player : MonoBehaviour
             Cursor.visible = (mouseMoved || mouseDecay > 0);
             mouseDecay = Mathf.Clamp01(mouseDecay - Time.deltaTime);
             dialogOverlay.SetActive(dialogOpen);
-            if (!invenOpen && !dialogOpen) {
+            inventoryOverlay.SetActive(invenOpen);
+            if (!invenOpen) manager.ReIndex();
+            if (!opening && !invenOpen && !dialogOpen) {
                 //Inputting directions takes the highest magnitude, and overrides click navigation
                 _direction = VectorGreater(keypad, joystick);
                 direction = new Vector3(_direction.x, 0, _direction.y);
@@ -89,37 +99,51 @@ public class Player : MonoBehaviour
         else if (trigger.CompareTag("Door")) {
             manager.Locate(int.Parse(trigger.gameObject.name));
             manager.Scene("Program Inner");
+        } else if (trigger.CompareTag("Item")) {
+            hoverItem = true;
+            manager.nearbyItem = trigger.GetComponent<ItemScript>().item;
         }
     }
 
     //Inputs switch to influence conversation
-    private void OnTriggerStay(Collider collision)
+    private void OnTriggerStay(Collider trigger)
     {
-        //Open dialog when close enough
-        if (!dialogOpen && confirm && inputDelay == 0) {
-            dialogOpen = true;
-            manager.Advance(1);
-            inputDelay = delay;
-        }
-        //SOUTH pressed
-        if (dialogOpen && (cancel || dirPad.Equals(Vector2.down)) && inputDelay == 0) {
-            manager.Advance(4);
-            inputDelay = delay;
-        }
-        //EAST pressed
-        if (dialogOpen && (confirm || dirPad.Equals(Vector2.right)) && inputDelay == 0) {
-            manager.Advance(1);
-            inputDelay = delay;
-        }
-        //NORTH pressed
-        if (dialogOpen && (invenOpen || dirPad.Equals(Vector2.up)) && inputDelay == 0) {
-            manager.Advance(2);
-            inputDelay = delay;
-        }
-        //WEST pressed
-        if (dialogOpen && (sprinting || dirPad.Equals(Vector2.left)) && inputDelay == 0) {
-            manager.Advance(3);
-            inputDelay = delay;
+        if (trigger.CompareTag("NPC")) {
+            //Open dialog when close enough
+            if (!dialogOpen && confirm && inputDelay == 0) {
+                dialogOpen = true;
+                manager.Advance(1);
+                inputDelay = delay;
+            }
+            //SOUTH pressed
+            if (dialogOpen && (cancel || dirPad.Equals(Vector2.down)) && inputDelay == 0) {
+                manager.Advance(4);
+                inputDelay = delay;
+            }
+            //EAST pressed
+            if (dialogOpen && (confirm || dirPad.Equals(Vector2.right)) && inputDelay == 0) {
+                manager.Advance(1);
+                inputDelay = delay;
+            }
+            //NORTH pressed
+            if (dialogOpen && (opening || dirPad.Equals(Vector2.up)) && inputDelay == 0) {
+                manager.Advance(2);
+                inputDelay = delay;
+            }
+            //WEST pressed
+            if (dialogOpen && (sprinting || dirPad.Equals(Vector2.left)) && inputDelay == 0) {
+                manager.Advance(3);
+                inputDelay = delay;
+            }
+        } else if (trigger.CompareTag("Item")) {
+            //NORTH pressed to pickup
+            if (hoverItem && confirm && inputDelay == 0) {
+                hoverItem = false;
+                manager.AddInven();
+                manager.nearbyItem = null;
+                Destroy(trigger.gameObject);
+                inputDelay = delay;
+            }
         }
     }
 
@@ -129,6 +153,8 @@ public class Player : MonoBehaviour
         dialogOpen = false;
         inputDelay = delay;
     }
+
+    public void ClickState(bool status) { canClick = status; }
 
     //Raycast a mouse click for click movement?
     private void MouseClick()
@@ -144,14 +170,22 @@ public class Player : MonoBehaviour
         }
     }
 
+    //Update the minimap camera to the new scale
+    private void Map(int val)
+    {
+        mapScale = Mathf.Clamp(mapScale + val, 1, 3);
+        miniCam.orthographicSize = mapScale * 5;
+    }
+
     //Input action functions
     private void Check(InputAction.CallbackContext ctx) { manager.ControllerButtons(ctx.control.device.displayName); }
     private void Veck(InputAction.CallbackContext ctx) { if (ctx.ReadValue<Vector2>() != Vector2.zero) Check(ctx); }
     public void Arrows(InputAction.CallbackContext ctx) { keypad = ctx.ReadValue<Vector2>(); Veck(ctx); }
     public void Stick(InputAction.CallbackContext ctx) { joystick = ctx.ReadValue<Vector2>(); Veck(ctx); }
+    public void Zoom(InputAction.CallbackContext ctx) { Map(Mathf.RoundToInt(ctx.ReadValue<Vector2>().y));}
     public void Dpad(InputAction.CallbackContext ctx) { dirPad = ctx.ReadValue<Vector2>(); }
     public void Sprint(InputAction.CallbackContext ctx) { sprinting = ctx.performed; Check(ctx); }
-    public void Inventory(InputAction.CallbackContext ctx) { invenOpen = ctx.performed; Check(ctx); }
+    public void Inventory(InputAction.CallbackContext ctx) { opening = ctx.performed; invenOpen ^= opening; Check(ctx); }
     public void Next(InputAction.CallbackContext ctx) { confirm = ctx.performed; Check(ctx); }
     public void Back(InputAction.CallbackContext ctx) { cancel = ctx.performed; Check(ctx); }
     public void Pause() { paused = true; }
@@ -160,4 +194,5 @@ public class Player : MonoBehaviour
     public void Mouse(InputAction.CallbackContext ctx) { if (ctx.performed) MouseClick(); }
     public void MousePos(InputAction.CallbackContext ctx) { mousition = ctx.ReadValue<Vector2>(); }
     public void MouseDelta(InputAction.CallbackContext ctx) { mouseMoved = (ctx.ReadValue<Vector2>().magnitude > mouseSensitivity); mouseDecay = 0.4f; }
+    public void MouseScroll(InputAction.CallbackContext ctx) { if (invenOpen) manager.Scroll(-(int)(Mathf.Clamp(ctx.ReadValue<Vector2>().y, -1, 1))); }
 }

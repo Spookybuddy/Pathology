@@ -6,6 +6,7 @@ TagManager:
   tags:
   - NPC
   - Door
+  - Item
   layers:
   - Default
   - TransparentFX

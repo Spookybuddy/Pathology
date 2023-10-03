@@ -15,6 +15,12 @@ public class GameManager : MonoBehaviour
     public CharacterText[] interiorChars;
     public Vector3[] cameraLocations;
 
+    public Item nearbyItem;
+    public List<Item> Inventory = new List<Item>();
+    public TextMeshProUGUI inventoryListing;
+    private int topItem;
+    private int sortType;
+
     public TextMeshProUGUI textbox;
     public RawImage playerPortrait;
     public RawImage otherPortrait;
@@ -83,10 +89,17 @@ public class GameManager : MonoBehaviour
         File.WriteAllLines(filename, savedData);
     }
 
+    //Add the nearby item to inventory
+    public void AddInven()
+    {
+        Inventory.Add(nearbyItem);
+        InventorySort(false);
+    }
+
     //Check player's inventory for item ID X
     public bool CheckInven(int ID)
     {
-        return false;
+        return Inventory.Exists(x => x.Id == ID);
     }
 
     //Set the portraits, and grey out who is not talking
@@ -99,6 +112,51 @@ public class GameManager : MonoBehaviour
             playerPortrait.color = shade;
             otherPortrait.color = Color.white;
         }
+    }
+
+    //Mouse scroll wheel / controller scroll
+    public void Scroll(int dir) 
+    {
+        if (Inventory.Count > 0) {
+            topItem = (topItem + dir + Inventory.Count) % Inventory.Count;
+            InventoryText();
+        }
+    }
+
+    //Update the text so that only 10 items are shown at a time
+    private void InventoryText()
+    {
+        inventoryListing.text = "";
+        for (int i = topItem; i < Mathf.Min(Inventory.Count, topItem + 10); i++) {
+            inventoryListing.text += Inventory[i].Name + "\n";
+        }
+    }
+
+    //Sort the inventory by the desired method: Name, Number, Category
+    public void InventorySort(bool increment)
+    {
+        if (increment) sortType = (sortType + 1) % 6;
+        switch (sortType) {
+            case 0:
+                Inventory.Sort((x, y) => x.Id.CompareTo(y.Id));
+                break;
+            case 1:
+                Inventory.Reverse();
+                break;
+            case 2:
+                Inventory.Sort((x, y) => x.Name.CompareTo(y.Name));
+                break;
+            case 3:
+                Inventory.Reverse();
+                break;
+            case 4:
+                Inventory.Sort((x, y) => x.Category.CompareTo(y.Category));
+                break;
+            default:
+                Inventory.Reverse();
+                break;
+        }
+        InventoryText();
     }
 
     //Change the display buttons depending on what controller is currently in use
@@ -145,7 +203,8 @@ public class GameManager : MonoBehaviour
     public void Decline() { currentConvo.PlayerCancel(); }
     public void PlayerLeaves() { player.CloseDialog(); }
     public void ClickButton(int EastNorthWest) { currentConvo.PlayerContinue(EastNorthWest); }
-    public void MouseClick(bool status) { player.canClick = status; }
+    public void MouseClick(bool status) { player.ClickState(status); }
+    public void ReIndex() { topItem = 0; }
     public void Locate(int loc) { location = loc; }
 
     //Record position for both scenes & load desired scene
