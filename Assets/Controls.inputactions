@@ -24,6 +24,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Rightstick",
+                    "type": "PassThrough",
+                    "id": "acda4447-ddf2-4283-b901-f675f9271455",
+                    "expectedControlType": "Stick",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "DPad",
                     "type": "PassThrough",
                     "id": "f8114b8e-86c1-4ad0-b62c-7ad930dd2339",
@@ -103,6 +112,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "MouseScroll",
+                    "type": "PassThrough",
+                    "id": "e79a58f2-760d-4878-9b32-e36ad601cecf",
+                    "expectedControlType": "Delta",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -378,6 +396,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "MouseDelta",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7f29c916-5827-4364-b5b2-05406cf3e26d",
+                    "path": "<Mouse>/scroll",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MouseScroll",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f11eaa1d-7f25-4890-9015-d49b111bf326",
+                    "path": "<Gamepad>/rightStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Rightstick",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
