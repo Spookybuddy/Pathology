@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using TMPro;
+using UnityEngine.UI;
 
 public class CharacterText : MonoBehaviour
 {
     private GameManager manager;
     public string folder;
     public string fileName;
-
+    public RawImage[] portraits;
     public TextMeshPro person;
 
     private int lineIndex;
@@ -176,9 +177,21 @@ public class CharacterText : MonoBehaviour
                 case '$':
                     gathering = true;
                     break;
+                //Give player an item
+                case '&':
+                    break;
                 //Check for event flag triggered
+                case '%':
+                    break;
+                //Set event flag
                 case '=':
                     //eventFlag = true;
+                    break;
+                //Player portrait state
+                case '^':
+                    break;
+                //NPC portrait state
+                case '~':
                     break;
                 //Conversation will continue otherwise
                 default:

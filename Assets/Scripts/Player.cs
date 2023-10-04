@@ -60,10 +60,18 @@ public class Player : MonoBehaviour
             mouseDecay = Mathf.Clamp01(mouseDecay - Time.deltaTime);
             dialogOverlay.SetActive(dialogOpen);
             inventoryOverlay.SetActive(invenOpen);
-            if (!invenOpen) manager.ReIndex();
+
+            //Inputting directions takes the highest magnitude, and overrides click navigation
+            _direction = VectorGreater(keypad, joystick);
+
+            //Pass movement data to invenetory when opened
+            if (invenOpen && _direction.magnitude != 0 && inputDelay == 0) {
+                inputDelay = delay / 2;
+                manager.Scroll(-(int)(Mathf.Clamp(_direction.y, -1, 1)));
+            }
+
+            //Player controls when not in menus
             if (!opening && !invenOpen && !dialogOpen) {
-                //Inputting directions takes the highest magnitude, and overrides click navigation
-                _direction = VectorGreater(keypad, joystick);
                 direction = new Vector3(_direction.x, 0, _direction.y);
                 if (direction.magnitude > 0) mouseControlled = false;
                 offset = transform.position + direction;

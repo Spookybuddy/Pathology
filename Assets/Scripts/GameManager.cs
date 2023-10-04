@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
     public Item nearbyItem;
     public List<Item> Inventory = new List<Item>();
     public TextMeshProUGUI inventoryListing;
+    public TextMeshProUGUI sortFormat;
     public GameObject pointer;
     private int indexedItem;
     private int sortType;
@@ -26,6 +27,7 @@ public class GameManager : MonoBehaviour
     //Dialog data
     public TextMeshProUGUI textbox;
     public RawImage playerPortrait;
+    public RawImage[] playerEmotes;
     public RawImage otherPortrait;
     private int Ndex;
     public GameObject[] buttonIndicators;
@@ -97,7 +99,9 @@ public class GameManager : MonoBehaviour
     //Add the nearby item to inventory
     public void AddInven()
     {
-        Inventory.Add(nearbyItem);
+        //Check if polayer already has that item ID in their inventory. If they do, add to its quantity. If not add to list
+        if (Inventory.Exists(x => x.Id == nearbyItem.Id)) Inventory.Find(x => x.Id == nearbyItem.Id).Quantity += nearbyItem.Quantity;
+        else Inventory.Add(nearbyItem);
         InventorySort(false);
     }
 
@@ -124,6 +128,18 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    //Change the portaits for player
+    public void PortraitPlayer(int state)
+    {
+        playerPortrait = playerEmotes[state];
+    }
+
+    //Change the portraits for npc
+    public void PortraitNPC(int state)
+    {
+        otherPortrait = currentConvo.portraits[state];
+    }
+
     //Mouse scroll wheel / controller scroll
     public void Scroll(int dir) 
     {
@@ -141,32 +157,46 @@ public class GameManager : MonoBehaviour
     {
         inventoryListing.text = "";
         for (int i = Mathf.Min(Mathf.Max(Inventory.Count - 10, 0), indexedItem); i < Mathf.Min(Inventory.Count, indexedItem + 10); i++) {
-            inventoryListing.text += Inventory[i].Name + "\n";
+            inventoryListing.text += Inventory[i].Name + " x" + Inventory[i].Quantity + "\n";
         }
     }
 
     //Sort the inventory by the desired method: Name, Number, Category
     public void InventorySort(bool increment)
     {
-        if (increment) sortType = (sortType + 1) % 6;
+        if (increment) sortType = (sortType + 1) % 8;
         switch (sortType) {
             case 0:
                 Inventory.Sort((x, y) => x.Id.CompareTo(y.Id));
+                sortFormat.text = "Numerical";
                 break;
             case 1:
                 Inventory.Reverse();
+                sortFormat.text = "Reverse Numerical";
                 break;
             case 2:
                 Inventory.Sort((x, y) => x.Name.CompareTo(y.Name));
+                sortFormat.text = "A - Z";
                 break;
             case 3:
                 Inventory.Reverse();
+                sortFormat.text = "Z - A";
                 break;
             case 4:
+                Inventory.Sort((x, y) => y.Quantity.CompareTo(x.Quantity));
+                sortFormat.text = "Most";
+                break;
+            case 5:
+                Inventory.Reverse();
+                sortFormat.text = "Least";
+                break;
+            case 6:
                 Inventory.Sort((x, y) => x.Category.CompareTo(y.Category));
+                sortFormat.text = "Categories";
                 break;
             default:
                 Inventory.Reverse();
+                sortFormat.text = "Reverse Categories";
                 break;
         }
         InventoryText();
@@ -217,7 +247,6 @@ public class GameManager : MonoBehaviour
     public void PlayerLeaves() { player.CloseDialog(); }
     public void ClickButton(int EastNorthWest) { currentConvo.PlayerContinue(EastNorthWest); }
     public void MouseClick(bool status) { player.ClickState(status); }
-    public void ReIndex() { indexedItem = 0; }
     public void Locate(int loc) { location = loc; }
 
     //Record position for both scenes & load desired scene

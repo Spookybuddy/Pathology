@@ -8,6 +8,7 @@ public class Item
     public int Id;
     public string Name;
     public char Category;
+    public int Quantity;
 }
 
 public class ItemScript : MonoBehaviour
