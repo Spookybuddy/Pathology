@@ -171,9 +171,10 @@ public class Player : MonoBehaviour
             manager.Advance(-1);
             inputDelay = delay;
         } else {
-            if (Physics.Raycast(mainCam.ScreenPointToRay(mousition), out RaycastHit hit, 100)) {
+            if (Physics.Raycast(mainCam.ScreenPointToRay(mousition), out RaycastHit hit, 100) && inputDelay == 0) {
                 mouseControlled = true;
                 targeted = new Vector3(hit.point.x, 0, hit.point.z);
+                inputDelay = delay;
             }
         }
     }

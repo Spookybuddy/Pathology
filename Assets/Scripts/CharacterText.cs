@@ -45,16 +45,21 @@ public class CharacterText : MonoBehaviour
             PrintLine();
             return;
         }
-        
+
         //Check if player has the specified items
         if (gathering) {
-            string itemID = "";
-            for (int i = 0; i < dialog[lineIndex + 1].Length; i++) {
-                if (char.IsDigit(dialog[lineIndex + 1][i])) itemID += dialog[lineIndex + 1][i];
-                if (char.IsWhiteSpace(dialog[lineIndex + 1][i])) break;
-            }
-            if (manager.CheckInven(int.Parse(itemID))) {
+            if (manager.CheckInven(GetInt(dialog[lineIndex + 1]))) {
                 gathering = false;
+                lineIndex++;
+                PrintLine();
+                return;
+            }
+        }
+
+        //Check if specified event flag is true
+        if (eventFlag) {
+            if (manager.ReadBool(5, GetInt(dialog[lineIndex + 1]))){
+                eventFlag = false;
                 lineIndex++;
                 PrintLine();
                 return;
@@ -64,13 +69,7 @@ public class CharacterText : MonoBehaviour
         //Player input buttons
         if (inputable && inputOptions >= EastNorthWest && EastNorthWest > 0) {
             inputable = false;
-            //Parse the line value to jump to
-            string toLine = "";
-            for (int i = 0; i < dialog[lineIndex + EastNorthWest].Length; i++) {
-                if (char.IsDigit(dialog[lineIndex + EastNorthWest][i])) toLine += dialog[lineIndex + EastNorthWest][i];
-                if (char.IsWhiteSpace(dialog[lineIndex + EastNorthWest][i])) break;
-            }
-            lineIndex = int.Parse(toLine);
+            lineIndex = GetInt(dialog[lineIndex + EastNorthWest]);
             PrintLine();
             return;
         }
@@ -179,19 +178,32 @@ public class CharacterText : MonoBehaviour
                     break;
                 //Give player an item
                 case '&':
+                    manager.AddInven(GetInt(dialog[lineIndex + 1]), 1);
+                    Debug.Log("Given Item");
+                    lineIndex++;
+                    PrintLine();
                     break;
                 //Check for event flag triggered
                 case '%':
+                    eventFlag = true;
                     break;
                 //Set event flag
                 case '=':
-                    //eventFlag = true;
+                    manager.WriteBool(5, GetInt(dialog[lineIndex + 1]), '1');
+                    lineIndex++;
+                    PrintLine();
                     break;
                 //Player portrait state
                 case '^':
+                    manager.PortraitPlayer(GetInt(dialog[lineIndex + 1]));
+                    lineIndex++;
+                    PrintLine();
                     break;
                 //NPC portrait state
                 case '~':
+                    manager.PortraitNPC(GetInt(dialog[lineIndex + 1]));
+                    lineIndex++;
+                    PrintLine();
                     break;
                 //Conversation will continue otherwise
                 default:
@@ -217,6 +229,17 @@ public class CharacterText : MonoBehaviour
     public int WriteData() { return lineIndex; }
     public void ReadData(int index) { lineIndex = index; }
     public string NameData() { return person.text; }
+
+    //Returns the number from the commands
+    private int GetInt(string line)
+    {
+        string number = "";
+        for (int i = 0; i < line.Length; i++) {
+            if (char.IsDigit(line[i])) number += line[i];
+            if (char.IsWhiteSpace(line[i])) break;
+        }
+        return int.Parse(number);
+    }
 
     //Slowly print each letter of the line
     private IEnumerator Typing(int i)
