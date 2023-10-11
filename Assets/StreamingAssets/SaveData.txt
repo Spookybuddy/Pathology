@@ -1,6 +1,6 @@
   
 Interior NPCs
-0 0
-Player Inventory
+0.6 -3.97 
+!016"999#301
 000
 000

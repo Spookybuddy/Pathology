@@ -109,7 +109,7 @@ public class Player : MonoBehaviour
             manager.Scene("Program Inner");
         } else if (trigger.CompareTag("Item")) {
             hoverItem = true;
-            manager.nearbyItem = trigger.GetComponent<ItemScript>().item;
+            manager.nearbyItem = trigger.GetComponent<ItemScript>().Pickup();
         }
     }
 
@@ -170,12 +170,11 @@ public class Player : MonoBehaviour
         if (dialogOpen && canClick && inputDelay == 0) {
             manager.Advance(-1);
             inputDelay = delay;
-        } else {
-            if (Physics.Raycast(mainCam.ScreenPointToRay(mousition), out RaycastHit hit, 100) && inputDelay == 0) {
-                mouseControlled = true;
-                targeted = new Vector3(hit.point.x, 0, hit.point.z);
-                inputDelay = delay;
-            }
+        }
+        if (Physics.Raycast(mainCam.ScreenPointToRay(mousition), out RaycastHit hit, 100) && !dialogOpen) {
+            mouseControlled = true;
+            targeted = new Vector3(hit.point.x, 0, hit.point.z);
+            inputDelay = delay;
         }
     }
 

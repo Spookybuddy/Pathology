@@ -21,6 +21,8 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI inventoryListing;
     public TextMeshProUGUI sortFormat;
     public GameObject pointer;
+    public Slider slider;
+    private int deltaSlide;
     private int indexedItem;
     private int sortType;
 
@@ -36,17 +38,27 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI npcName;
     private readonly Vector4 shade = new Vector4(0.3f, 0.3f, 0.3f, 1);
 
+    //Saved data
     private string filename;
+    private string itemCollection;
     private string[] savedData;
+    private string[] catalog;
     private static Vector3 position;
     private static int location;
     private bool loading;
 
-    void Start()
+    //Gets all the saved data at start of scene
+    private void Awake()
     {
         filename = Application.streamingAssetsPath + "/SaveData.txt";
+        itemCollection = Application.streamingAssetsPath + "/Catalog.txt";
         savedData = File.ReadAllLines(filename);
+        catalog = File.ReadAllLines(itemCollection);
+    }
+    void Start()
+    {
         ReadPosition();
+        ReadInven();
         if (player != null) {
             player.transform.position = position + Vector3.back;
             ReadData(characterIDs, 0);
@@ -60,6 +72,7 @@ public class GameManager : MonoBehaviour
     void OnApplicationQuit()
     {
         loading = true;
+        WriteInven();
         WritePosition();
         ClearData();
     }
@@ -92,7 +105,15 @@ public class GameManager : MonoBehaviour
     //Write all the fun little inventory data to the save file using char & triple digits for ID & amount
     public void WriteInven()
     {
-
+        string line = "";
+        for (int i = 0; i < Inventory.Count; i++) {
+            string obj = "";
+            obj += (char)(Inventory[i].Id % 95 + 32);
+            obj += (Inventory[i].Quantity).ToString("000");
+            line += obj;
+        }
+        savedData[3] = line;
+        File.WriteAllLines(filename, savedData);
     }
 
     //Save the player world positions
@@ -123,22 +144,44 @@ public class GameManager : MonoBehaviour
         return savedData[line][index] == '0' ? false : true;
     }
 
-    //Reads through the inventory save data so I can explode
-    public void ReadInven()
+    //Reads through the inventory save data and the item catalog to create new items with proper stats
+    private void ReadInven()
     {
+        Inventory.Clear();
+        for (int i = 0; i < savedData[3].Length / 4; i++) {
+            Inventory.Add(ParseCatalog((int)(savedData[3][4 * i] - 32), int.Parse(savedData[3].Substring(4 * i + 1, 3))));
+        }
+        InventorySort(false);
+    }
 
+    //Parse the item data from the item catalog
+    public Item ParseCatalog(int ID, int amt)
+    {
+        Item add = new Item();
+        add.Id = ID;
+        add.Quantity = amt;
+        string name = "";
+        for (int j = 0; j < catalog[add.Id].Length; j++) {
+            if (char.IsWhiteSpace(catalog[add.Id][j])) {
+                add.Category = catalog[add.Id][j + 1];
+                break;
+            }
+            else name += catalog[add.Id][j];
+        }
+        add.Name = name;
+        return add;
     }
 
     //Returns the positions
     private void ReadPosition()
     {
         string number = "";
-        float x = -999;
+        float x = -9999;
         float z = 0;
         for (int i = 0; i < savedData[2].Length; i++) {
             if (char.IsDigit(savedData[2][i]) || char.IsPunctuation(savedData[2][i])) number += savedData[2][i];
             if (char.IsWhiteSpace(savedData[2][i])) {
-                if (x != -999) {
+                if (x != -9999) {
                     z = float.Parse(number);
                     break;
                 }
@@ -173,7 +216,7 @@ public class GameManager : MonoBehaviour
     public void AddInven()
     {
         //Check if polayer already has that item ID in their inventory. If they do, add to its quantity. If not add to list
-        if (Inventory.Exists(x => x.Id == nearbyItem.Id)) Inventory.Find(x => x.Id == nearbyItem.Id).Quantity += nearbyItem.Quantity;
+        if (Inventory.Exists(x => x.Id == nearbyItem.Id)) Inventory.Find(x => x.Id == nearbyItem.Id).Quantity = Mathf.Clamp(Inventory.Find(x => x.Id == nearbyItem.Id).Quantity + nearbyItem.Quantity, 1, 999);
         else Inventory.Add(nearbyItem);
         InventorySort(false);
     }
@@ -182,12 +225,7 @@ public class GameManager : MonoBehaviour
     public void AddInven(int item, int amt)
     {
         if (Inventory.Exists(x => x.Id == item)) Inventory.Find(x => x.Id == item).Quantity += amt;
-        else {
-            Item m = new Item();
-            m.Id = item;
-            m.Quantity = amt;
-            Inventory.Add(m);
-        }
+        else Inventory.Add(ParseCatalog(item, amt));
         InventorySort(false);
     }
 
@@ -238,6 +276,13 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    //Inventory slider
+    public void Scrollbar()
+    {
+        Scroll((int)slider.value - deltaSlide);
+        deltaSlide = (int)slider.value;
+    }
+
     //Update the text so that only 10 items are shown at a time
     private void InventoryText()
     {
@@ -245,6 +290,7 @@ public class GameManager : MonoBehaviour
         for (int i = Mathf.Min(Mathf.Max(Inventory.Count - 10, 0), indexedItem); i < Mathf.Min(Inventory.Count, indexedItem + 10); i++) {
             inventoryListing.text += Inventory[i].Name + " x" + Inventory[i].Quantity + "\n";
         }
+        slider.maxValue = Mathf.Max(Inventory.Count - 1, 0);
     }
 
     //Sort the inventory by the desired method: Name, Number, Category
