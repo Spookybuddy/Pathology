@@ -22,6 +22,8 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI sortFormat;
     public GameObject pointer;
     public Slider slider;
+    public RawImage[] icons;
+    public Texture2D[] categories;
     private int deltaSlide;
     private int indexedItem;
     private int sortType;
@@ -29,9 +31,8 @@ public class GameManager : MonoBehaviour
     //Dialog data
     public TextMeshProUGUI textbox;
     public RawImage playerPortrait;
-    public RawImage[] playerEmotes;
+    public Texture2D[] playerEmotes;
     public RawImage otherPortrait;
-    private int Ndex;
     public GameObject[] buttonIndicators;
     public Button[] buttons;
     public GameObject[] nameplates;
@@ -255,13 +256,13 @@ public class GameManager : MonoBehaviour
     //Change the portaits for player
     public void PortraitPlayer(int state)
     {
-        playerPortrait = playerEmotes[state];
+        playerPortrait.texture = playerEmotes[state];
     }
 
     //Change the portraits for npc
     public void PortraitNPC(int state)
     {
-        otherPortrait = currentConvo.portraits[state];
+        otherPortrait.texture = currentConvo.portraits[state];
     }
 
     //Mouse scroll wheel / controller scroll
@@ -286,9 +287,12 @@ public class GameManager : MonoBehaviour
     //Update the text so that only 10 items are shown at a time
     private void InventoryText()
     {
+        for (int i = 0; i < icons.Length; i++) icons[i].gameObject.SetActive(false);
         inventoryListing.text = "";
         for (int i = Mathf.Min(Mathf.Max(Inventory.Count - 10, 0), indexedItem); i < Mathf.Min(Inventory.Count, indexedItem + 10); i++) {
             inventoryListing.text += Inventory[i].Name + " x" + Inventory[i].Quantity + "\n";
+            icons[i].texture = categories[(int)(Inventory[i].Category - 32)];
+            icons[i].gameObject.SetActive(true);
         }
         slider.maxValue = Mathf.Max(Inventory.Count - 1, 0);
     }

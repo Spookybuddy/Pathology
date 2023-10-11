@@ -1,16 +1,14 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using TMPro;
-using UnityEngine.UI;
 
 public class CharacterText : MonoBehaviour
 {
     private GameManager manager;
     public string folder;
     public string fileName;
-    public RawImage[] portraits;
+    public Texture2D[] portraits;
     public TextMeshPro person;
 
     private int lineIndex;
@@ -22,6 +20,8 @@ public class CharacterText : MonoBehaviour
     private bool cancelable;
     private bool gathering;
     private bool eventFlag;
+    private bool changePlay;
+    private bool changeNPC;
     private bool printing;
 
     void Awake() { manager = GameObject.FindWithTag("GameController").GetComponent<GameManager>(); }
@@ -38,6 +38,10 @@ public class CharacterText : MonoBehaviour
     //Player input button
     public void PlayerContinue(int EastNorthWest)
     {
+        //Change portraits at start of new line
+        if (changePlay) { manager.PortraitPlayer(GetInt(dialog[lineIndex])); changePlay = false; }
+        if (changeNPC) { manager.PortraitNPC(GetInt(dialog[lineIndex])); changeNPC = false; }
+
         //Player continue
         if (confirmable) {
             confirmable = false;
@@ -50,9 +54,11 @@ public class CharacterText : MonoBehaviour
         if (gathering) {
             if (manager.CheckInven(GetInt(dialog[lineIndex + 1]))) {
                 gathering = false;
-                lineIndex++;
+                lineIndex += 2;
                 PrintLine();
                 return;
+            } else {
+                cancelable = true;
             }
         }
 
@@ -63,6 +69,8 @@ public class CharacterText : MonoBehaviour
                 lineIndex++;
                 PrintLine();
                 return;
+            } else {
+                cancelable = true;
             }
         }
         
@@ -107,6 +115,13 @@ public class CharacterText : MonoBehaviour
         confirmable = false;
         manager.MouseClick(true);
         manager.PlayerLeaves();
+    }
+
+    //Can continue conversation
+    private void Continue()
+    {
+        confirmable = true;
+        manager.MouseClick(true);
     }
 
     //Check who is talking and update portraits
@@ -175,40 +190,40 @@ public class CharacterText : MonoBehaviour
                 //Ask player for a certain item
                 case '$':
                     gathering = true;
+                    Continue();
                     break;
                 //Give player an item
                 case '&':
                     manager.AddInven(GetInt(dialog[lineIndex + 1]), 1);
-                    Debug.Log("Given Item");
                     lineIndex++;
-                    PrintLine();
+                    Continue();
                     break;
                 //Check for event flag triggered
                 case '%':
                     eventFlag = true;
+                    Continue();
                     break;
                 //Set event flag
                 case '=':
                     manager.WriteBool(5, GetInt(dialog[lineIndex + 1]), '1');
                     lineIndex++;
-                    PrintLine();
+                    Continue();
                     break;
                 //Player portrait state
                 case '^':
-                    manager.PortraitPlayer(GetInt(dialog[lineIndex + 1]));
+                    changePlay = true;
                     lineIndex++;
-                    PrintLine();
+                    Continue();
                     break;
-                //NPC portrait state
+                //NPC portrait state - Move to change once next line starts printing
                 case '~':
-                    manager.PortraitNPC(GetInt(dialog[lineIndex + 1]));
+                    changeNPC = true;
                     lineIndex++;
-                    PrintLine();
+                    Continue();
                     break;
                 //Conversation will continue otherwise
                 default:
-                    confirmable = true;
-                    manager.MouseClick(true);
+                    Continue();
                     break;
             }
         }
@@ -234,7 +249,7 @@ public class CharacterText : MonoBehaviour
     private int GetInt(string line)
     {
         string number = "";
-        for (int i = 0; i < line.Length; i++) {
+        for (int i = 1; i < line.Length; i++) {
             if (char.IsDigit(line[i])) number += line[i];
             if (char.IsWhiteSpace(line[i])) break;
         }

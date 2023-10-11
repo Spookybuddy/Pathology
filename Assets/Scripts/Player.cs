@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -170,8 +168,7 @@ public class Player : MonoBehaviour
         if (dialogOpen && canClick && inputDelay == 0) {
             manager.Advance(-1);
             inputDelay = delay;
-        }
-        if (Physics.Raycast(mainCam.ScreenPointToRay(mousition), out RaycastHit hit, 100) && !dialogOpen) {
+        } else if (Physics.Raycast(mainCam.ScreenPointToRay(mousition), out RaycastHit hit, 100) && !dialogOpen) {
             mouseControlled = true;
             targeted = new Vector3(hit.point.x, 0, hit.point.z);
             inputDelay = delay;

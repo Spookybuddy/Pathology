@@ -1,4 +1,5 @@
 0 Indexed list of each item & their stats. First Item is empty. Format by Name | Category (A-Z) | Attributes to be determined
-Testing X
-Second O
-Finale Z
+Testing !
+Second "
+Finale #
+Gift  

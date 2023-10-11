@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
-using System.Runtime.CompilerServices;
 
 [System.Serializable]
 public class Item
@@ -22,9 +19,9 @@ public class ItemScript : MonoBehaviour
     private Item item;
 
     //To be modified by the level design
-    public int fileIndex;
-    public int id;
-    public int amount;
+    public int saveIndex;
+    public int itemId;
+    public int itemAmount;
 
     //Read in from save file to determine if item has been picked up, as well as create a new item from the catalog
     void Start()
@@ -32,11 +29,11 @@ public class ItemScript : MonoBehaviour
         manager = GameObject.FindWithTag("GameController").GetComponent<GameManager>();
         location = Application.streamingAssetsPath + location;
         read = File.ReadAllLines(location)[4];
-        spawn = read[fileIndex] == '0';
+        spawn = read[saveIndex] == '0';
         if (!spawn) Destroy(gameObject);
 
         //Get the item from the catalog using the manager
-        item = manager.ParseCatalog(id, amount);
+        item = manager.ParseCatalog(itemId, itemAmount);
     }
 
     public Item Pickup() { return item; }
@@ -44,6 +41,6 @@ public class ItemScript : MonoBehaviour
     //Call function when picked up
     void OnDestroy()
     {
-        if (spawn) manager.WriteBool(4, fileIndex, '1');
+        if (spawn) manager.WriteBool(4, saveIndex, '1');
     }
 }
