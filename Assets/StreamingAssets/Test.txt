@@ -17,5 +17,8 @@ We have already called for a doctor. Your assistance is not required.
 No. You will leave until the doctor arrives to cure the infected.
 @
 !I'm the doctor.
+~1
 Of course. I shall make sure you are not distrubed while you work.
+&4
+Take this item to help.
 @
