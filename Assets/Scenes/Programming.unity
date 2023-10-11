@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -222,7 +222,7 @@ RectTransform:
   m_GameObject: {fileID: 137778657}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 0.5, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1475246930}
@@ -230,7 +230,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 5, y: 2}
+  m_SizeDelta: {x: 5, y: 1.5}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &137778659
 MonoBehaviour:
@@ -1122,6 +1122,7 @@ GameObject:
   - component: {fileID: 516750821}
   - component: {fileID: 516750820}
   - component: {fileID: 516750819}
+  - component: {fileID: 516750823}
   m_Layer: 0
   m_Name: 1
   m_TagString: Door
@@ -1215,6 +1216,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &516750823
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 516750818}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d35e08177d9f17e4c84dab3b1e562430, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fileIndex: 0
+  Enter: 0
+  Erase: 0
 --- !u!1 &612494818
 GameObject:
   m_ObjectHideFlags: 0
@@ -1762,6 +1778,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 401e56ea7a87c444995ad98a9bec8e4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  fileIndex: 1
   item:
     Id: 10
     Name: Berry 3
@@ -3984,6 +4001,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 401e56ea7a87c444995ad98a9bec8e4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  fileIndex: 2
   item:
     Id: 12
     Name: Pickupable Item
@@ -4307,6 +4325,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 401e56ea7a87c444995ad98a9bec8e4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  fileIndex: 0
   item:
     Id: 12
     Name: Pickupable Item

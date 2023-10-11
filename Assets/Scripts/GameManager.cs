@@ -40,11 +40,13 @@ public class GameManager : MonoBehaviour
     private string[] savedData;
     private static Vector3 position;
     private static int location;
+    private bool loading;
 
     void Start()
     {
         filename = Application.streamingAssetsPath + "/SaveData.txt";
         savedData = File.ReadAllLines(filename);
+        ReadPosition();
         if (player != null) {
             player.transform.position = position + Vector3.back;
             ReadData(characterIDs, 0);
@@ -52,10 +54,13 @@ public class GameManager : MonoBehaviour
             innerCam.transform.position = cameraLocations[location];
             //ReadData(interiorChars, 1);
         }
+        loading = false;
     }
 
     void OnApplicationQuit()
     {
+        loading = true;
+        WritePosition();
         ClearData();
     }
     
@@ -73,6 +78,36 @@ public class GameManager : MonoBehaviour
         File.WriteAllLines(filename, savedData);
     }
 
+    //Reads the desired line, replaces the index with the char, then rewrites the line
+    public void WriteBool(int line, int index, char state)
+    {
+        if (loading) return;
+        string current = savedData[line];
+        char[] replace = current.ToCharArray();
+        replace[index] = state;
+        savedData[line] = new string(replace);
+        File.WriteAllLines(filename, savedData);
+    }
+
+    //Write all the fun little inventory data to the save file using char & triple digits for ID & amount
+    public void WriteInven()
+    {
+
+    }
+
+    //Save the player world positions
+    private void WritePosition()
+    {
+        if (player != null) position = player.transform.position;
+        string digits = "";
+        float rounded = Mathf.RoundToInt(position.x * 100) / 100f;
+        digits += rounded + " ";
+        rounded = Mathf.RoundToInt(position.z * 100) / 100f;
+        digits += rounded + " ";
+        savedData[2] = digits;
+        File.WriteAllLines(filename, savedData);
+    }
+
     //Read the data from the saved file and record it into character indicies
     public void ReadData(CharacterText[] array, int line)
     {
@@ -80,6 +115,38 @@ public class GameManager : MonoBehaviour
             int x = ((int)savedData[line][2 * i] - 32) * 95 + ((int)savedData[line][2 * i + 1] - 32);
             array[i].ReadData(x);
         }
+    }
+
+    //Returns the boolean value at line # & index #
+    public bool ReadBool(int line, int index)
+    {
+        return savedData[line][index] == '0' ? false : true;
+    }
+
+    //Reads through the inventory save data so I can explode
+    public void ReadInven()
+    {
+
+    }
+
+    //Returns the positions
+    private void ReadPosition()
+    {
+        string number = "";
+        float x = -999;
+        float z = 0;
+        for (int i = 0; i < savedData[2].Length; i++) {
+            if (char.IsDigit(savedData[2][i]) || char.IsPunctuation(savedData[2][i])) number += savedData[2][i];
+            if (char.IsWhiteSpace(savedData[2][i])) {
+                if (x != -999) {
+                    z = float.Parse(number);
+                    break;
+                }
+                x = float.Parse(number);
+                number = "";
+            }
+        }
+        position = new Vector3(x, 0, z);
     }
 
     //Resets all character indexes to 00
@@ -93,6 +160,12 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < interiorChars.Length; i++) clearline += "  ";
         savedData[1] = clearline;
         */
+        clearline = "";
+        for (int i = 0; i < savedData[4].Length; i++) clearline += "0";
+        savedData[4] = clearline;
+        clearline = "";
+        for (int i = 0; i < savedData[5].Length; i++) clearline += "0";
+        savedData[5] = clearline;
         File.WriteAllLines(filename, savedData);
     }
 
@@ -102,6 +175,19 @@ public class GameManager : MonoBehaviour
         //Check if polayer already has that item ID in their inventory. If they do, add to its quantity. If not add to list
         if (Inventory.Exists(x => x.Id == nearbyItem.Id)) Inventory.Find(x => x.Id == nearbyItem.Id).Quantity += nearbyItem.Quantity;
         else Inventory.Add(nearbyItem);
+        InventorySort(false);
+    }
+
+    //Add a new item of id & amount
+    public void AddInven(int item, int amt)
+    {
+        if (Inventory.Exists(x => x.Id == item)) Inventory.Find(x => x.Id == item).Quantity += amt;
+        else {
+            Item m = new Item();
+            m.Id = item;
+            m.Quantity = amt;
+            Inventory.Add(m);
+        }
         InventorySort(false);
     }
 
@@ -252,9 +338,11 @@ public class GameManager : MonoBehaviour
     //Record position for both scenes & load desired scene
     public void Scene(string scene)
     {
+        loading = true;
         if (player != null) {
-            position = player.transform.position;
+            WritePosition();
             WriteData(characterIDs, 0);
+            WriteInven();
         } else {
             //WriteData(interiorChars, 1);
         }

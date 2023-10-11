@@ -1,1 +1,6 @@
   
+Interior NPCs
+0 0
+Player Inventory
+000
+000
