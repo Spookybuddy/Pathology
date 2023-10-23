@@ -29,7 +29,7 @@ public class CharacterText : MonoBehaviour
     void Start()
     {
         //Read in the file & folder
-        person.text = fileName;
+        if (person != null) person.text = fileName;
         if (!folder.Equals("")) fileName = Application.streamingAssetsPath + "/" + folder + "/" + fileName + ".txt";
         else fileName = Application.streamingAssetsPath + "/" + fileName + ".txt";
         dialog = File.ReadAllLines(fileName);

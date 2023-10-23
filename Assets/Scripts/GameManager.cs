@@ -9,6 +9,7 @@ using TMPro;
 public class GameManager : MonoBehaviour
 {
     public Player player;
+    public Interior inner;
     public Camera innerCam;
     public CharacterText currentConvo;
     public CharacterText[] characterIDs;
@@ -65,6 +66,8 @@ public class GameManager : MonoBehaviour
             ReadData(characterIDs, 0);
         } else {
             innerCam.transform.position = cameraLocations[location];
+            currentConvo = interiorChars[Mathf.Min(location + 1, interiorChars.Length - 1)];
+            inner.GameMode((location == 0));
             //ReadData(interiorChars, 1);
         }
         loading = false;
@@ -271,8 +274,8 @@ public class GameManager : MonoBehaviour
         if (Inventory.Count > 0) {
             indexedItem = (indexedItem + dir + Inventory.Count) % Inventory.Count;
             int limit = Mathf.Min(Mathf.Max(Inventory.Count - 10, 0), indexedItem);
-            if (indexedItem > limit) pointer.transform.localPosition = new Vector3(-375, 175 - (indexedItem - limit) * 45, 0);
-            else pointer.transform.localPosition = new Vector3(-375, 175, 0);
+            if (indexedItem > limit) pointer.transform.localPosition = new Vector3(pointer.transform.localPosition.x, 175 - (indexedItem - limit) * 45, 0);
+            else pointer.transform.localPosition = new Vector3(pointer.transform.localPosition.x, 175, 0);
             InventoryText();
         }
     }
@@ -290,7 +293,7 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < icons.Length; i++) icons[i].gameObject.SetActive(false);
         inventoryListing.text = "";
         for (int i = Mathf.Min(Mathf.Max(Inventory.Count - 10, 0), indexedItem); i < Mathf.Min(Inventory.Count, indexedItem + 10); i++) {
-            inventoryListing.text += Inventory[i].Name + " x" + Inventory[i].Quantity + "\n";
+            inventoryListing.text += "x" + Inventory[i].Quantity + " " + Inventory[i].Name + "\n";
             icons[i].texture = categories[(int)(Inventory[i].Category - 32)];
             icons[i].gameObject.SetActive(true);
         }
