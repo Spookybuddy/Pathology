@@ -1,0 +1,15 @@
+!I'm here to cure you.
+Oh thank the Lord. I think I might have-
+!Now now, I'm the doctor with the doctored doctorate here.
+!Can't have my patients self-diagnosing, can we.
+But I think I just need-
+>8 Leeches!
+>10 Acupuncture!
+>13 An exorcism!
+!Leeches always work. Let me go get mine from my cart.
+@
+!It may be painful but my patients always feel better afterwards.
+!Let me go get my sword collection from my cart.
+@
+!I'll go get the priest.
+@

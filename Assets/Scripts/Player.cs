@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
-    private GameManager manager;
+    public GameManager manager;
     public Camera mainCam;
     public Camera miniCam;
     public GameObject dialogOverlay;
@@ -40,8 +40,6 @@ public class Player : MonoBehaviour
     private bool cancel;
     private bool convoRange;
     private bool colliding;
-
-    void Awake() { manager = GameObject.FindWithTag("GameController").GetComponent<GameManager>(); }
 
     void Start() { canClick = true; }
 

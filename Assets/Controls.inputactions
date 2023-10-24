@@ -437,24 +437,6 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "MouseClick",
-                    "type": "Button",
-                    "id": "4dd5d683-6ce5-439b-a551-b53ec155f09a",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "MousePos",
-                    "type": "Value",
-                    "id": "dc6accb9-dded-4662-8d30-9cc399fad1c6",
-                    "expectedControlType": "Vector2",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                },
-                {
                     "name": "Advance",
                     "type": "Button",
                     "id": "9b8cd5de-ed5b-4ecb-a755-15f7cb5f8e00",
@@ -489,6 +471,33 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "MousePos",
+                    "type": "Value",
+                    "id": "dc6accb9-dded-4662-8d30-9cc399fad1c6",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "MouseClick",
+                    "type": "Button",
+                    "id": "4dd5d683-6ce5-439b-a551-b53ec155f09a",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "MouseScroll",
+                    "type": "PassThrough",
+                    "id": "a5aa08c5-971a-426b-92da-a59e9d510a47",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -500,28 +509,6 @@
                     "processors": "",
                     "groups": "Layout",
                     "action": "Stick",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "b4461ab1-50e4-410b-98a2-26e71b25778a",
-                    "path": "<Mouse>/leftButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Layout",
-                    "action": "MouseClick",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "633c9311-38df-4cc1-9bf8-fe495e896424",
-                    "path": "<Mouse>/position",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Layout",
-                    "action": "MousePos",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -632,6 +619,39 @@
                     "processors": "",
                     "groups": "Layout",
                     "action": "Prev",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "869fa861-a8fa-4300-9495-c3e061aaf9fe",
+                    "path": "<Mouse>/scroll",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MouseScroll",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "633c9311-38df-4cc1-9bf8-fe495e896424",
+                    "path": "<Mouse>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Layout",
+                    "action": "MousePos",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b4461ab1-50e4-410b-98a2-26e71b25778a",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Layout",
+                    "action": "MouseClick",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
