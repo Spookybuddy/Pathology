@@ -41,6 +41,8 @@ public class Player : MonoBehaviour
     private bool convoRange;
     private bool colliding;
 
+    private void Awake() { manager = GameObject.FindWithTag("GameController").GetComponent<GameManager>(); }
+
     void Start() { canClick = true; }
 
     void Update()

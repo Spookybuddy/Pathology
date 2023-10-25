@@ -66,9 +66,14 @@ public class GameManager : MonoBehaviour
             ReadData(characterIDs, 0);
         } else {
             innerCam.transform.position = cameraLocations[location];
-            currentConvo = interiorChars[Mathf.Min(location + 1, interiorChars.Length - 1)];
-            inner.GameMode((location == 0));
             //ReadData(interiorChars, 1);
+            currentConvo = interiorChars[Mathf.Min(location + 1, interiorChars.Length - 1)];
+            if (location == 0) {
+                inner.GameMode(true);
+            } else {
+                inner.GameMode(false);
+                StartCoroutine(ConvoDelay());
+            }
         }
         loading = false;
     }
@@ -136,6 +141,7 @@ public class GameManager : MonoBehaviour
     //Read the data from the saved file and record it into character indicies
     public void ReadData(CharacterText[] array, int line)
     {
+        if (array.Length == 0) return;
         for (int i = 0; i < array.Length; i++) {
             int x = ((int)savedData[line][2 * i] - 32) * 95 + ((int)savedData[line][2 * i + 1] - 32);
             array[i].ReadData(x);
@@ -383,9 +389,9 @@ public class GameManager : MonoBehaviour
     //Player inputs are translated into whatever the current conversation is
     public void Advance(int EastNorthWest) { currentConvo.PlayerContinue(EastNorthWest); }
     public void Decline() { currentConvo.PlayerCancel(); }
-    public void PlayerLeaves() { player.CloseDialog(); }
+    public void PlayerLeaves() { if (player != null) player.CloseDialog(); else inner.Exit(); }
     public void ClickButton(int EastNorthWest) { currentConvo.PlayerContinue(EastNorthWest); }
-    public void MouseClick(bool status) { player.ClickState(status); }
+    public void MouseClick(bool status) { if (player != null) player.ClickState(status); else inner.ClickState(status); }
     public void Locate(int loc) { location = loc; }
 
     //Record position for both scenes & load desired scene
@@ -408,5 +414,11 @@ public class GameManager : MonoBehaviour
         while (!asyncLoad.isDone) {
             yield return null;
         }
+    }
+
+    private IEnumerator ConvoDelay()
+    {
+        yield return new WaitForSeconds(0.2f);
+        currentConvo.PrintLine();
     }
 }

@@ -25,8 +25,9 @@ public class Interior : MonoBehaviour
     private bool paused;
     private bool confirm;
     private bool cancel;
+    private bool sprinting;
+    public int index;
 
-    private Vector2 keypad;
     private Vector2 joystick;
     private Vector2 dirPad;
     private Vector3 mousition;
@@ -53,17 +54,17 @@ public class Interior : MonoBehaviour
             inventoryOverlay.SetActive(invenOpen);
 
             //Inputting directions takes the highest magnitude, and overrides click navigation
-            _direction = VectorGreater(keypad, joystick);
+            _direction = VectorGreater(dirPad, joystick);
 
             //Pass movement data to invenetory when opened
             if (invenOpen && _direction.magnitude != 0 && inputDelay == 0) {
                 inputDelay = delay / 2;
-                manager.Scroll(-(int)(Mathf.Clamp(_direction.y, -1, 1)));
+                manager.Scroll(-(int)(Mathf.Clamp(_direction.y * 2, -1, 1)));
             }
 
             //Player can control a cursor when in crafting mode
             if (!opening && !invenOpen && !dialogOpen && canCraft) {
-                direction = new Vector3(_direction.x, 0, _direction.y);
+                direction = new Vector3(_direction.x, _direction.y, 0);
                 if (direction.magnitude > 0) mouseMoved = false;
                 offset = transform.position + direction;
 
@@ -73,6 +74,30 @@ public class Interior : MonoBehaviour
                     transform.position = Vector3.MoveTowards(transform.position, offset, Time.deltaTime * moveSpd);
                 }
             }
+
+            //Player Inputs
+            if (dialogOpen) {
+                //SOUTH pressed
+                if ((cancel || dirPad.Equals(Vector2.down)) && inputDelay == 0) {
+                    manager.Advance(4);
+                    inputDelay = delay;
+                }
+                //EAST pressed
+                if ((confirm || dirPad.Equals(Vector2.right)) && inputDelay == 0) {
+                    manager.Advance(1);
+                    inputDelay = delay;
+                }
+                //NORTH pressed
+                if ((opening || dirPad.Equals(Vector2.up)) && inputDelay == 0) {
+                    manager.Advance(2);
+                    inputDelay = delay;
+                }
+                //WEST pressed
+                if ((sprinting || dirPad.Equals(Vector2.left)) && inputDelay == 0) {
+                    manager.Advance(3);
+                    inputDelay = delay;
+                }
+            }
         }
     }
 
@@ -80,8 +105,14 @@ public class Interior : MonoBehaviour
     public void GameMode(bool craft)
     {
         canCraft = craft;
-        dialogOpen = false;
+        dialogOpen = !craft;
         invenOpen = false;
+    }
+
+    //Exit the scene
+    public void Exit()
+    {
+        manager.Scene("Programming");
     }
 
     //Raycast a mouse click for click movement?
@@ -107,18 +138,19 @@ public class Interior : MonoBehaviour
         }
     }
 
+    public void ClickState(bool status) { canClick = status; }
+
     //Input action functions
     private void Check(InputAction.CallbackContext ctx) { manager.ControllerButtons(ctx.control.device.displayName); }
     private void Veck(InputAction.CallbackContext ctx) { if (ctx.ReadValue<Vector2>() != Vector2.zero) Check(ctx); }
-    public void Arrows(InputAction.CallbackContext ctx) { keypad = ctx.ReadValue<Vector2>(); Veck(ctx); }
     public void Stick(InputAction.CallbackContext ctx) { joystick = ctx.ReadValue<Vector2>(); Veck(ctx); }
     public void Dpad(InputAction.CallbackContext ctx) { dirPad = ctx.ReadValue<Vector2>(); }
     public void Inventory(InputAction.CallbackContext ctx) { if (canCraft) { opening = ctx.performed; invenOpen ^= opening; Check(ctx); } }
+    public void Sprint(InputAction.CallbackContext ctx) { sprinting = ctx.performed; Check(ctx); }
     public void Next(InputAction.CallbackContext ctx) { confirm = ctx.performed; Check(ctx); }
     public void Back(InputAction.CallbackContext ctx) { cancel = ctx.performed; Check(ctx); }
-    public void Pause() { paused = true; }
-    public void Unpause() { paused = false; }
-    public void InvertPause() { paused = !paused; }
+    public void Left(InputAction.CallbackContext ctx) { index = (index + 3) % 4; }
+    public void Right(InputAction.CallbackContext ctx) { index = (index + 1) % 4; }
     public void Mouse(InputAction.CallbackContext ctx) { if (ctx.performed) MouseClick(); }
     public void MousePos(InputAction.CallbackContext ctx) { mousition = ctx.ReadValue<Vector2>(); }
     public void MouseDelta(InputAction.CallbackContext ctx) { mouseMoved = (ctx.ReadValue<Vector2>().magnitude > mouseSensitivity); }
