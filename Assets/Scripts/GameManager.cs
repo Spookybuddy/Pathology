@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.IO;
 using TMPro;
+using Unity.VisualScripting;
 
 public class GameManager : MonoBehaviour
 {
@@ -47,6 +48,8 @@ public class GameManager : MonoBehaviour
     private string[] catalog;
     private static Vector3 position;
     private static int location;
+    private static int EXChars;
+    private static int INChars;
     private bool loading;
 
     //Gets all the saved data at start of scene
@@ -56,6 +59,8 @@ public class GameManager : MonoBehaviour
         itemCollection = Application.streamingAssetsPath + "/Catalog.txt";
         savedData = File.ReadAllLines(filename);
         catalog = File.ReadAllLines(itemCollection);
+        EXChars = savedData[0].Length / 2;
+        INChars = savedData[1].Length / 2;
     }
     void Start()
     {
@@ -66,11 +71,12 @@ public class GameManager : MonoBehaviour
             ReadData(characterIDs, 0);
         } else {
             innerCam.transform.position = cameraLocations[location];
-            //ReadData(interiorChars, 1);
-            currentConvo = interiorChars[Mathf.Min(location + 1, interiorChars.Length - 1)];
+            ReadData(interiorChars, 1);
             if (location == 0) {
+                currentConvo = null;
                 inner.GameMode(true);
             } else {
+                currentConvo = interiorChars[(location - 1)];
                 inner.GameMode(false);
                 StartCoroutine(ConvoDelay());
             }
@@ -141,9 +147,9 @@ public class GameManager : MonoBehaviour
     //Read the data from the saved file and record it into character indicies
     public void ReadData(CharacterText[] array, int line)
     {
-        if (array.Length == 0) return;
         for (int i = 0; i < array.Length; i++) {
             int x = ((int)savedData[line][2 * i] - 32) * 95 + ((int)savedData[line][2 * i + 1] - 32);
+            x = Mathf.Max(x, 0);
             array[i].ReadData(x);
         }
     }
@@ -151,7 +157,7 @@ public class GameManager : MonoBehaviour
     //Returns the boolean value at line # & index #
     public bool ReadBool(int line, int index)
     {
-        return savedData[line][index] == '0' ? false : true;
+        return ((savedData[line][index] == '0') ? false : true);
     }
 
     //Reads through the inventory save data and the item catalog to create new items with proper stats
@@ -206,13 +212,11 @@ public class GameManager : MonoBehaviour
     private void ClearData()
     {
         string clearline = "";
-        for (int i = 0; i < characterIDs.Length; i++) clearline += "  ";
-        savedData[0] = clearline;
-        /*
+        for (int i = 0; i < EXChars; i++) clearline += "  ";
+        savedData[0] = clearline + ";";
         clearline = "";
-        for (int i = 0; i < interiorChars.Length; i++) clearline += "  ";
-        savedData[1] = clearline;
-        */
+        for (int i = 0; i < INChars; i++) clearline += "  ";
+        savedData[1] = clearline + ";";
         clearline = "";
         for (int i = 0; i < savedData[4].Length; i++) clearline += "0";
         savedData[4] = clearline;
@@ -403,7 +407,7 @@ public class GameManager : MonoBehaviour
             WriteData(characterIDs, 0);
             WriteInven();
         } else {
-            //WriteData(interiorChars, 1);
+            WriteData(interiorChars, 1);
         }
         StartCoroutine(Load(scene));
     }
@@ -418,7 +422,7 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator ConvoDelay()
     {
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.02f);
         currentConvo.PrintLine();
     }
 }

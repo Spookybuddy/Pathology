@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using System.IO;
 using TMPro;
+using UnityEditor.Experimental.GraphView;
 
 public class CharacterText : MonoBehaviour
 {
@@ -11,7 +12,7 @@ public class CharacterText : MonoBehaviour
     public Texture2D[] portraits;
     public TextMeshPro person;
 
-    private int lineIndex;
+    public int lineIndex;
     private string[] dialog;
 
     private bool inputable;
@@ -59,21 +60,16 @@ public class CharacterText : MonoBehaviour
                 return;
             } else {
                 cancelable = true;
+                return;
             }
         }
 
-        //Check if specified event flag is true
-        if (eventFlag) {
-            if (manager.ReadBool(5, GetInt(dialog[lineIndex + 1]))){
-                eventFlag = false;
-                lineIndex++;
-                PrintLine();
-                return;
-            } else {
-                cancelable = true;
-            }
+        //Player leave
+        if (cancelable && !inputable) {
+            PlayerCancel();
+            return;
         }
-        
+
         //Player input buttons
         if (inputable && inputOptions >= EastNorthWest && EastNorthWest > 0) {
             inputable = false;
@@ -87,7 +83,7 @@ public class CharacterText : MonoBehaviour
             PlayerCancel();
             return;
         }
-        
+
         //Skip typing and display full text
         if (printing) {
             printing = false;
@@ -136,6 +132,12 @@ public class CharacterText : MonoBehaviour
         }
     }
 
+    //Check for events
+    private bool CheckEvent()
+    {
+        return manager.ReadBool(5, GetInt(dialog[lineIndex + 1]));
+    }
+
     //Fully print out the line
     private void PrintAll()
     {
@@ -149,6 +151,16 @@ public class CharacterText : MonoBehaviour
     public void PrintLine()
     {
         cancelable = false;
+        //Check even & gather state before printing line
+        if (lineIndex + 1 < dialog.Length) {
+            switch(dialog[lineIndex + 1][0]) {
+                case '%':
+                    if (CheckEvent()) lineIndex += 2;
+                    break;
+                case '$':
+                    break;
+            }
+        }
         manager.ButtonDisplay(inputOptions, false, cancelable);
         manager.setDisplay("");
         manager.MouseClick(true);
@@ -200,8 +212,13 @@ public class CharacterText : MonoBehaviour
                     break;
                 //Check for event flag triggered
                 case '%':
-                    eventFlag = true;
-                    Continue();
+                    if (CheckEvent()) {
+                        lineIndex++;
+                        Continue();
+                    } else {
+                        cancelable = true;
+                        manager.MouseClick(false);
+                    }
                     break;
                 //Set event flag
                 case '=':

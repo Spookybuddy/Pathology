@@ -4880,9 +4880,9 @@ MonoBehaviour:
   inner: {fileID: 1080842845}
   innerCam: {fileID: 1334984482}
   currentConvo: {fileID: 0}
-  characterIDs: []
-  interiorChars:
+  characterIDs:
   - {fileID: 0}
+  interiorChars:
   - {fileID: 1724684371}
   cameraLocations:
   - {x: 0, y: 0, z: 0}
@@ -5018,6 +5018,7 @@ MonoBehaviour:
   - {fileID: 1725462976}
   - {fileID: 73262710}
   npcName: {fileID: 191070940}
+  savedData: []
 --- !u!4 &1903538950
 Transform:
   m_ObjectHideFlags: 0
