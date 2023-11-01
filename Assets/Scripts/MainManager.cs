@@ -6,7 +6,6 @@ using TMPro;
 using UnityEngine.UI;
 using System.IO;
 using UnityEngine.SceneManagement;
-using UnityEditor.SearchService;
 
 public class MainManager : MonoBehaviour
 {
@@ -40,7 +39,7 @@ public class MainManager : MonoBehaviour
     {
         volume = int.Parse(settings.Substring(0, 3));
         clickMove = settings[3].Equals('1');
-        txtSpd = int.Parse(settings.Substring(4));
+        txtSpd = int.Parse(settings.Substring(4, 1));
         SetValues();
         Title.SetActive(true);
         Options.SetActive(false);
@@ -53,6 +52,7 @@ public class MainManager : MonoBehaviour
         updated += volume.ToString("000");
         updated += clickMove ? "1" : "0";
         updated += txtSpd.ToString("0");
+        updated += settings.Substring(5);
         settings = updated;
         data[6] = settings;
         File.WriteAllLines(filename, data);
@@ -80,7 +80,7 @@ public class MainManager : MonoBehaviour
         Save();
     }
 
-    //Toggle click movement active
+    //Toggle click movement active - BUG: Called when toggle display is changed; Fix soon
     public void ToggleClick() {
         clickMove = !clickMove;
         Save();
@@ -94,11 +94,12 @@ public class MainManager : MonoBehaviour
         Save();
     }
 
+    //Update displays
     private void SetValues()
     {
         toggle.isOn = clickMove;
         volumeLvl.value = volume;
-        ChangeSpeed(0);
+        speed.text = texts[txtSpd];
     }
 
     //Exit the game

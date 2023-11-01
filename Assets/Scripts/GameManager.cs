@@ -5,7 +5,6 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.IO;
 using TMPro;
-using Unity.VisualScripting;
 
 public class GameManager : MonoBehaviour
 {
@@ -50,9 +49,10 @@ public class GameManager : MonoBehaviour
     private static int location;
     private static int EXChars;
     private static int INChars;
-    private static float volume;
+    private static int volume;
     private static bool CMEnabled;
     private static int txtSpd;
+    private static int minimap;
     private bool loading;
 
     //Gets all the saved data at start of scene
@@ -64,9 +64,10 @@ public class GameManager : MonoBehaviour
         catalog = File.ReadAllLines(itemCollection);
         EXChars = savedData[0].Length / 2;
         INChars = savedData[1].Length / 2;
-        volume = int.Parse(savedData[6].Substring(0, 3)) / 100f;
+        volume = int.Parse(savedData[6].Substring(0, 3));
         CMEnabled = savedData[6].Equals('1');
-        txtSpd = int.Parse(savedData[6].Substring(4));
+        txtSpd = int.Parse(savedData[6].Substring(4, 1));
+        minimap = int.Parse(savedData[6].Substring(5));
     }
     void Start()
     {
@@ -74,6 +75,7 @@ public class GameManager : MonoBehaviour
         ReadInven();
         if (player != null) {
             player.ClickMovement(CMEnabled);
+            player.MinimapSetting(minimap);
             player.transform.position = position + Vector3.back;
             ReadData(characterIDs, 0);
         } else {
@@ -96,6 +98,7 @@ public class GameManager : MonoBehaviour
         loading = true;
         WriteInven();
         WritePosition();
+        WriteSettings();
         ClearData();
     }
     
@@ -148,6 +151,18 @@ public class GameManager : MonoBehaviour
         rounded = Mathf.RoundToInt(position.z * 100) / 100f;
         digits += rounded + " ";
         savedData[2] = digits;
+        File.WriteAllLines(filename, savedData);
+    }
+
+    //Write the player settings to file
+    public void WriteSettings()
+    {
+        string update = "";
+        update += volume.ToString("000");
+        update += CMEnabled ? "1" : "0";
+        update += txtSpd.ToString("0");
+        update += minimap.ToString("0");
+        savedData[6] = update;
         File.WriteAllLines(filename, savedData);
     }
 
@@ -230,12 +245,14 @@ public class GameManager : MonoBehaviour
         clearline = "";
         for (int i = 0; i < savedData[5].Length; i++) clearline += "0";
         savedData[5] = clearline;
+        //savedData[6] = "100112";
         File.WriteAllLines(filename, savedData);
     }
 
     //Pass settings data
-    public float Sound() { return volume; }
-    public float TextSpeed() { return txtSpd / -31f + 0.1f; }
+    public float Sound() { return (volume / 100f); }
+    public float TextSpeed() { return (txtSpd / -31f + 0.1f); }
+    public void SetMinimap(int scale) { minimap = scale; WriteSettings(); }
 
     //Add the nearby item to inventory
     public void AddInven()

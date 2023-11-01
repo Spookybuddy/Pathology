@@ -28,7 +28,7 @@ public class Player : MonoBehaviour
     public int moveSpd;
     public float mouseSensitivity;
     public float delay;
-    private int mapScale = 2;
+    private int mapScale;
     private bool CMEnabled;
 
     //Player states
@@ -166,6 +166,7 @@ public class Player : MonoBehaviour
 
     public void ClickState(bool status) { canClick = status; }
     public void ClickMovement(bool state) { CMEnabled = state; }
+    public void MinimapSetting(int scale) { mapScale = scale; UpdateMap(); }
 
     //Raycast a mouse click for click movement?
     private void MouseClick()
@@ -187,9 +188,12 @@ public class Player : MonoBehaviour
     {
         if (zoomStop || Mathf.Abs(val) < 1) return;
         mapScale = Mathf.Clamp(mapScale + val, 1, 3);
-        miniCam.orthographicSize = mapScale * 5;
+        UpdateMap();
+        manager.SetMinimap(mapScale);
         zoomStop = true;
     }
+
+    public void UpdateMap() { miniCam.orthographicSize = mapScale * 5; }
 
     //Input action functions
     private void Check(InputAction.CallbackContext ctx) { manager.ControllerButtons(ctx.control.device.displayName); }
