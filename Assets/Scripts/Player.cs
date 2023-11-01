@@ -190,7 +190,7 @@ public class Player : MonoBehaviour
     public void Zoom(InputAction.CallbackContext ctx) { Map(Mathf.RoundToInt(ctx.ReadValue<Vector2>().y));}
     public void Dpad(InputAction.CallbackContext ctx) { dirPad = ctx.ReadValue<Vector2>(); }
     public void Sprint(InputAction.CallbackContext ctx) { sprinting = ctx.performed; Check(ctx); }
-    public void Inventory(InputAction.CallbackContext ctx) { opening = ctx.performed; invenOpen ^= opening; Check(ctx); }
+    public void Inventory(InputAction.CallbackContext ctx) { if (!paused && !dialogOpen) { opening = ctx.performed; invenOpen ^= opening; Check(ctx); } }
     public void Next(InputAction.CallbackContext ctx) { confirm = ctx.performed; Check(ctx); }
     public void Back(InputAction.CallbackContext ctx) { cancel = ctx.performed; Check(ctx); }
     public void Pause() { paused = true; }
