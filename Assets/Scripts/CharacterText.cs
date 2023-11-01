@@ -2,7 +2,6 @@ using System.Collections;
 using UnityEngine;
 using System.IO;
 using TMPro;
-using UnityEditor.Experimental.GraphView;
 
 public class CharacterText : MonoBehaviour
 {
@@ -14,13 +13,13 @@ public class CharacterText : MonoBehaviour
 
     public int lineIndex;
     private string[] dialog;
+    private float txtSpd;
 
+    //States
     private bool inputable;
     private int inputOptions;
     private bool confirmable;
     private bool cancelable;
-    private bool gathering;
-    private bool eventFlag;
     private bool changePlay;
     private bool changeNPC;
     private bool printing;
@@ -34,6 +33,7 @@ public class CharacterText : MonoBehaviour
         if (!folder.Equals("")) fileName = Application.streamingAssetsPath + "/" + folder + "/" + fileName + ".txt";
         else fileName = Application.streamingAssetsPath + "/" + fileName + ".txt";
         dialog = File.ReadAllLines(fileName);
+        txtSpd = manager.TextSpeed();
     }
 
     //Player input button
@@ -106,6 +106,13 @@ public class CharacterText : MonoBehaviour
         manager.MouseClick(true);
     }
 
+    //Set state to be able to exit conversation
+    private void End()
+    {
+        cancelable = true;
+        manager.MouseClick(false);
+    }
+
     //Check who is talking and update portraits
     private int CheckTalk()
     {
@@ -133,7 +140,6 @@ public class CharacterText : MonoBehaviour
     //Removes item ID
     private bool RemoveItem()
     {
-        Debug.Log("Calling");
         return manager.RemoveInven(GetInt(dialog[lineIndex + 1]), 1);
     }
 
@@ -150,25 +156,32 @@ public class CharacterText : MonoBehaviour
     public void PrintLine()
     {
         cancelable = false;
-        //Check even & gather state before printing line
-        if (lineIndex + 1 < dialog.Length) {
-            switch(dialog[lineIndex + 1][0]) {
-                case '$':
-                    if (CheckItem()) lineIndex += 2;
-                    break;
-                case '-':
-                    if (RemoveItem()) lineIndex += 2;
-                    break;
-                case '%':
-                    if (CheckEvent()) lineIndex += 2;
-                    break;
-            }
+        //Check event & gather state before printing line
+        switch (dialog[lineIndex][0]) {
+            case '$':
+                if (CheckItem()) lineIndex++;
+                else End();
+                break;
+            case '-':
+                if (RemoveItem()) lineIndex++;
+                else End();
+                break;
+            case '%':
+                if (CheckEvent()) lineIndex++;
+                else End();
+                break;
+            case '@':
+                End();
+                break;
+            default:
+                //All other lines
+                manager.ButtonDisplay(inputOptions, false, cancelable);
+                manager.setDisplay("");
+                manager.MouseClick(true);
+                printing = true;
+                StartCoroutine(Typing(CheckTalk()));
+                break;
         }
-        manager.ButtonDisplay(inputOptions, false, cancelable);
-        manager.setDisplay("");
-        manager.MouseClick(true);
-        printing = true;
-        StartCoroutine(Typing(CheckTalk()));
     }
 
     //Check what the next line is
@@ -199,8 +212,7 @@ public class CharacterText : MonoBehaviour
                     break;
                 //End Conversation Button available
                 case '@':
-                    cancelable = true;
-                    manager.MouseClick(false);
+                    End();
                     break;
                 //Ask player for a certain item
                 case '$':
@@ -208,8 +220,7 @@ public class CharacterText : MonoBehaviour
                         lineIndex++;
                         Continue();
                     } else {
-                        cancelable = true;
-                        manager.MouseClick(false);
+                        End();
                     }
                     break;
                 //Give player an item
@@ -224,8 +235,7 @@ public class CharacterText : MonoBehaviour
                         lineIndex++;
                         Continue();
                     } else {
-                        cancelable = true;
-                        manager.MouseClick(false);
+                        End();
                     }
                     break;
                 //Check for event flag triggered
@@ -234,8 +244,7 @@ public class CharacterText : MonoBehaviour
                         lineIndex++;
                         Continue();
                     } else {
-                        cancelable = true;
-                        manager.MouseClick(false);
+                        End();
                     }
                     break;
                 //Set event flag
@@ -288,13 +297,14 @@ public class CharacterText : MonoBehaviour
             if (char.IsDigit(line[i])) number += line[i];
             if (char.IsWhiteSpace(line[i])) break;
         }
-        return int.Parse(number);
+        if (int.TryParse(number, out int result)) return result;
+        return 0;
     }
 
     //Slowly print each letter of the line
     private IEnumerator Typing(int i)
     {
-        yield return new WaitForSeconds(0.05f);
+        yield return new WaitForSeconds(txtSpd);
         if (printing) manager.addDisplay(dialog[lineIndex][i]);
         if (i + 1 < dialog[lineIndex].Length && printing) StartCoroutine(Typing(i + 1));
         else {
