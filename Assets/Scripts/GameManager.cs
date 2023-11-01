@@ -50,10 +50,13 @@ public class GameManager : MonoBehaviour
     private static int location;
     private static int EXChars;
     private static int INChars;
+    private static float volume;
+    private static bool CMEnabled;
+    private static int txtSpd;
     private bool loading;
 
     //Gets all the saved data at start of scene
-    private void Awake()
+    void Awake()
     {
         filename = Application.streamingAssetsPath + "/SaveData.txt";
         itemCollection = Application.streamingAssetsPath + "/Catalog.txt";
@@ -61,12 +64,16 @@ public class GameManager : MonoBehaviour
         catalog = File.ReadAllLines(itemCollection);
         EXChars = savedData[0].Length / 2;
         INChars = savedData[1].Length / 2;
+        volume = int.Parse(savedData[6].Substring(0, 3)) / 100f;
+        CMEnabled = savedData[6].Equals('1');
+        txtSpd = int.Parse(savedData[6].Substring(4));
     }
     void Start()
     {
         ReadPosition();
         ReadInven();
         if (player != null) {
+            player.ClickMovement(CMEnabled);
             player.transform.position = position + Vector3.back;
             ReadData(characterIDs, 0);
         } else {
@@ -225,6 +232,10 @@ public class GameManager : MonoBehaviour
         savedData[5] = clearline;
         File.WriteAllLines(filename, savedData);
     }
+
+    //Pass settings data
+    public float Sound() { return volume; }
+    public float TextSpeed() { return txtSpd / -31f + 0.1f; }
 
     //Add the nearby item to inventory
     public void AddInven()
@@ -428,9 +439,7 @@ public class GameManager : MonoBehaviour
     private IEnumerator Load(string scene)
     {
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(scene);
-        while (!asyncLoad.isDone) {
-            yield return null;
-        }
+        while (!asyncLoad.isDone) yield return null;
     }
 
     private IEnumerator ConvoDelay()

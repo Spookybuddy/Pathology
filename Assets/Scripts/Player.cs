@@ -22,12 +22,14 @@ public class Player : MonoBehaviour
     private float mouseDecay;
     private float inputDelay;
     private bool canClick;
+    public bool zoomStop;
 
     //Settings
     public int moveSpd;
     public float mouseSensitivity;
     public float delay;
     private int mapScale = 2;
+    private bool CMEnabled;
 
     //Player states
     private bool sprinting;
@@ -38,12 +40,14 @@ public class Player : MonoBehaviour
     private bool paused;
     private bool confirm;
     private bool cancel;
-    private bool convoRange;
     private bool colliding;
 
     private void Awake() { manager = GameObject.FindWithTag("GameController").GetComponent<GameManager>(); }
 
-    void Start() { canClick = true; }
+    void Start() {
+        canClick = true;
+        zoomStop = false;
+    }
 
     void Update()
     {
@@ -161,6 +165,7 @@ public class Player : MonoBehaviour
     }
 
     public void ClickState(bool status) { canClick = status; }
+    public void ClickMovement(bool state) { CMEnabled = state; }
 
     //Raycast a mouse click for click movement?
     private void MouseClick()
@@ -168,18 +173,22 @@ public class Player : MonoBehaviour
         if (dialogOpen && canClick && inputDelay == 0) {
             manager.Advance(-1);
             inputDelay = delay;
-        } else if (Physics.Raycast(mainCam.ScreenPointToRay(mousition), out RaycastHit hit, 100) && !dialogOpen) {
-            mouseControlled = true;
-            targeted = new Vector3(hit.point.x, 0, hit.point.z);
-            inputDelay = delay;
+        } else if (CMEnabled) {
+            if (Physics.Raycast(mainCam.ScreenPointToRay(mousition), out RaycastHit hit, 100) && !dialogOpen) {
+                mouseControlled = true;
+                targeted = new Vector3(hit.point.x, 0, hit.point.z);
+                inputDelay = delay;
+            }
         }
     }
 
     //Update the minimap camera to the new scale
     private void Map(int val)
     {
+        if (zoomStop || Mathf.Abs(val) < 1) return;
         mapScale = Mathf.Clamp(mapScale + val, 1, 3);
         miniCam.orthographicSize = mapScale * 5;
+        zoomStop = true;
     }
 
     //Input action functions
@@ -187,7 +196,7 @@ public class Player : MonoBehaviour
     private void Veck(InputAction.CallbackContext ctx) { if (ctx.ReadValue<Vector2>() != Vector2.zero) Check(ctx); }
     public void Arrows(InputAction.CallbackContext ctx) { keypad = ctx.ReadValue<Vector2>(); Veck(ctx); }
     public void Stick(InputAction.CallbackContext ctx) { joystick = ctx.ReadValue<Vector2>(); Veck(ctx); }
-    public void Zoom(InputAction.CallbackContext ctx) { Map(Mathf.RoundToInt(ctx.ReadValue<Vector2>().y));}
+    public void Zoom(InputAction.CallbackContext ctx) { Map(Mathf.RoundToInt(ctx.ReadValue<Vector2>().y)); if (Mathf.Abs(ctx.ReadValue<Vector2>().y) < 0.1f) zoomStop = false; }
     public void Dpad(InputAction.CallbackContext ctx) { dirPad = ctx.ReadValue<Vector2>(); }
     public void Sprint(InputAction.CallbackContext ctx) { sprinting = ctx.performed; Check(ctx); }
     public void Inventory(InputAction.CallbackContext ctx) { if (!paused && !dialogOpen) { opening = ctx.performed; invenOpen ^= opening; Check(ctx); } }

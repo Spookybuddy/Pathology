@@ -2,7 +2,6 @@ using System.Collections;
 using UnityEngine;
 using System.IO;
 using TMPro;
-using UnityEditor.Experimental.GraphView;
 
 public class CharacterText : MonoBehaviour
 {
@@ -14,13 +13,13 @@ public class CharacterText : MonoBehaviour
 
     public int lineIndex;
     private string[] dialog;
+    private float txtSpd;
 
+    //States
     private bool inputable;
     private int inputOptions;
     private bool confirmable;
     private bool cancelable;
-    private bool gathering;
-    private bool eventFlag;
     private bool changePlay;
     private bool changeNPC;
     private bool printing;
@@ -34,6 +33,7 @@ public class CharacterText : MonoBehaviour
         if (!folder.Equals("")) fileName = Application.streamingAssetsPath + "/" + folder + "/" + fileName + ".txt";
         else fileName = Application.streamingAssetsPath + "/" + fileName + ".txt";
         dialog = File.ReadAllLines(fileName);
+        txtSpd = manager.TextSpeed();
     }
 
     //Player input button
@@ -304,7 +304,7 @@ public class CharacterText : MonoBehaviour
     //Slowly print each letter of the line
     private IEnumerator Typing(int i)
     {
-        yield return new WaitForSeconds(0.05f);
+        yield return new WaitForSeconds(txtSpd);
         if (printing) manager.addDisplay(dialog[lineIndex][i]);
         if (i + 1 < dialog[lineIndex].Length && printing) StartCoroutine(Typing(i + 1));
         else {
