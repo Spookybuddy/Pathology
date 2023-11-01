@@ -243,6 +243,19 @@ public class GameManager : MonoBehaviour
         InventorySort(false);
     }
 
+    //Tries to remove the amount of item, and returns if it was successful or not
+    public bool RemoveInven(int item, int amt)
+    {
+        if (Inventory.Exists(x => x.Id == item)) {
+            Item remove = Inventory.Find(x => x.Id == item);
+            if (remove.Quantity > amt) remove.Quantity -= amt;
+            else if (remove.Quantity == amt) Inventory.Remove(remove);
+            else return false;
+        } else return false;
+        InventorySort(false);
+        return true;
+    }
+
     //Check player's inventory for item ID X
     public bool CheckInven(int ID)
     {
