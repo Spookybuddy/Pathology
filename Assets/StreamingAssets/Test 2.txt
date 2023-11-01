@@ -1,0 +1,12 @@
+Hello good sir.
+Do you have any Potato?
+$5
+I would like to take that potato.
+>6 Ok here.
+>8 No it's my potato.
+Oh why thank you!
+-5
+@
+Please?
+>5 Fine.
+@

@@ -51,19 +51,6 @@ public class CharacterText : MonoBehaviour
             return;
         }
 
-        //Check if player has the specified items
-        if (gathering) {
-            if (manager.CheckInven(GetInt(dialog[lineIndex + 1]))) {
-                gathering = false;
-                lineIndex += 2;
-                PrintLine();
-                return;
-            } else {
-                cancelable = true;
-                return;
-            }
-        }
-
         //Player leave
         if (cancelable && !inputable) {
             PlayerCancel();
@@ -107,7 +94,6 @@ public class CharacterText : MonoBehaviour
         cancelable = false;
         inputable = false;
         printing = false;
-        gathering = false;
         confirmable = false;
         manager.MouseClick(true);
         manager.PlayerLeaves();
@@ -138,6 +124,19 @@ public class CharacterText : MonoBehaviour
         return manager.ReadBool(5, GetInt(dialog[lineIndex + 1]));
     }
 
+    //Check for item ID
+    private bool CheckItem()
+    {
+        return manager.CheckInven(GetInt(dialog[lineIndex + 1]));
+    }
+
+    //Removes item ID
+    private bool RemoveItem()
+    {
+        Debug.Log("Calling");
+        return manager.RemoveInven(GetInt(dialog[lineIndex + 1]), 1);
+    }
+
     //Fully print out the line
     private void PrintAll()
     {
@@ -154,10 +153,14 @@ public class CharacterText : MonoBehaviour
         //Check even & gather state before printing line
         if (lineIndex + 1 < dialog.Length) {
             switch(dialog[lineIndex + 1][0]) {
+                case '$':
+                    if (CheckItem()) lineIndex += 2;
+                    break;
+                case '-':
+                    if (RemoveItem()) lineIndex += 2;
+                    break;
                 case '%':
                     if (CheckEvent()) lineIndex += 2;
-                    break;
-                case '$':
                     break;
             }
         }
@@ -201,14 +204,29 @@ public class CharacterText : MonoBehaviour
                     break;
                 //Ask player for a certain item
                 case '$':
-                    gathering = true;
-                    Continue();
+                    if (CheckItem()) {
+                        lineIndex++;
+                        Continue();
+                    } else {
+                        cancelable = true;
+                        manager.MouseClick(false);
+                    }
                     break;
                 //Give player an item
                 case '&':
                     manager.AddInven(GetInt(dialog[lineIndex + 1]), 1);
                     lineIndex++;
                     Continue();
+                    break;
+                //Remove item from inventory
+                case '-':
+                    if (RemoveItem()) {
+                        lineIndex++;
+                        Continue();
+                    } else {
+                        cancelable = true;
+                        manager.MouseClick(false);
+                    }
                     break;
                 //Check for event flag triggered
                 case '%':
