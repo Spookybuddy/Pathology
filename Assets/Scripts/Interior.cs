@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
@@ -11,9 +9,10 @@ public class Interior : MonoBehaviour
     public GameObject inventoryOverlay;
     public GameObject dialogOverlay;
     public GameObject itemObj;
-    public GameObject current;
+    public GameObject currently;
     public Vector3 itemPadding;
     public Vector3 invenPadding;
+    public Vector3[] lockPositions;
 
     public int moveSpd;
     public float mouseSensitivity;
@@ -65,20 +64,24 @@ public class Interior : MonoBehaviour
             }
 
             //Player can control a cursor when in crafting mode
-            if (!opening && !invenOpen && !dialogOpen && canCraft) {
+            if (canCraft) {
                 direction = new Vector3(_direction.x, _direction.y, 0);
                 if (direction.magnitude > 0) mouseMoved = false;
                 offset = transform.position + direction;
 
+                //Take out item from inventory
                 if (invenOpen && confirm) {
-                    current = Instantiate(itemObj, new Vector3(0, 3, 0), Quaternion.identity) as GameObject;
+                    GameObject current = Instantiate(itemObj, mouseMoved ? mousition : lockPositions[index], Quaternion.identity) as GameObject;
+                    current.GetComponent<ItemCrafting>().Create(manager.RemoveInven());
+                    currently = current;
                     invenOpen = false;
                 }
 
-                if (mouseMoved) {
-
+                //Click and hold the item hostage
+                if (mouseMoved && confirm && currently != null) {
+                    currently.transform.position = mousition;
                 } else {
-                    transform.position = Vector3.MoveTowards(transform.position, offset, Time.deltaTime * moveSpd);
+                    
                 }
             }
 
@@ -129,6 +132,7 @@ public class Interior : MonoBehaviour
             manager.Advance(-1);
             inputDelay = delay;
         } else {
+            confirm = true;
             inputDelay = delay;
         }
     }

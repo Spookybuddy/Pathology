@@ -263,12 +263,30 @@ public class GameManager : MonoBehaviour
         InventorySort(false);
     }
 
+    public void AddInven(Item i)
+    {
+        nearbyItem = i;
+        AddInven();
+    }
+
     //Add a new item of id & amount
     public void AddInven(int item, int amt)
     {
         if (Inventory.Exists(x => x.Id == item)) Inventory.Find(x => x.Id == item).Quantity += amt;
         else Inventory.Add(ParseCatalog(item, amt));
         InventorySort(false);
+    }
+
+    //Removes Item at the manager index and returns the item data
+    public Item RemoveInven()
+    {
+        Item temp = new Item();
+        temp.Copy(Inventory[indexedItem]);
+        temp.Quantity = 1;
+        Inventory[indexedItem].Quantity--;
+        if (Inventory[indexedItem].Quantity < 1) Inventory.Remove(Inventory[indexedItem]);
+        InventorySort(false);
+        return temp;
     }
 
     //Tries to remove the amount of item, and returns if it was successful or not

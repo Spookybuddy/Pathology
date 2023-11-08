@@ -8,6 +8,14 @@ public class Item
     public string Name;
     public char Category;
     public int Quantity;
+
+    public void Copy(Item i)
+    {
+        Id = i.Id;
+        Name = i.Name;
+        Category = i.Category;
+        Quantity = i.Quantity;
+    }
 }
 
 public class ItemScript : MonoBehaviour
