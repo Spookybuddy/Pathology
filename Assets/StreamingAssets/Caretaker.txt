@@ -1,0 +1,72 @@
+Who’s there?
+Oh Lord! Thank you, thank you! A doctor’s come!
+>4 Is that the infirm there in the bed?
+>55 What has been availing him?
+Yes, yes sir, my poor husband Ellis.
+he’s been wracked with pain and sickness since a few days ago
+>8 What is this sickness?
+>37 How did he come by this plague?
+I’m afraid I couldn’t tell you the name.
+I’ve heard of something called the sweating sickness…
+But I dare not think that’s what this is
+>13 Has it just been terrible sweating?
+>23 I’ve heard of it before
+Aye sir, but also coughing, pain in the torso, hacking up phlegm– oh Lord
+Isn’t it just terrible!
+>17 It’s alright miss, I’ll cure your husband
+>20 There’s still some hope, I just wish I got to him sooner
+Oh thank the Lord for your visit!
+Please, please, see the priest, he may be able to help you
+@
+Oh goodness, I can’t bear to see my Ellis perish–
+Perhaps the priest could help? Or at least- let him know you’re here
+@
+Well can you treat it?
+>27 Without fail, simply put your trust in God
+>31 I have occasionally, it’s a sensitive case
+>34 I haven’t encountered it before now
+Oh thank you! Thank the Lord!
+Please, visit the priest if you need anything
+He’s a helpful soul, a good man
+@
+Then I will pray most diligently for my husband
+Perhaps you could visit our priest? He may be able to guide you
+@
+Then surely all hope is lost!
+Begone from my home, and ask our holy father to pray for me and Ellis
+@
+I don’t know how, but there was another who died of it a week ago
+They worked together occasionally, oh I hope Ellis doesn’t suffer the same fate
+>41 Same symptoms?
+>51 Was this friend treated with anything?
+Yes sir, there was coughing, phlegm, pain in the chest, sweating of course
+>44 Certainly sounds familiar
+>48 Strange, I’ll have to consult my notes about this
+I sure hope the cure is familiar to you then
+I’ve said as much as I know.
+Should you need any holy guidance, seek out our priest
+@
+I’ll pray there’s something there
+If you visit our priest, he would know more about it than I
+@
+Another doctor came through a week ago, but he arrived too late.
+It’s the same signs, coughs, pain in his chest, difficulty breathing
+This doctor was staying at the church if you want to talk to our priest about it
+@
+My husband Ellis has been ill a few days now, wracked with pain he says, when he can speak
+Not to mention the coughing, phlegm, and sweats
+>60 When did symptoms start?
+>70 I’ll see what I can do, anything else?
+>8 What is this sickness?
+A few days ago, right after that other doctor left
+Damn him! Couldn’t stick around just a little longer
+>64 Another doctor?
+>67 Why’d he leave?
+Aye, here treating someone else, couldn’t even save him
+You’d get more information from our priest, he let the doctor stay with him
+@
+His patient, our friend, passed before he could finish his cure he said
+The priest would know more about it, this doctor stayed at the church
+@
+If you’re looking for guidance, our priest may be of assistance
+@
