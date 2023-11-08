@@ -1,11 +1,11 @@
 Halt Stranger!
 Go no further, you’ll find nothing but disease and death
->4 “Disease is exactly why I’ve come
->16 “Thank you sir, I am aware
+>4 Disease is exactly why I’ve come
+>16 Thank you sir, I am aware
 What? Are you some sort of physician mayhaps?
->8 “Aye, here to help the infirm
->11 “Here to stop the spread
->14 “Indeed, now where might I find this disease?
+>8 Aye, here to help the infirm
+>11 Here to stop the spread
+>14 Indeed, now where might I find this disease?
 Ah… another tried the same, didn’t go so well for him.
 You’ll find the sickness in the small house down the way.
 @
@@ -16,8 +16,8 @@ Ah, well, just down the way. It’s the small white house
 @
 Then you’ll know there’s nothing for you here
 Best be on your way then
->20 “No you misunderstand, I’m a physician
->23 “I think I’ll take my chances
+>20 No you misunderstand, I’m a physician
+>23 I think I’ll take my chances
 Oh a physician? Well why didn’t you say so
 If you want to help, our sick friend is in the small house just down the way
 @

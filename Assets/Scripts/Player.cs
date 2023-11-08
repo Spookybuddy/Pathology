@@ -8,6 +8,7 @@ public class Player : MonoBehaviour
     public Camera miniCam;
     public GameObject dialogOverlay;
     public GameObject inventoryOverlay;
+    public GameObject minimapOverlay;
 
     private Vector2 keypad;
     private Vector2 joystick;
@@ -62,6 +63,7 @@ public class Player : MonoBehaviour
             mouseDecay = Mathf.Clamp01(mouseDecay - Time.deltaTime);
             dialogOverlay.SetActive(dialogOpen);
             inventoryOverlay.SetActive(invenOpen);
+            minimapOverlay.SetActive(!invenOpen && !dialogOpen);
 
             //Inputting directions takes the highest magnitude, and overrides click navigation
             _direction = VectorGreater(keypad, joystick);
@@ -193,6 +195,15 @@ public class Player : MonoBehaviour
         zoomStop = true;
     }
 
+    private void Map()
+    {
+        if (zoomStop) return;
+        mapScale = Mathf.Clamp((mapScale + 1) % 4, 1, 3);
+        UpdateMap();
+        manager.SetMinimap(mapScale);
+        zoomStop = true;
+    }
+
     public void UpdateMap() { miniCam.orthographicSize = mapScale * 5; }
 
     //Input action functions
@@ -201,6 +212,7 @@ public class Player : MonoBehaviour
     public void Arrows(InputAction.CallbackContext ctx) { keypad = ctx.ReadValue<Vector2>(); Veck(ctx); }
     public void Stick(InputAction.CallbackContext ctx) { joystick = ctx.ReadValue<Vector2>(); Veck(ctx); }
     public void Zoom(InputAction.CallbackContext ctx) { Map(Mathf.RoundToInt(ctx.ReadValue<Vector2>().y)); if (Mathf.Abs(ctx.ReadValue<Vector2>().y) < 0.1f) zoomStop = false; }
+    public void ZoomTab(InputAction.CallbackContext ctx) { Map(); if (ctx.canceled && zoomStop) zoomStop = false; }
     public void Dpad(InputAction.CallbackContext ctx) { dirPad = ctx.ReadValue<Vector2>(); }
     public void Sprint(InputAction.CallbackContext ctx) { sprinting = ctx.performed; Check(ctx); }
     public void Inventory(InputAction.CallbackContext ctx) { if (!paused && !dialogOpen) { opening = ctx.performed; invenOpen ^= opening; Check(ctx); } }
