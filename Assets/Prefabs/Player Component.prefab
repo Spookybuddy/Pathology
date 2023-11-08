@@ -1969,6 +1969,22 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 3b3b7113-0d53-46ba-8cb7-1dbb5025f40e
     m_ActionName: InScene/Sprint[/Keyboard/leftShift]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 8786809066943996639}
+        m_TargetAssemblyTypeName: Player, Assembly-CSharp
+        m_MethodName: ZoomTab
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 6a4917da-8c7c-4640-872b-dea6e6a71b0b
+    m_ActionName: Actions/MapZoom[/Keyboard/tab]
   m_NeverAutoSwitchControlSchemes: 1
   m_DefaultControlScheme: Layout
   m_DefaultActionMap: Actions
@@ -1991,6 +2007,7 @@ MonoBehaviour:
   miniCam: {fileID: 4852915679858142657}
   dialogOverlay: {fileID: 1209772498395084265}
   inventoryOverlay: {fileID: 7011656642963430185}
+  minimapOverlay: {fileID: 182347322113009293}
   zoomStop: 0
   moveSpd: 5
   mouseSensitivity: 1

@@ -10,6 +10,8 @@ public class Interior : MonoBehaviour
     public Camera mainCam;
     public GameObject inventoryOverlay;
     public GameObject dialogOverlay;
+    public GameObject itemObj;
+    public GameObject current;
     public Vector3 itemPadding;
     public Vector3 invenPadding;
 
@@ -67,6 +69,11 @@ public class Interior : MonoBehaviour
                 direction = new Vector3(_direction.x, _direction.y, 0);
                 if (direction.magnitude > 0) mouseMoved = false;
                 offset = transform.position + direction;
+
+                if (invenOpen && confirm) {
+                    current = Instantiate(itemObj, new Vector3(0, 3, 0), Quaternion.identity) as GameObject;
+                    invenOpen = false;
+                }
 
                 if (mouseMoved) {
 
