@@ -3686,10 +3686,10 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 1000
+  far clip plane: 10
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 4.998
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -4358,6 +4358,7 @@ MonoBehaviour:
   - {fileID: 10309, guid: 0000000000000000f000000000000000, type: 0}
   - {fileID: 2800000, guid: dffef66376be4fa480fb02b19edbe903, type: 3}
   person: {fileID: 1926766790}
+  lineIndex: 0
 --- !u!4 &1724684372
 Transform:
   m_ObjectHideFlags: 0
@@ -5018,7 +5019,6 @@ MonoBehaviour:
   - {fileID: 1725462976}
   - {fileID: 73262710}
   npcName: {fileID: 191070940}
-  savedData: []
 --- !u!4 &1903538950
 Transform:
   m_ObjectHideFlags: 0
