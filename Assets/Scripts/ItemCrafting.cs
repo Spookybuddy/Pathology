@@ -28,9 +28,13 @@ public class ItemCrafting : MonoBehaviour
         Debug.Log("Craftng: " + other.name);
     }
 
+    public void EnableGravity(bool enabled) { rigid.useGravity = enabled; }
+
+    //Spawn with item data
     public void Create(Item i)
     {
         item = i;
         render.material = materials[item.Id];
+        EnableGravity(false);
     }
 }
