@@ -349,6 +349,18 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    //Set inventory index via click
+    public void SetIndex(int i)
+    {
+        indexedItem = (indexedItem + i + Inventory.Count) % Inventory.Count;
+        int limit = Mathf.Min(Mathf.Max(Inventory.Count - 10, 0), indexedItem);
+        if (indexedItem > limit) pointer.transform.localPosition = new Vector3(pointer.transform.localPosition.x, 175 - (indexedItem - limit) * 45, 0);
+        else pointer.transform.localPosition = new Vector3(pointer.transform.localPosition.x, 175, 0);
+        InventoryText();
+    }
+
+    public int limitation() { return Mathf.Min(Inventory.Count, 10); }
+
     //Inventory slider
     public void Scrollbar()
     {
