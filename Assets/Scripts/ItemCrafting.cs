@@ -16,7 +16,11 @@ public class ItemCrafting : MonoBehaviour
     //Returns Item to inventory if fallen out of bounds
     void FixedUpdate()
     {
-        if (transform.position.y < -6) {
+        if (!rigid.useGravity) {
+            rigid.velocity = Vector3.zero;
+            rigid.angularVelocity = Vector3.zero;
+        }
+        if (transform.position.y < -10) {
             manager.AddInven(item);
             Destroy(gameObject);
         }
@@ -25,7 +29,13 @@ public class ItemCrafting : MonoBehaviour
     //Dropped onto the crafting stations
     void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Craftng: " + other.name);
+        if (other.CompareTag("One")) {
+
+        } else if (other.CompareTag("Two")) {
+
+        } else if (other.CompareTag("Three")) {
+
+        }
     }
 
     public void EnableGravity(bool enabled) { rigid.useGravity = enabled; }

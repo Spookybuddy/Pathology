@@ -33,11 +33,13 @@ public class Interior : MonoBehaviour
 
     private Vector2 joystick;
     private Vector2 dirPad;
+    private Vector3 _mousition;
     private Vector3 mousition;
     private Vector2 _direction;
     private Vector3 direction;
     private Vector3 offset;
     private bool mouseMoved;
+    private bool mouseDown;
     private float inputDelay;
     private bool canClick;
 
@@ -73,7 +75,7 @@ public class Interior : MonoBehaviour
 
                 //Take out item from inventory
                 if (invenOpen && confirm) {
-                    GameObject current = Instantiate(itemObj, mouseMoved ? mousition : lockPositions[index], Quaternion.identity) as GameObject;
+                    GameObject current = Instantiate(itemObj, mouseMoved || mouseDown ? _mousition : lockPositions[index], Quaternion.identity) as GameObject;
                     current.GetComponent<ItemCrafting>().Create(manager.RemoveInven());
                     currently = current;
                     invenOpen = false;
@@ -86,13 +88,13 @@ public class Interior : MonoBehaviour
                 }
 
                 //Move controller
-                if (!mouseMoved && !cancel && currently != null) {
+                if (!mouseMoved && !mouseDown && !cancel && currently != null) {
                     currently.transform.position = Vector3.MoveTowards(currently.transform.position, lockPositions[index], Time.deltaTime * 16);
                 }
 
                 //Mouse drag
                 if (mouseMoved && confirm && currently != null) {
-                    currently.transform.position = mousition;
+                    currently.transform.position = _mousition;
                 }
             }
 
@@ -153,6 +155,7 @@ public class Interior : MonoBehaviour
                             confirm = true;
                             inputDelay = delay;
                             range = manager.limitation();
+                            mouseDown = true;
                         }
                     }
                 }
@@ -236,6 +239,7 @@ public class Interior : MonoBehaviour
         if (ctx.performed) MouseClick();
         if (ctx.canceled) {
             confirm = false;
+            mouseDown = false;
             if (canCraft) {
                 cancel = true;
                 StartCoroutine(MouseUp());
@@ -244,6 +248,14 @@ public class Interior : MonoBehaviour
     }
     public void MousePos(InputAction.CallbackContext ctx) {
         mousition = ctx.ReadValue<Vector2>();
+        if (Physics.Raycast(mainCam.ScreenPointToRay(mousition), out RaycastHit hit, 20)) {
+            if (hit.transform.CompareTag("Item") && mouseDown && currently == null) {
+                currently = hit.transform.gameObject;
+                currently.GetComponent<ItemCrafting>().EnableGravity(false);
+
+            }
+            _mousition = new Vector3(hit.point.x, hit.point.y, 4);
+        }
     }
     public void MouseDelta(InputAction.CallbackContext ctx) {
         mouseMoved = (ctx.ReadValue<Vector2>().magnitude > mouseSensitivity);
