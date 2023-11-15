@@ -479,6 +479,7 @@ public class GameManager : MonoBehaviour
             WriteInven();
         } else {
             WriteData(interiorChars, 1);
+            WriteInven();
         }
         StartCoroutine(Load(scene));
     }

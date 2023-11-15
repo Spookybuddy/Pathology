@@ -9,6 +9,7 @@ public class Player : MonoBehaviour
     public GameObject dialogOverlay;
     public GameObject inventoryOverlay;
     public GameObject minimapOverlay;
+    public GameObject pauseOverlay;
 
     private Vector2 keypad;
     private Vector2 joystick;
@@ -55,15 +56,15 @@ public class Player : MonoBehaviour
         //Move only when unpaused & not in a menu
         if (paused) {
             Cursor.visible = true;
-            mouseDecay = 0.4f;
+            dialogOpen = false;
+            invenOpen = false;
+            Menus(true, false, false, false);
         } else {
             //Decay input delay
             inputDelay = Mathf.Clamp01(inputDelay - Time.deltaTime);
             Cursor.visible = (mouseMoved || mouseDecay > 0);
             mouseDecay = Mathf.Clamp01(mouseDecay - Time.deltaTime);
-            dialogOverlay.SetActive(dialogOpen);
-            inventoryOverlay.SetActive(invenOpen);
-            minimapOverlay.SetActive(!invenOpen && !dialogOpen);
+            Menus(false, invenOpen, !invenOpen && !dialogOpen, dialogOpen);
 
             //Inputting directions takes the highest magnitude, and overrides click navigation
             _direction = VectorGreater(keypad, joystick);
@@ -206,6 +207,15 @@ public class Player : MonoBehaviour
 
     public void UpdateMap() { miniCam.orthographicSize = mapScale * 5; }
 
+    //Update the menus with given bools
+    private void Menus(bool P, bool I, bool M, bool D)
+    {
+        pauseOverlay.SetActive(P);
+        inventoryOverlay.SetActive(I);
+        minimapOverlay.SetActive(M);
+        dialogOverlay.SetActive(D);
+    }
+
     //Input action functions
     private void Check(InputAction.CallbackContext ctx) { manager.ControllerButtons(ctx.control.device.displayName); }
     private void Veck(InputAction.CallbackContext ctx) { if (ctx.ReadValue<Vector2>() != Vector2.zero) Check(ctx); }
@@ -218,7 +228,7 @@ public class Player : MonoBehaviour
     public void Inventory(InputAction.CallbackContext ctx) { if (!paused && !dialogOpen) { opening = ctx.performed; invenOpen ^= opening; Check(ctx); } }
     public void Next(InputAction.CallbackContext ctx) { confirm = ctx.performed; Check(ctx); }
     public void Back(InputAction.CallbackContext ctx) { cancel = ctx.performed; Check(ctx); }
-    public void Pause() { paused = true; }
+    public void Pause() { if (!dialogOpen) paused = true; }
     public void Unpause() { paused = false; }
     public void InvertPause() { paused = !paused; }
     public void Mouse(InputAction.CallbackContext ctx) { if (ctx.performed) MouseClick(); }
