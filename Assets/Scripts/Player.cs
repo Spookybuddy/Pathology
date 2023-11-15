@@ -160,6 +160,14 @@ public class Player : MonoBehaviour
         }
     }
 
+    //Remove outline effect on item
+    private void OnTriggerExit(Collider trigger)
+    {
+        if (trigger.CompareTag("Item")) {
+            trigger.GetComponent<ItemScript>().Disable();
+        }
+    }
+
     //Exit from the dialog screen
     public void CloseDialog()
     {
