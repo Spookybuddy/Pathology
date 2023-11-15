@@ -7,14 +7,13 @@ TagManager:
   - NPC
   - Door
   - Item
-  - One
-  - Two
-  - Three
+  - Grab
+  - Ground
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Map Only
   - Water
   - UI
   - 

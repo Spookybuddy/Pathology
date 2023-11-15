@@ -6,6 +6,7 @@ public class ItemCrafting : MonoBehaviour
     private GameManager manager;
     public Rigidbody rigid;
     public Renderer render;
+    public BoxCollider hitbox;
     private Item item;
 
     void Start()
@@ -20,31 +21,41 @@ public class ItemCrafting : MonoBehaviour
             rigid.velocity = Vector3.zero;
             rigid.angularVelocity = Vector3.zero;
         }
-        if (transform.position.y < -10) {
-            manager.AddInven(item);
-            Destroy(gameObject);
-        }
+        if (transform.position.y < -10) Store();
     }
 
-    //Dropped onto the crafting stations
-    void OnTriggerEnter(Collider other)
+    //Enabled collider and gravity
+    public void Enable(bool gravity, bool collider)
     {
-        if (other.CompareTag("One")) {
-
-        } else if (other.CompareTag("Two")) {
-
-        } else if (other.CompareTag("Three")) {
-
-        }
+        rigid.useGravity = gravity;
+        hitbox.enabled = collider;
     }
-
-    public void EnableGravity(bool enabled) { rigid.useGravity = enabled; }
 
     //Spawn with item data
-    public void Create(Item i)
+    public void Create(Item i, bool g, bool c)
     {
         item = i;
         render.material = materials[item.Id];
-        EnableGravity(false);
+        Enable(g, c);
+    }
+
+    //Return item to inventory
+    public void Store()
+    {
+        manager.AddInven(item);
+        Destroy(gameObject);
+    }
+
+    //Pass item data before destroying
+    public int GetData(int X)
+    {
+        switch (X) {
+            case 0:
+                return item.Vitamin;
+            case 1:
+                return item.Mineral;
+            default:
+                return item.Enzymes;
+        }
     }
 }
