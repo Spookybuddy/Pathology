@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &1473913544522755248
+--- !u!1 &6607145737753943165
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,26 +8,26 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 924687040224438058}
-  - component: {fileID: 8582580673406377497}
-  - component: {fileID: 4853329719199713180}
-  - component: {fileID: 5662166224401839155}
-  - component: {fileID: 1191270964875139339}
-  - component: {fileID: -8936678349890278961}
+  - component: {fileID: 2266916601302674250}
+  - component: {fileID: 3860757916115301541}
+  - component: {fileID: 3149735298577722135}
+  - component: {fileID: 8966084204008229984}
+  - component: {fileID: 6761932395190099537}
+  - component: {fileID: 8758745204388316870}
   m_Layer: 0
-  m_Name: HeldItem
-  m_TagString: Item
+  m_Name: GrabItem
+  m_TagString: Grab
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &924687040224438058
+--- !u!4 &2266916601302674250
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1473913544522755248}
+  m_GameObject: {fileID: 6607145737753943165}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 3, z: 0}
@@ -36,21 +36,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &8582580673406377497
+--- !u!33 &3860757916115301541
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1473913544522755248}
+  m_GameObject: {fileID: 6607145737753943165}
   m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &4853329719199713180
+--- !u!23 &3149735298577722135
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1473913544522755248}
+  m_GameObject: {fileID: 6607145737753943165}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -86,13 +86,13 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!54 &5662166224401839155
+--- !u!54 &8966084204008229984
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1473913544522755248}
+  m_GameObject: {fileID: 6607145737753943165}
   serializedVersion: 4
   m_Mass: 1
   m_Drag: 0
@@ -113,13 +113,13 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 56
   m_CollisionDetection: 0
---- !u!65 &1191270964875139339
+--- !u!65 &6761932395190099537
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1473913544522755248}
+  m_GameObject: {fileID: 6607145737753943165}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -134,13 +134,13 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &-8936678349890278961
+--- !u!114 &8758745204388316870
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1473913544522755248}
+  m_GameObject: {fileID: 6607145737753943165}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c8a2b472e4cb9ac47acfb9532365e84e, type: 3}
@@ -242,9 +242,9 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  rigid: {fileID: 5662166224401839155}
-  render: {fileID: 4853329719199713180}
-  hitbox: {fileID: 1191270964875139339}
+  rigid: {fileID: 8966084204008229984}
+  render: {fileID: 3149735298577722135}
+  hitbox: {fileID: 6761932395190099537}
   item:
     Id: 0
     Name: 

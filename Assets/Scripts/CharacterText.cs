@@ -278,7 +278,7 @@ public class CharacterText : MonoBehaviour
                     break;
                 //Jump to line immediately
                 case '+':
-                    lineIndex = GetInt(dialog[lineIndex + 1]);
+                    lineIndex = GetInt(dialog[lineIndex + 1]) - 1;
                     Continue();
                     break;
                 //Conversation will continue otherwise

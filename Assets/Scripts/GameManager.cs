@@ -199,12 +199,31 @@ public class GameManager : MonoBehaviour
         add.Id = ID;
         add.Quantity = amt;
         string name = "";
-        for (int j = 0; j < catalog[add.Id].Length; j++) {
-            if (char.IsWhiteSpace(catalog[add.Id][j])) {
-                add.Category = catalog[add.Id][j + 1];
+        for (int j = 0; j < catalog[ID].Length; j++) {
+            if (char.IsWhiteSpace(catalog[ID][j])) {
+                add.Category = catalog[ID][j + 1];
+                int x = 0;
+                string stat = "";
+                for (int i = j + 3; i < catalog[ID].Length; i++) {
+                    if (char.IsWhiteSpace(catalog[ID][i])) {
+                        switch (x) {
+                            case 0:
+                                add.Vitamin = int.Parse(stat);
+                                stat = "";
+                                break;
+                            case 1:
+                                add.Mineral = int.Parse(stat);
+                                stat = "";
+                                break;
+                            case 2:
+                                add.Enzymes = int.Parse(stat);
+                                break;
+                        }
+                        x++;
+                    } else stat += catalog[ID][i];
+                }
                 break;
-            }
-            else name += catalog[add.Id][j];
+            } else name += catalog[ID][j];
         }
         add.Name = name;
         return add;
@@ -358,6 +377,9 @@ public class GameManager : MonoBehaviour
         else pointer.transform.localPosition = new Vector3(pointer.transform.localPosition.x, 175, 0);
         InventoryText();
     }
+
+    //Returns Indexed item
+    public int GetIndex() { return indexedItem; }
 
     public int limitation() { return Mathf.Min(Inventory.Count, 10); }
 

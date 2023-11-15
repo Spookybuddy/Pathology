@@ -75,15 +75,15 @@ public class Interior : MonoBehaviour
 
                 //Take out item from inventory
                 if (invenOpen && confirm) {
-                    GameObject current = Instantiate(itemObj, mouseMoved || mouseDown ? _mousition : lockPositions[index], Quaternion.identity) as GameObject;
-                    current.GetComponent<ItemCrafting>().Create(manager.RemoveInven());
+                    GameObject current = Instantiate(itemObj, (mouseMoved || mouseDown) ? _mousition : lockPositions[index], Quaternion.identity) as GameObject;
+                    current.GetComponent<ItemCrafting>().Create(manager.RemoveInven(), false, false);
                     currently = current;
                     invenOpen = false;
                 }
 
                 //Drop item
                 if (cancel && currently != null) {
-                    currently.GetComponent<ItemCrafting>().EnableGravity(true);
+                    currently.GetComponent<ItemCrafting>().Enable(true, true);
                     currently = null;
                 }
 
@@ -93,7 +93,7 @@ public class Interior : MonoBehaviour
                 }
 
                 //Mouse drag
-                if (mouseMoved && confirm && currently != null) {
+                if ((mouseMoved || confirm) && currently != null) {
                     currently.transform.position = _mousition;
                 }
             }
@@ -146,16 +146,17 @@ public class Interior : MonoBehaviour
             manager.Advance(-1);
             inputDelay = delay;
         } else {
+            mouseDown = true;
+            //Loop through the UI inventory and check if the mouse was clicked within the bounds of any, and drag that item out
             for (int i = 0; i < clickBounds.Length; i++) {
                 if (mousition.x < clickBounds[i].position.x + 150 && mousition.x > clickBounds[i].position.x - 150) {
                     if (mousition.y < clickBounds[i].position.y + 20 && mousition.y > clickBounds[i].position.y - 20) {
                         if (i < range) {
-                            lastIndex = i - lastIndex;
-                            manager.SetIndex(lastIndex);
+                            manager.SetIndex(i - lastIndex);
+                            lastIndex = manager.GetIndex();
                             confirm = true;
                             inputDelay = delay;
                             range = manager.limitation();
-                            mouseDown = true;
                         }
                     }
                 }
@@ -249,11 +250,11 @@ public class Interior : MonoBehaviour
     public void MousePos(InputAction.CallbackContext ctx) {
         mousition = ctx.ReadValue<Vector2>();
         if (Physics.Raycast(mainCam.ScreenPointToRay(mousition), out RaycastHit hit, 20)) {
-            if (hit.transform.CompareTag("Item") && mouseDown && currently == null) {
+            if (hit.transform.CompareTag("Item") && mouseDown) {
                 currently = hit.transform.gameObject;
-                currently.GetComponent<ItemCrafting>().EnableGravity(false);
-
+                currently.GetComponent<ItemCrafting>().Enable(false, false);
             }
+            if (hit.transform.CompareTag("Grab")) hit.transform.GetComponent<ItemCrafting>().Store();
             _mousition = new Vector3(hit.point.x, hit.point.y, 4);
         }
     }
@@ -261,6 +262,9 @@ public class Interior : MonoBehaviour
         mouseMoved = (ctx.ReadValue<Vector2>().magnitude > mouseSensitivity);
     }
     public void MouseScroll(InputAction.CallbackContext ctx) {
-        if (invenOpen) manager.Scroll(-(int)(Mathf.Clamp(ctx.ReadValue<Vector2>().y, -1, 1)));
+        if (invenOpen) {
+            manager.Scroll(-(int)(Mathf.Clamp(ctx.ReadValue<Vector2>().y, -1, 1)));
+            lastIndex = manager.GetIndex();
+        }
     }
 }

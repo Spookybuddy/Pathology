@@ -8,6 +8,9 @@ public class Item
     public string Name;
     public char Category;
     public int Quantity;
+    public int Vitamin;
+    public int Mineral;
+    public int Enzymes;
 
     public void Copy(Item i)
     {
@@ -15,6 +18,9 @@ public class Item
         Name = i.Name;
         Category = i.Category;
         Quantity = i.Quantity;
+        Vitamin = i.Vitamin;
+        Mineral = i.Mineral;
+        Enzymes = i.Enzymes;
     }
 }
 
