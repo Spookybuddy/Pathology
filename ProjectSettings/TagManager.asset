@@ -8,6 +8,7 @@ TagManager:
   - Door
   - Item
   - Grab
+  - Ground
   layers:
   - Default
   - TransparentFX

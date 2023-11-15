@@ -65,7 +65,7 @@ public class GameManager : MonoBehaviour
         EXChars = savedData[0].Length / 2;
         INChars = savedData[1].Length / 2;
         volume = int.Parse(savedData[6].Substring(0, 3));
-        CMEnabled = savedData[6].Equals('1');
+        CMEnabled = (savedData[6].Substring(3, 1)).Equals("1");
         txtSpd = int.Parse(savedData[6].Substring(4, 1));
         minimap = int.Parse(savedData[6].Substring(5));
     }

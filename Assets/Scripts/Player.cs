@@ -179,9 +179,11 @@ public class Player : MonoBehaviour
             inputDelay = delay;
         } else if (CMEnabled) {
             if (Physics.Raycast(mainCam.ScreenPointToRay(mousition), out RaycastHit hit, 100) && !dialogOpen) {
-                mouseControlled = true;
-                targeted = new Vector3(hit.point.x, 0, hit.point.z);
-                inputDelay = delay;
+                if (hit.transform.CompareTag("Ground")) {
+                    mouseControlled = true;
+                    targeted = new Vector3(hit.point.x, 0, hit.point.z);
+                    inputDelay = delay;
+                }
             }
         }
     }
@@ -222,7 +224,7 @@ public class Player : MonoBehaviour
     public void Arrows(InputAction.CallbackContext ctx) { keypad = ctx.ReadValue<Vector2>(); Veck(ctx); }
     public void Stick(InputAction.CallbackContext ctx) { joystick = ctx.ReadValue<Vector2>(); Veck(ctx); }
     public void Zoom(InputAction.CallbackContext ctx) { Map(Mathf.RoundToInt(ctx.ReadValue<Vector2>().y)); if (Mathf.Abs(ctx.ReadValue<Vector2>().y) < 0.1f) zoomStop = false; }
-    public void ZoomTab(InputAction.CallbackContext ctx) { Map(); if (ctx.canceled && zoomStop) zoomStop = false; }
+    public void ZoomTab(InputAction.CallbackContext ctx) { if (ctx.performed && !zoomStop) Map(); if (ctx.canceled && zoomStop) zoomStop = false; }
     public void Dpad(InputAction.CallbackContext ctx) { dirPad = ctx.ReadValue<Vector2>(); }
     public void Sprint(InputAction.CallbackContext ctx) { sprinting = ctx.performed; Check(ctx); }
     public void Inventory(InputAction.CallbackContext ctx) { if (!paused && !dialogOpen) { opening = ctx.performed; invenOpen ^= opening; Check(ctx); } }
