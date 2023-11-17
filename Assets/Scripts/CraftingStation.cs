@@ -12,8 +12,8 @@ public class CraftingStation : MonoBehaviour
 
     //Raise item out of pot
     private bool moving;
-    private Vector3 spawn = new Vector3(0, 2, 0);
-    private Vector3 goal = new Vector3(0, 5, 0);
+    public Vector3 spawn;
+    public Vector3 goal;
 
     [Header("Prodce Item of ID when Threshold value is met")]
     public int[] threshold;
@@ -34,7 +34,7 @@ public class CraftingStation : MonoBehaviour
     void Update()
     {
         if (moving) {
-            if (current.transform.position.y < goal.y) current.transform.position = Vector3.MoveTowards(current.transform.position, goal, Time.deltaTime * 10);
+            if (current.transform.position.y < goal.y) current.transform.position = Vector3.MoveTowards(current.transform.position, goal, Time.deltaTime * 7.5f);
             else moving = false;
         }
     }
@@ -48,6 +48,7 @@ public class CraftingStation : MonoBehaviour
                 current = Instantiate(itemPrefab, spawn, Quaternion.identity);
                 current.GetComponent<ItemCrafting>().Create(ParseCatalog(productID[i]), false, true);
                 moving = true;
+                mixValue = 0;
             }
         }
     }
