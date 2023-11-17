@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.IO;
+using Unity.VisualScripting;
 
 [System.Serializable]
 public class Item
@@ -8,6 +9,9 @@ public class Item
     public string Name;
     public char Category;
     public int Quantity;
+    public int Vitamin;
+    public int Mineral;
+    public int Enzymes;
 
     public void Copy(Item i)
     {
@@ -15,6 +19,9 @@ public class Item
         Name = i.Name;
         Category = i.Category;
         Quantity = i.Quantity;
+        Vitamin = i.Vitamin;
+        Mineral = i.Mineral;
+        Enzymes = i.Enzymes;
     }
 }
 
@@ -25,6 +32,15 @@ public class ItemScript : MonoBehaviour
     private string read;
     private bool spawn;
     private Item item;
+
+    //Visual aid
+    private Renderer visibility;
+    private GameObject glow;
+    private float lerp;
+    private float delta;
+    private Vector3 start;
+    private Vector3 end;
+    public Material[] itemIcons;
 
     //To be modified by the level design
     public int saveIndex;
@@ -42,9 +58,36 @@ public class ItemScript : MonoBehaviour
 
         //Get the item from the catalog using the manager
         item = manager.ParseCatalog(itemId, itemAmount);
+
+        //Update visual aspects: Outline, Image, Bob
+        visibility = GetComponent<Renderer>();
+        visibility.material = itemIcons[item.Id];
+        glow = transform.GetChild(0).gameObject;
+        glow.SetActive(false);
+        start = new Vector3(transform.position.x, transform.position.y + 0.2f, transform.position.z);
+        end = new Vector3(transform.position.x, transform.position.y - 0.2f, transform.position.z);
     }
 
-    public Item Pickup() { return item; }
+    private void Update()
+    {
+        //Bob up and down only when visible
+        if (visibility.isVisible) {
+            lerp = (lerp + Time.deltaTime) % 4;
+            delta = Mathf.Abs(lerp - 2) / 2;
+            transform.position = Vector3.Lerp(start, end, delta);
+        }
+    }
+
+    public Item Pickup()
+    {
+        glow.SetActive(true);
+        return item;
+    }
+
+    public void Disable()
+    {
+        glow.SetActive(false);
+    }
 
     //Call function when picked up
     void OnDestroy()

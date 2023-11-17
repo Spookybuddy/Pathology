@@ -15,6 +15,7 @@ public class MainManager : MonoBehaviour
     public string settings;
     public int volume;
     public bool clickMove;
+    private bool clickToggle;
     public int txtSpd;
 
     //Menu visuals
@@ -32,6 +33,7 @@ public class MainManager : MonoBehaviour
         data = File.ReadAllLines(filename);
         settings = data[6];
         menuUp = true;
+        clickToggle = false;
     }
 
     //Read in and set all the values from the save file
@@ -82,7 +84,7 @@ public class MainManager : MonoBehaviour
 
     //Toggle click movement active - BUG: Called when toggle display is changed; Fix soon
     public void ToggleClick() {
-        clickMove = !clickMove;
+        if (clickToggle) clickMove = !clickMove;
         Save();
     }
 
@@ -100,6 +102,7 @@ public class MainManager : MonoBehaviour
         toggle.isOn = clickMove;
         volumeLvl.value = volume;
         speed.text = texts[txtSpd];
+        clickToggle = true;
     }
 
     //Exit the game
