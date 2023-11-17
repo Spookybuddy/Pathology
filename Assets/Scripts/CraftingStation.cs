@@ -6,6 +6,8 @@ public class CraftingStation : MonoBehaviour
     public int Station;
     public int mixValue;
     public GameObject itemPrefab;
+    public Animator anime;
+    private bool close;
     private GameObject current;
     private string file = "/Catalog.txt";
     private string[] catalog;
@@ -44,11 +46,16 @@ public class CraftingStation : MonoBehaviour
         mixValue += other.GetComponent<ItemCrafting>().GetData(Station);
         Destroy(other.gameObject);
         for (int i = 0; i < threshold.Length; i++) {
+            if (!close) close = (mixValue - threshold[i] < 4 && mixValue - threshold[i] > -4);
+            if (anime != null) anime.SetBool("Boiling", close);
+
             if (mixValue == threshold[i]) {
                 current = Instantiate(itemPrefab, spawn, Quaternion.identity);
                 current.GetComponent<ItemCrafting>().Create(ParseCatalog(productID[i]), false, true);
                 moving = true;
                 mixValue = 0;
+                close = false;
+                anime.SetBool("Boiling", close);
             }
         }
     }
