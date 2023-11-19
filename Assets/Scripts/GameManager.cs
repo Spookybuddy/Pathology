@@ -65,7 +65,7 @@ public class GameManager : MonoBehaviour
         EXChars = savedData[0].Length / 2;
         INChars = savedData[1].Length / 2;
         volume = int.Parse(savedData[6].Substring(0, 3));
-        CMEnabled = savedData[6].Equals('1');
+        CMEnabled = (savedData[6].Substring(3, 1)).Equals("1");
         txtSpd = int.Parse(savedData[6].Substring(4, 1));
         minimap = int.Parse(savedData[6].Substring(5));
     }
@@ -199,12 +199,31 @@ public class GameManager : MonoBehaviour
         add.Id = ID;
         add.Quantity = amt;
         string name = "";
-        for (int j = 0; j < catalog[add.Id].Length; j++) {
-            if (char.IsWhiteSpace(catalog[add.Id][j])) {
-                add.Category = catalog[add.Id][j + 1];
+        for (int j = 0; j < catalog[ID].Length; j++) {
+            if (char.IsWhiteSpace(catalog[ID][j])) {
+                add.Category = catalog[ID][j + 1];
+                int x = 0;
+                string stat = "";
+                for (int i = j + 3; i < catalog[ID].Length; i++) {
+                    if (char.IsWhiteSpace(catalog[ID][i])) {
+                        switch (x) {
+                            case 0:
+                                add.Vitamin = int.Parse(stat);
+                                stat = "";
+                                break;
+                            case 1:
+                                add.Mineral = int.Parse(stat);
+                                stat = "";
+                                break;
+                            case 2:
+                                add.Enzymes = int.Parse(stat);
+                                break;
+                        }
+                        x++;
+                    } else stat += catalog[ID][i];
+                }
                 break;
-            }
-            else name += catalog[add.Id][j];
+            } else name += catalog[ID][j];
         }
         add.Name = name;
         return add;
@@ -263,12 +282,30 @@ public class GameManager : MonoBehaviour
         InventorySort(false);
     }
 
+    public void AddInven(Item i)
+    {
+        nearbyItem = i;
+        AddInven();
+    }
+
     //Add a new item of id & amount
     public void AddInven(int item, int amt)
     {
         if (Inventory.Exists(x => x.Id == item)) Inventory.Find(x => x.Id == item).Quantity += amt;
         else Inventory.Add(ParseCatalog(item, amt));
         InventorySort(false);
+    }
+
+    //Removes Item at the manager index and returns the item data
+    public Item RemoveInven()
+    {
+        Item temp = new Item();
+        temp.Copy(Inventory[indexedItem]);
+        temp.Quantity = 1;
+        Inventory[indexedItem].Quantity--;
+        if (Inventory[indexedItem].Quantity < 1) Inventory.Remove(Inventory[indexedItem]);
+        InventorySort(false);
+        return temp;
     }
 
     //Tries to remove the amount of item, and returns if it was successful or not
@@ -330,6 +367,21 @@ public class GameManager : MonoBehaviour
             InventoryText();
         }
     }
+
+    //Set inventory index via click
+    public void SetIndex(int i)
+    {
+        indexedItem = (indexedItem + i + Inventory.Count) % Inventory.Count;
+        int limit = Mathf.Min(Mathf.Max(Inventory.Count - 10, 0), indexedItem);
+        if (indexedItem > limit) pointer.transform.localPosition = new Vector3(pointer.transform.localPosition.x, 175 - (indexedItem - limit) * 45, 0);
+        else pointer.transform.localPosition = new Vector3(pointer.transform.localPosition.x, 175, 0);
+        InventoryText();
+    }
+
+    //Returns Indexed item
+    public int GetIndex() { return indexedItem; }
+
+    public int limitation() { return Mathf.Min(Inventory.Count, 10); }
 
     //Inventory slider
     public void Scrollbar()
@@ -449,6 +501,7 @@ public class GameManager : MonoBehaviour
             WriteInven();
         } else {
             WriteData(interiorChars, 1);
+            WriteInven();
         }
         StartCoroutine(Load(scene));
     }

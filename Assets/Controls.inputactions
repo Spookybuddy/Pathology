@@ -121,6 +121,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "MapZoom",
+                    "type": "Button",
+                    "id": "6a4917da-8c7c-4640-872b-dea6e6a71b0b",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -420,6 +429,17 @@
                     "action": "Rightstick",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f9e25f96-aadd-4f1c-b38b-9840d2dbeda8",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MapZoom",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -616,17 +636,6 @@
                 },
                 {
                     "name": "",
-                    "id": "ee6989a6-6f72-41ba-a8e3-1815ae5ab35e",
-                    "path": "<Gamepad>/rightTrigger",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Layout",
-                    "action": "Next",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "20cd823f-86fd-4507-96ce-debb298eaa94",
                     "path": "<Keyboard>/a",
                     "interactions": "",
@@ -640,17 +649,6 @@
                     "name": "",
                     "id": "a6e894da-bae9-4178-a26e-492b5eb87cfc",
                     "path": "<Keyboard>/leftArrow",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Layout",
-                    "action": "Prev",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "a722bb9c-82a4-4c49-9d67-dd07bec19ca5",
-                    "path": "<Gamepad>/leftTrigger",
                     "interactions": "",
                     "processors": "",
                     "groups": "Layout",
