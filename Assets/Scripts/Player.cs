@@ -43,10 +43,13 @@ public class Player : MonoBehaviour
     private bool confirm;
     private bool cancel;
     private bool colliding;
+    private bool loading;
 
     private void Awake() { manager = GameObject.FindWithTag("GameController").GetComponent<GameManager>(); }
 
-    void Start() {
+    void Start()
+    {
+        loading = true;
         canClick = true;
         zoomStop = false;
     }
@@ -76,7 +79,7 @@ public class Player : MonoBehaviour
             }
 
             //Player controls when not in menus
-            if (!opening && !invenOpen && !dialogOpen) {
+            if (!opening && !invenOpen && !dialogOpen && !loading) {
                 direction = new Vector3(_direction.x, 0, _direction.y);
                 if (direction.magnitude > 0) mouseControlled = false;
                 offset = transform.position + direction;
@@ -110,6 +113,7 @@ public class Player : MonoBehaviour
     {
         if (trigger.CompareTag("NPC")) manager.currentConvo = trigger.GetComponent<CharacterText>();
         else if (trigger.CompareTag("Door")) {
+            loading = true;
             manager.Locate(int.Parse(trigger.gameObject.name));
             manager.Scene("Program Inner");
         } else if (trigger.CompareTag("Item")) {
@@ -178,6 +182,7 @@ public class Player : MonoBehaviour
     public void ClickState(bool status) { canClick = status; }
     public void ClickMovement(bool state) { CMEnabled = state; }
     public void MinimapSetting(int scale) { mapScale = scale; UpdateMap(); }
+    public void Transitioning(bool load) { loading = load; }
 
     //Raycast a mouse click for click movement?
     private void MouseClick()

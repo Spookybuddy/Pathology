@@ -30,6 +30,7 @@ public class GameManager : MonoBehaviour
     private int sortType;
 
     //Dialog data
+    public AudioSource type;
     public TextMeshProUGUI textbox;
     public RawImage playerPortrait;
     public Texture2D[] playerEmotes;
@@ -39,6 +40,12 @@ public class GameManager : MonoBehaviour
     public GameObject[] nameplates;
     public TextMeshProUGUI npcName;
     private readonly Vector4 shade = new Vector4(0.3f, 0.3f, 0.3f, 1);
+
+    //Shader
+    public Material shader;
+    public float loadTimes;
+    private float shaderValue;
+    private float transition;
 
     //Saved data
     private string filename;
@@ -69,13 +76,20 @@ public class GameManager : MonoBehaviour
         txtSpd = int.Parse(savedData[6].Substring(4, 1));
         minimap = int.Parse(savedData[6].Substring(5));
     }
+
     void Start()
     {
+        //Start with shader full
+        transition = loadTimes - 0.001f;
+        StartCoroutine(Shade(false));
+
+        //Read data depending on which scene is loaded
         ReadPosition();
         ReadInven();
         if (player != null) {
             player.ClickMovement(CMEnabled);
             player.MinimapSetting(minimap);
+            player.Transitioning(true);
             player.transform.position = position + Vector3.back;
             ReadData(characterIDs, 0);
         } else {
@@ -467,7 +481,18 @@ public class GameManager : MonoBehaviour
 
     //Display text
     public void setDisplay(string txt) { textbox.text = txt; }
-    public void addDisplay(char chr) { textbox.text += chr; }
+    public void addDisplay(char chr)
+    {
+        int ascii = Mathf.Max((int)chr - 64, 0) % 32;
+        if (ascii > 0) TextSounds(ascii);
+        textbox.text += chr;
+    }
+
+    private void TextSounds(int index)
+    {
+        type.pitch = index / 26f + 0.5f;
+        type.PlayOneShot(type.clip, 1);
+    }
 
     //Show/Hide buttons
     public void ButtonDisplay(int amount, bool input, bool cancel)
@@ -506,15 +531,37 @@ public class GameManager : MonoBehaviour
         StartCoroutine(Load(scene));
     }
 
+    //Load scene until the transition is finished
     private IEnumerator Load(string scene)
     {
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(scene);
-        while (!asyncLoad.isDone) yield return null;
+        asyncLoad.allowSceneActivation = false;
+        transition = 0.001f;
+        StartCoroutine(Shade(true));
+        while (!asyncLoad.isDone) {
+            if (asyncLoad.progress >= 0.9f && transition >= loadTimes) asyncLoad.allowSceneActivation = true;
+            yield return null;
+        }
     }
 
+    //Pass the conversation update
     private IEnumerator ConvoDelay()
     {
-        yield return new WaitForSeconds(0.02f);
+        yield return new WaitForSeconds(loadTimes);
         currentConvo.PrintLine();
+    }
+
+    //Update the transition shader
+    private IEnumerator Shade(bool pos)
+    {
+        yield return new WaitForSeconds(Time.deltaTime);
+        if (0 < transition && transition < loadTimes) {
+            transition = Mathf.Clamp(transition + (pos ? Time.deltaTime : -Time.deltaTime), 0, loadTimes);
+            shaderValue = Mathf.Pow(transition * (10 / loadTimes), 2);
+            shader.SetFloat("_Scale", shaderValue);
+            StartCoroutine(Shade(pos));
+        } else if (player != null) {
+            player.Transitioning(false);
+        }
     }
 }
