@@ -90,7 +90,10 @@ public class GameManager : MonoBehaviour
             player.ClickMovement(CMEnabled);
             player.MinimapSetting(minimap);
             player.Transitioning(true);
-            player.transform.position = position + Vector3.back;
+
+            //Move the player down to exit doors, but raycast first to prevent clipping
+            if (Physics.Raycast(position, Vector3.forward, 2)) player.transform.position = position + Vector3.back;
+            else player.transform.position = position;
             ReadData(characterIDs, 0);
         } else {
             innerCam.transform.position = cameraLocations[location];
@@ -273,6 +276,8 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < INChars; i++) clearline += "  ";
         savedData[1] = clearline + ";";
         clearline = "";
+        //savedData[2] = "0.00 0.00";
+        //savedData[3] = " 000";
         for (int i = 0; i < savedData[4].Length; i++) clearline += "0";
         savedData[4] = clearline;
         clearline = "";
@@ -283,7 +288,7 @@ public class GameManager : MonoBehaviour
     }
 
     //Pass settings data
-    public float Sound() { return (volume / 100f); }
+    public float Sound() { return (volume / 100.0f); }
     public float TextSpeed() { return (txtSpd / -31f + 0.1f); }
     public void SetMinimap(int scale) { minimap = scale; WriteSettings(); }
 
@@ -296,6 +301,7 @@ public class GameManager : MonoBehaviour
         InventorySort(false);
     }
 
+    //Add specific item
     public void AddInven(Item i)
     {
         nearbyItem = i;
