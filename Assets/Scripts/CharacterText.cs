@@ -174,6 +174,7 @@ public class CharacterText : MonoBehaviour
                 break;
             case '+':
                 lineIndex = GetInt(dialog[lineIndex]);
+                PrintLine();
                 break;
             case '*':
             case '@':
