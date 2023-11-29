@@ -37,7 +37,7 @@ public class Interior : MonoBehaviour
     private Vector3 mousition;
     private Vector2 _direction;
     private Vector3 direction;
-    private Vector3 offset;
+    private readonly Vector3 fixedPos = new Vector3(450, 0, 0);
     private bool mouseMoved;
     private bool mouseDown;
     private float inputDelay;
@@ -56,6 +56,8 @@ public class Interior : MonoBehaviour
             //Decay input delay
             inputDelay = Mathf.Clamp01(inputDelay - Time.deltaTime);
             dialogOverlay.SetActive(dialogOpen);
+            if (opening) inventoryOverlay.transform.localPosition = fixedPos * 2;
+            if (invenOpen) inventoryOverlay.transform.localPosition = Vector3.MoveTowards(inventoryOverlay.transform.localPosition, fixedPos, Time.deltaTime * 1000);
             inventoryOverlay.SetActive(invenOpen);
 
             //Inputting directions takes the highest magnitude, and overrides click navigation
@@ -71,7 +73,6 @@ public class Interior : MonoBehaviour
             if (canCraft) {
                 direction = new Vector3(_direction.x, _direction.y, 0);
                 if (direction.magnitude > 0) mouseMoved = false;
-                offset = transform.position + direction;
 
                 //Take out item from inventory
                 if (invenOpen && confirm) {

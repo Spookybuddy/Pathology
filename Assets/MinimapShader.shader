@@ -9,7 +9,7 @@ Shader"Unlit/MinimapShader"
     {
         Tags { "RenderType"="Transparent" }
         LOD 100
-
+        Blend SrcAlpha OneMinusSrcAlpha
         Pass
         {
             CGPROGRAM
@@ -31,19 +31,20 @@ Shader"Unlit/MinimapShader"
             };
 
             sampler2D _MainTex;
+            float4 _MainTex_ST;
             sampler2D _AlphaTex;
 
             v2f vert (appdata v)
             {
                 v2f o;
                 o.vertex = UnityObjectToClipPos(v.vertex);
-                o.uv = v.uv;
+                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
                 return o;
             }
 
             fixed4 frag (v2f i) : SV_Target
             {
-                fixed4 col = tex2D(_MainTex, i.uv);
+                float4 col = tex2D(_MainTex, i.uv);
                 col.a = tex2D(_AlphaTex, i.uv).a;
                 return col;
             }
