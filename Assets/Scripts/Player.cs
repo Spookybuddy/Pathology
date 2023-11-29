@@ -135,6 +135,7 @@ public class Player : MonoBehaviour
         else if (trigger.CompareTag("Door")) {
             loading = true;
             manager.Locate(int.Parse(trigger.gameObject.name));
+            //Change to build scenes
             manager.Scene("Program Inner");
         } else if (trigger.CompareTag("Item")) {
             hoverItem = true;
