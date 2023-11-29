@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -6,6 +7,8 @@ public class Player : MonoBehaviour
     public GameManager manager;
     public Camera mainCam;
     public Camera miniCam;
+    public AudioSource source;
+    public AudioClip[] sounds;
     public GameObject dialogOverlay;
     public GameObject inventoryOverlay;
     public GameObject minimapOverlay;
@@ -43,10 +46,14 @@ public class Player : MonoBehaviour
     private bool confirm;
     private bool cancel;
     private bool colliding;
+    private bool loading;
+    private bool stepping;
 
     private void Awake() { manager = GameObject.FindWithTag("GameController").GetComponent<GameManager>(); }
 
-    void Start() {
+    void Start()
+    {
+        loading = true;
         canClick = true;
         zoomStop = false;
     }
@@ -76,19 +83,35 @@ public class Player : MonoBehaviour
             }
 
             //Player controls when not in menus
-            if (!opening && !invenOpen && !dialogOpen) {
+            if (!opening && !invenOpen && !dialogOpen && !loading) {
                 direction = new Vector3(_direction.x, 0, _direction.y);
                 if (direction.magnitude > 0) mouseControlled = false;
                 offset = transform.position + direction;
-
-                if (mouseControlled) transform.position = Vector3.MoveTowards(transform.position, targeted, Time.deltaTime * moveSpd * (sprinting ? 2 : 1));
 
                 //Collision detection from 3 points
                 if (Physics.Raycast(transform.position + new Vector3(0.33f, 0, 0), direction, 1)) colliding = true;
                 else if (Physics.Raycast(transform.position - new Vector3(0.33f, 0, 0), direction, 1)) colliding = true;
                 else if (Physics.Raycast(transform.position + new Vector3(0, 0, 0.15f), direction, 1)) colliding = true;
                 else colliding = false;
-                if (!colliding && !mouseControlled) transform.position = Vector3.MoveTowards(transform.position, offset, Time.deltaTime * moveSpd * (sprinting ? 2 : 1));
+
+                //Mouse collision detection
+                if (Physics.Raycast(transform.position, (targeted - transform.position).normalized, 1)) mouseControlled = false;
+
+                //Move if not going to collide
+                if (!colliding) {
+                    //Play sound
+                    if (!stepping && (mouseControlled || direction.magnitude > 0)) {
+                        stepping = true;
+                        StartCoroutine(StepSound());
+                    }
+
+                    //Move by mouse or controls
+                    if (mouseControlled) {
+                        transform.position = Vector3.MoveTowards(transform.position, targeted, Time.deltaTime * moveSpd * (sprinting ? 2 : 1));
+                        if (Vector3.Distance(transform.position, targeted) < 0.1f) mouseControlled = false;
+                    }
+                    else transform.position = Vector3.MoveTowards(transform.position, offset, Time.deltaTime * moveSpd * (sprinting ? 2 : 1));
+                }
             }
         }
     }
@@ -110,6 +133,7 @@ public class Player : MonoBehaviour
     {
         if (trigger.CompareTag("NPC")) manager.currentConvo = trigger.GetComponent<CharacterText>();
         else if (trigger.CompareTag("Door")) {
+            loading = true;
             manager.Locate(int.Parse(trigger.gameObject.name));
             manager.Scene("Program Inner");
         } else if (trigger.CompareTag("Item")) {
@@ -178,6 +202,7 @@ public class Player : MonoBehaviour
     public void ClickState(bool status) { canClick = status; }
     public void ClickMovement(bool state) { CMEnabled = state; }
     public void MinimapSetting(int scale) { mapScale = scale; UpdateMap(); }
+    public void Transitioning(bool load) { loading = load; }
 
     //Raycast a mouse click for click movement?
     private void MouseClick()
@@ -202,8 +227,6 @@ public class Player : MonoBehaviour
         if (zoomStop || Mathf.Abs(val) < 1) return;
         mapScale = Mathf.Clamp(mapScale + val, 1, 3);
         UpdateMap();
-        manager.SetMinimap(mapScale);
-        zoomStop = true;
     }
 
     private void Map()
@@ -211,11 +234,14 @@ public class Player : MonoBehaviour
         if (zoomStop) return;
         mapScale = Mathf.Clamp((mapScale + 1) % 4, 1, 3);
         UpdateMap();
+    }
+
+    public void UpdateMap()
+    {
+        miniCam.orthographicSize = mapScale * 5;
         manager.SetMinimap(mapScale);
         zoomStop = true;
     }
-
-    public void UpdateMap() { miniCam.orthographicSize = mapScale * 5; }
 
     //Update the menus with given bools
     private void Menus(bool P, bool I, bool M, bool D)
@@ -224,6 +250,19 @@ public class Player : MonoBehaviour
         inventoryOverlay.SetActive(I);
         minimapOverlay.SetActive(M);
         dialogOverlay.SetActive(D);
+    }
+
+    //Play the step sound only when walking at set intervals
+    private IEnumerator StepSound()
+    {
+        if (mouseControlled || direction.magnitude > 0) {
+            source.pitch = Random.Range(0.875f, 1.125f);
+            if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit tile, 2)) {
+                if (tile.transform.CompareTag("Ground")) source.PlayOneShot(sounds[int.Parse(tile.transform.name)], manager.Sound());
+            }
+        }
+        yield return new WaitForSeconds(sprinting ? 0.25f : 0.5f);
+        stepping = false;
     }
 
     //Input action functions
