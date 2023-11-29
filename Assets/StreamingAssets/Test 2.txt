@@ -6,7 +6,10 @@ I would like to take that potato.
 >9 No it's my potato.
 Oh why thank you!
 -5
-@
++12
 Please?
 >6 Fine.
+@
+Secret dialog option.
+!Hooray
 @

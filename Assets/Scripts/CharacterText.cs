@@ -11,7 +11,7 @@ public class CharacterText : MonoBehaviour
     public Texture2D[] portraits;
     public TextMeshPro person;
 
-    public int lineIndex;
+    private int lineIndex;
     private string[] dialog;
     private float txtSpd;
 
@@ -23,6 +23,7 @@ public class CharacterText : MonoBehaviour
     private bool changePlay;
     private bool changeNPC;
     private bool printing;
+    private int toLine;
 
     void Awake() { manager = GameObject.FindWithTag("GameController").GetComponent<GameManager>(); }
 
@@ -96,6 +97,7 @@ public class CharacterText : MonoBehaviour
         printing = false;
         confirmable = false;
         manager.MouseClick(true);
+        if (toLine > 0) lineIndex = toLine;
         manager.PlayerLeaves();
     }
 
@@ -170,6 +172,11 @@ public class CharacterText : MonoBehaviour
                 if (CheckEvent()) lineIndex++;
                 else End();
                 break;
+            case '+':
+                lineIndex = GetInt(dialog[lineIndex]);
+                PrintLine();
+                break;
+            case '*':
             case '@':
                 End();
                 break;
@@ -263,6 +270,16 @@ public class CharacterText : MonoBehaviour
                 case '~':
                     changeNPC = true;
                     lineIndex++;
+                    Continue();
+                    break;
+                //Jump to line once player leaves
+                case '*':
+                    toLine = GetInt(dialog[lineIndex + 1]);
+                    End();
+                    break;
+                //Jump to line immediately
+                case '+':
+                    lineIndex = GetInt(dialog[lineIndex + 1]) - 1;
                     Continue();
                     break;
                 //Conversation will continue otherwise
