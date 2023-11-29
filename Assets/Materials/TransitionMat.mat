@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Shader
+  m_Name: TransitionMat
   m_Shader: {fileID: 4800000, guid: 55878ad42391ca34a808ec49cb14d77d, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0

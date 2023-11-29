@@ -22,6 +22,7 @@ public class Player : MonoBehaviour
     private Vector3 direction;
     private Vector3 targeted;
     private Vector3 offset;
+    private readonly Vector3 fixedPos = new Vector3(450, 0, 0);
     private bool mouseControlled;
     private bool mouseMoved;
     private float mouseDecay;
@@ -72,11 +73,12 @@ public class Player : MonoBehaviour
             Cursor.visible = (mouseMoved || mouseDecay > 0);
             mouseDecay = Mathf.Clamp01(mouseDecay - Time.deltaTime);
             Menus(false, invenOpen, !invenOpen && !dialogOpen, dialogOpen);
+            if (invenOpen) inventoryOverlay.transform.localPosition = Vector3.MoveTowards(inventoryOverlay.transform.localPosition, fixedPos, Time.deltaTime * 1000);
 
             //Inputting directions takes the highest magnitude, and overrides click navigation
             _direction = VectorGreater(keypad, joystick);
 
-            //Pass movement data to invenetory when opened
+            //Pass movement data to inventory when opened
             if (invenOpen && _direction.magnitude != 0 && inputDelay == 0) {
                 inputDelay = delay / 2;
                 manager.Scroll(-(int)(Mathf.Clamp(_direction.y, -1, 1)));
@@ -239,7 +241,7 @@ public class Player : MonoBehaviour
 
     public void UpdateMap()
     {
-        miniCam.orthographicSize = mapScale * 5;
+        miniCam.orthographicSize = mapScale * 5 + 5;
         manager.SetMinimap(mapScale);
         zoomStop = true;
     }
@@ -269,20 +271,51 @@ public class Player : MonoBehaviour
     //Input action functions
     private void Check(InputAction.CallbackContext ctx) { manager.ControllerButtons(ctx.control.device.displayName); }
     private void Veck(InputAction.CallbackContext ctx) { if (ctx.ReadValue<Vector2>() != Vector2.zero) Check(ctx); }
-    public void Arrows(InputAction.CallbackContext ctx) { keypad = ctx.ReadValue<Vector2>(); Veck(ctx); }
-    public void Stick(InputAction.CallbackContext ctx) { joystick = ctx.ReadValue<Vector2>(); Veck(ctx); }
-    public void Zoom(InputAction.CallbackContext ctx) { Map(Mathf.RoundToInt(ctx.ReadValue<Vector2>().y)); if (Mathf.Abs(ctx.ReadValue<Vector2>().y) < 0.1f) zoomStop = false; }
-    public void ZoomTab(InputAction.CallbackContext ctx) { if (ctx.performed && !zoomStop) Map(); if (ctx.canceled && zoomStop) zoomStop = false; }
+    public void Arrows(InputAction.CallbackContext ctx) {
+        keypad = ctx.ReadValue<Vector2>();
+        Veck(ctx);
+    }
+    public void Stick(InputAction.CallbackContext ctx) {
+        joystick = ctx.ReadValue<Vector2>();
+        Veck(ctx);
+    }
+    public void Zoom(InputAction.CallbackContext ctx) {
+        Map(Mathf.RoundToInt(ctx.ReadValue<Vector2>().y));
+        if (Mathf.Abs(ctx.ReadValue<Vector2>().y) < 0.1f) zoomStop = false;
+    }
+    public void ZoomTab(InputAction.CallbackContext ctx) {
+        if (ctx.performed && !zoomStop) Map();
+        if (ctx.canceled && zoomStop) zoomStop = false;
+    }
     public void Dpad(InputAction.CallbackContext ctx) { dirPad = ctx.ReadValue<Vector2>(); }
-    public void Sprint(InputAction.CallbackContext ctx) { sprinting = ctx.performed; Check(ctx); }
-    public void Inventory(InputAction.CallbackContext ctx) { if (!paused && !dialogOpen) { opening = ctx.performed; invenOpen ^= opening; Check(ctx); } }
-    public void Next(InputAction.CallbackContext ctx) { confirm = ctx.performed; Check(ctx); }
-    public void Back(InputAction.CallbackContext ctx) { cancel = ctx.performed; Check(ctx); }
+    public void Sprint(InputAction.CallbackContext ctx) {
+        sprinting = ctx.performed;
+        Check(ctx);
+    }
+    public void Inventory(InputAction.CallbackContext ctx) {
+        if (!paused && !dialogOpen) {
+            opening = ctx.performed;
+            invenOpen ^= opening;
+            if (opening) inventoryOverlay.transform.localPosition = fixedPos * 2;
+            Check(ctx);
+        }
+    }
+    public void Next(InputAction.CallbackContext ctx) {
+        confirm = ctx.performed;
+        Check(ctx);
+    }
+    public void Back(InputAction.CallbackContext ctx) {
+        cancel = ctx.performed;
+        Check(ctx);
+    }
     public void Pause() { if (!dialogOpen) paused = true; }
     public void Unpause() { paused = false; }
     public void InvertPause() { paused = !paused; }
     public void Mouse(InputAction.CallbackContext ctx) { if (ctx.performed) MouseClick(); }
     public void MousePos(InputAction.CallbackContext ctx) { mousition = ctx.ReadValue<Vector2>(); }
-    public void MouseDelta(InputAction.CallbackContext ctx) { mouseMoved = (ctx.ReadValue<Vector2>().magnitude > mouseSensitivity); mouseDecay = 0.4f; }
+    public void MouseDelta(InputAction.CallbackContext ctx) {
+        mouseMoved = (ctx.ReadValue<Vector2>().magnitude > mouseSensitivity);
+        mouseDecay = 0.4f;
+    }
     public void MouseScroll(InputAction.CallbackContext ctx) { if (invenOpen) manager.Scroll(-(int)(Mathf.Clamp(ctx.ReadValue<Vector2>().y, -1, 1))); }
 }

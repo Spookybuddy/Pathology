@@ -27,6 +27,18 @@ public class MainManager : MonoBehaviour
     public TextMeshProUGUI speed;
     private readonly string[] texts = new string[] { "Slow", "Normal", "Fast", "Instant" };
 
+    //Menu controls
+    private Vector2 joystick;
+    private Vector2 keyboard;
+    private Vector2 dirpad;
+    public Vector2 _direction;
+    private bool inputting;
+    public int horizontal;
+    public int vertical;
+    public GameObject[] MM;
+    public GameObject[] SM;
+    private float delay;
+
     void Awake()
     {
         filename = Application.streamingAssetsPath + "/SaveData.txt";
@@ -45,6 +57,22 @@ public class MainManager : MonoBehaviour
         SetValues();
         Title.SetActive(true);
         Options.SetActive(false);
+    }
+
+    //Event system because it never works
+    void Update()
+    {
+        _direction = VectorGreater(joystick, keyboard);
+        _direction = VectorGreater(_direction, dirpad);
+        if (_direction.magnitude > 0.1f) inputting = true;
+        delay = Mathf.Clamp01(delay - Time.deltaTime);
+        if (inputting) {
+            if (delay == 0) {
+                vertical = (int)(vertical + _direction.y) % (menuUp ? MM.Length : SM.Length);
+                delay = 0.167f;
+                inputting = false;
+            }
+        }
     }
 
     //Write the vales to the save data & file
@@ -73,6 +101,7 @@ public class MainManager : MonoBehaviour
         menuUp = !menuUp;
         Title.SetActive(menuUp);
         Options.SetActive(!menuUp);
+        vertical = 0;
     }
 
     //Volume of 100%
@@ -122,5 +151,48 @@ public class MainManager : MonoBehaviour
     {
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(scene);
         while (!asyncLoad.isDone) yield return null;
+    }
+
+    //Returns greatest magnitude X Y of Vector2. This allows for dual controller use without overriding the other
+    private Vector2 VectorGreater(Vector2 A, Vector2 B)
+    {
+        if (Mathf.Abs(A.x) > Mathf.Abs(B.x)) {
+            if (Mathf.Abs(A.y) > Mathf.Abs(B.y)) return A;
+            else return new Vector2(A.x, B.y);
+        } else {
+            if (Mathf.Abs(A.y) > Mathf.Abs(B.y)) return new Vector2(B.x, A.y);
+            else return B;
+        }
+    }
+
+    private void Input()
+    {
+        vertical = (int)(vertical + _direction.y) % (menuUp ? MM.Length : SM.Length);
+        inputting = true;
+        delay = 0.25f;
+    }
+
+    public void Joystick(InputAction.CallbackContext ctx) {
+        joystick = ctx.ReadValue<Vector2>();
+        if (ctx.performed) Input();
+    }
+    public void Keypad(InputAction.CallbackContext ctx) {
+        keyboard = ctx.ReadValue<Vector2>();
+        if (ctx.performed) Input();
+    }
+    public void DPad(InputAction.CallbackContext ctx) {
+        dirpad = ctx.ReadValue<Vector2>();
+        if (ctx.performed) Input();
+    }
+    public void Confirm(InputAction.CallbackContext ctx)
+    {
+        if (ctx.performed && !inputting) {
+            Debug.Log(menuUp ? MM[Mathf.Abs(vertical)].name : "No");
+            Input();
+        }
+    }
+    public void Cancel(InputAction.CallbackContext ctx)
+    {
+        if (ctx.performed && !inputting) Input();
     }
 }
