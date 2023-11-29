@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
@@ -10,11 +11,9 @@ public class Interior : MonoBehaviour
     public GameObject dialogOverlay;
     public GameObject itemObj;
     public GameObject currently;
-    public Vector3 itemPadding;
-    public Vector3 invenPadding;
+    public Transform[] clickBounds;
     public Vector3[] lockPositions;
 
-    public int moveSpd;
     public float mouseSensitivity;
     public float delay;
 
@@ -27,15 +26,20 @@ public class Interior : MonoBehaviour
     private bool confirm;
     private bool cancel;
     private bool sprinting;
-    public int index;
+    private bool changeIndex;
+    private int index;
+    private int lastIndex;
+    public int range;
 
     private Vector2 joystick;
     private Vector2 dirPad;
+    private Vector3 _mousition;
     private Vector3 mousition;
     private Vector2 _direction;
     private Vector3 direction;
     private Vector3 offset;
     private bool mouseMoved;
+    private bool mouseDown;
     private float inputDelay;
     private bool canClick;
 
@@ -71,17 +75,26 @@ public class Interior : MonoBehaviour
 
                 //Take out item from inventory
                 if (invenOpen && confirm) {
-                    GameObject current = Instantiate(itemObj, mouseMoved ? mousition : lockPositions[index], Quaternion.identity) as GameObject;
-                    current.GetComponent<ItemCrafting>().Create(manager.RemoveInven());
+                    GameObject current = Instantiate(itemObj, (mouseMoved || mouseDown) ? _mousition : lockPositions[index], Quaternion.identity) as GameObject;
+                    current.GetComponent<ItemCrafting>().Create(manager.RemoveInven(), false, false);
                     currently = current;
                     invenOpen = false;
                 }
 
-                //Click and hold the item hostage
-                if (mouseMoved && confirm && currently != null) {
-                    currently.transform.position = mousition;
-                } else {
-                    
+                //Drop item
+                if (cancel && currently != null) {
+                    currently.GetComponent<ItemCrafting>().Enable(true, true);
+                    currently = null;
+                }
+
+                //Move controller
+                if (!mouseMoved && !mouseDown && !cancel && currently != null) {
+                    currently.transform.position = Vector3.MoveTowards(currently.transform.position, lockPositions[index], Time.deltaTime * 16);
+                }
+
+                //Mouse drag
+                if ((mouseMoved || confirm) && currently != null) {
+                    currently.transform.position = _mousition;
                 }
             }
 
@@ -117,6 +130,7 @@ public class Interior : MonoBehaviour
         canCraft = craft;
         dialogOpen = !craft;
         invenOpen = false;
+        range = manager.limitation();
     }
 
     //Exit the scene
@@ -125,15 +139,28 @@ public class Interior : MonoBehaviour
         manager.Scene("Programming");
     }
 
-    //Raycast a mouse click for click movement?
+    //Mouse position from screen to determine click and drag
     private void MouseClick()
     {
         if (dialogOpen && canClick && inputDelay == 0) {
             manager.Advance(-1);
             inputDelay = delay;
         } else {
-            confirm = true;
-            inputDelay = delay;
+            mouseDown = true;
+            //Loop through the UI inventory and check if the mouse was clicked within the bounds of any, and drag that item out
+            for (int i = 0; i < clickBounds.Length; i++) {
+                if (mousition.x < clickBounds[i].position.x + 150 && mousition.x > clickBounds[i].position.x - 150) {
+                    if (mousition.y < clickBounds[i].position.y + 20 && mousition.y > clickBounds[i].position.y - 20) {
+                        if (i < range) {
+                            manager.SetIndex(i - lastIndex);
+                            lastIndex = manager.GetIndex();
+                            confirm = true;
+                            inputDelay = delay;
+                            range = manager.limitation();
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -149,21 +176,95 @@ public class Interior : MonoBehaviour
         }
     }
 
+    //Move between the holding positions, only when inventory is not open
+    private void IndexState(bool action, bool check, int change)
+    {
+        if (invenOpen) {
+            index = 2;
+            return;
+        }
+        if (action && changeIndex == check) changeIndex = !check;
+        if (action != check) index = (index + change) % 3;
+    }
+
     public void ClickState(bool status) { canClick = status; }
 
-    //Input action functions
-    private void Check(InputAction.CallbackContext ctx) { manager.ControllerButtons(ctx.control.device.displayName); }
-    private void Veck(InputAction.CallbackContext ctx) { if (ctx.ReadValue<Vector2>() != Vector2.zero) Check(ctx); }
-    public void Stick(InputAction.CallbackContext ctx) { joystick = ctx.ReadValue<Vector2>(); Veck(ctx); }
-    public void Dpad(InputAction.CallbackContext ctx) { dirPad = ctx.ReadValue<Vector2>(); }
-    public void Inventory(InputAction.CallbackContext ctx) { if (canCraft) { opening = ctx.performed; invenOpen ^= opening; Check(ctx); } }
-    public void Sprint(InputAction.CallbackContext ctx) { sprinting = ctx.performed; Check(ctx); }
-    public void Next(InputAction.CallbackContext ctx) { confirm = ctx.performed; Check(ctx); }
-    public void Back(InputAction.CallbackContext ctx) { cancel = ctx.performed; Check(ctx); }
-    public void Left(InputAction.CallbackContext ctx) { index = (index + 3) % 4; }
-    public void Right(InputAction.CallbackContext ctx) { index = (index + 1) % 4; }
-    public void Mouse(InputAction.CallbackContext ctx) { if (ctx.performed) MouseClick(); }
-    public void MousePos(InputAction.CallbackContext ctx) { mousition = ctx.ReadValue<Vector2>(); }
-    public void MouseDelta(InputAction.CallbackContext ctx) { mouseMoved = (ctx.ReadValue<Vector2>().magnitude > mouseSensitivity); }
-    public void MouseScroll(InputAction.CallbackContext ctx) { if (invenOpen) manager.Scroll(-(int)(Mathf.Clamp(ctx.ReadValue<Vector2>().y, -1, 1))); }
+    private IEnumerator MouseUp()
+    {
+        yield return new WaitForSeconds(inputDelay);
+        cancel = false;
+    }
+
+    //Input action functions ----------------------------------------------------------------------------------------------------
+    private void Check(InputAction.CallbackContext ctx) {
+        manager.ControllerButtons(ctx.control.device.displayName);
+    }
+    private void Veck(InputAction.CallbackContext ctx) {
+        if (ctx.ReadValue<Vector2>() != Vector2.zero) Check(ctx);
+    }
+    public void Stick(InputAction.CallbackContext ctx) {
+        joystick = ctx.ReadValue<Vector2>();
+        Veck(ctx);
+    }
+    public void Dpad(InputAction.CallbackContext ctx) {
+        dirPad = ctx.ReadValue<Vector2>();
+    }
+    public void Inventory(InputAction.CallbackContext ctx) {
+        if (canCraft) {
+            opening = ctx.performed;
+            invenOpen ^= opening;
+            Check(ctx);
+        }
+    }
+    public void Sprint(InputAction.CallbackContext ctx) {
+        sprinting = ctx.performed;
+        Check(ctx);
+    }
+    public void Next(InputAction.CallbackContext ctx) {
+        confirm = ctx.performed;
+        Check(ctx);
+    }
+    public void Back(InputAction.CallbackContext ctx) {
+        cancel = ctx.performed;
+        Check(ctx);
+    }
+    public void Left(InputAction.CallbackContext ctx) {
+        IndexState(ctx.performed, false, 2);
+        IndexState(ctx.canceled, true, 0);
+    }
+    public void Right(InputAction.CallbackContext ctx) {
+        IndexState(ctx.performed, false, 1);
+        IndexState(ctx.canceled, true, 0);
+    }
+    public void Mouse(InputAction.CallbackContext ctx) {
+        if (ctx.performed) MouseClick();
+        if (ctx.canceled) {
+            confirm = false;
+            mouseDown = false;
+            if (canCraft) {
+                cancel = true;
+                StartCoroutine(MouseUp());
+            }
+        }
+    }
+    public void MousePos(InputAction.CallbackContext ctx) {
+        mousition = ctx.ReadValue<Vector2>();
+        if (Physics.Raycast(mainCam.ScreenPointToRay(mousition), out RaycastHit hit, 20)) {
+            if (hit.transform.CompareTag("Item") && mouseDown) {
+                currently = hit.transform.gameObject;
+                currently.GetComponent<ItemCrafting>().Enable(false, false);
+            }
+            if (hit.transform.CompareTag("Grab")) hit.transform.GetComponent<ItemCrafting>().Store();
+            _mousition = new Vector3(hit.point.x, hit.point.y, 4);
+        }
+    }
+    public void MouseDelta(InputAction.CallbackContext ctx) {
+        mouseMoved = (ctx.ReadValue<Vector2>().magnitude > mouseSensitivity);
+    }
+    public void MouseScroll(InputAction.CallbackContext ctx) {
+        if (invenOpen) {
+            manager.Scroll(-(int)(Mathf.Clamp(ctx.ReadValue<Vector2>().y, -1, 1)));
+            lastIndex = manager.GetIndex();
+        }
+    }
 }
