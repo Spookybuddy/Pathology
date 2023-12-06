@@ -1,7 +1,6 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using TMPro;
 
 public class Interior : MonoBehaviour
 {
@@ -250,13 +249,15 @@ public class Interior : MonoBehaviour
     }
     public void MousePos(InputAction.CallbackContext ctx) {
         mousition = ctx.ReadValue<Vector2>();
-        if (Physics.Raycast(mainCam.ScreenPointToRay(mousition), out RaycastHit hit, 20)) {
-            if (hit.transform.CompareTag("Item") && mouseDown) {
-                currently = hit.transform.gameObject;
-                currently.GetComponent<ItemCrafting>().Enable(false, false);
+        if (mainCam != null) {
+            if (Physics.Raycast(mainCam.ScreenPointToRay(mousition), out RaycastHit hit, 20)) {
+                if (hit.transform.CompareTag("Item") && mouseDown) {
+                    currently = hit.transform.gameObject;
+                    currently.GetComponent<ItemCrafting>().Enable(false, false);
+                }
+                if (hit.transform.CompareTag("Grab")) hit.transform.GetComponent<ItemCrafting>().Store();
+                _mousition = new Vector3(hit.point.x, hit.point.y, 4);
             }
-            if (hit.transform.CompareTag("Grab")) hit.transform.GetComponent<ItemCrafting>().Store();
-            _mousition = new Vector3(hit.point.x, hit.point.y, 4);
         }
     }
     public void MouseDelta(InputAction.CallbackContext ctx) {

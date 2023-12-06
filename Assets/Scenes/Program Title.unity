@@ -1613,16 +1613,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   settings: 
-  volume: 0
-  clickMove: 0
-  txtSpd: 0
   Title: {fileID: 1998872567}
   Options: {fileID: 350056034}
-  menuUp: 0
   volumeLvl: {fileID: 22021204}
   toggle: {fileID: 1638332499}
   speed: {fileID: 1346085854}
-  _direction: {x: 0, y: 0}
+  shader: {fileID: 2100000, guid: a40b4a75a9cf0c1488ac3021a4f3c774, type: 2}
   sensitivity: 1.4
   MM:
   - {fileID: 917494280}
@@ -1644,6 +1640,12 @@ MonoBehaviour:
   - {fileID: 930727844}
   - {fileID: 937041623}
   - {fileID: 1196606782}
+  specialPadding:
+  - {x: 200, y: 30}
+  - {x: 50, y: 50}
+  - {x: 100, y: 50}
+  - {x: 150, y: 50}
+  - {x: 150, y: 50}
 --- !u!4 &920252362
 Transform:
   m_ObjectHideFlags: 0
@@ -1852,6 +1854,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 19c305f8-3934-42f2-a114-ff4867fbbc02
     m_ActionName: UI/Return[/Keyboard/q,/Keyboard/escape]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 920252361}
+        m_TargetAssemblyTypeName: MainManager, Assembly-CSharp
+        m_MethodName: MousePosition
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 021ce09b-81f3-412f-bbce-1bff800ef746
+    m_ActionName: UI/Mouse[/Mouse/position]
   m_NeverAutoSwitchControlSchemes: 1
   m_DefaultControlScheme: Layout
   m_DefaultActionMap: UI
@@ -4399,9 +4417,9 @@ RectTransform:
   - {fileID: 1878564381}
   m_Father: {fileID: 132859580}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 640, y: 360}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &2049025163
