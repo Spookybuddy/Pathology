@@ -37,6 +37,7 @@ public class MainManager : MonoBehaviour
     public int vertical;
     public GameObject[] MM;
     public GameObject[] SM;
+    public GameObject outline;
     private float delay;
 
     void Awake()
@@ -64,15 +65,16 @@ public class MainManager : MonoBehaviour
     {
         _direction = VectorGreater(joystick, keyboard);
         _direction = VectorGreater(_direction, dirpad);
-        if (_direction.magnitude > 0.1f) inputting = true;
+        if (_direction.magnitude > 0.167f) inputting = true;
         delay = Mathf.Clamp01(delay - Time.deltaTime);
         if (inputting) {
             if (delay == 0) {
-                vertical = (int)(vertical + _direction.y) % (menuUp ? MM.Length : SM.Length);
-                delay = 0.167f;
+                vertical = (vertical - (int)(1.25f * _direction.y)) % (menuUp ? MM.Length : SM.Length);
+                delay = 0.2f;
                 inputting = false;
             }
         }
+        outline.transform.localPosition = (menuUp ? MM[vertical].transform.localPosition : SM[vertical].transform.localPosition);
     }
 
     //Write the vales to the save data & file
@@ -165,34 +167,36 @@ public class MainManager : MonoBehaviour
         }
     }
 
-    private void Input()
+    private void Input(float y)
     {
-        vertical = (int)(vertical + _direction.y) % (menuUp ? MM.Length : SM.Length);
+        if (menuUp) vertical = (vertical - (int)(1.7f * y) + MM.Length) % MM.Length;
+        else vertical = (vertical - (int)(1.7f * y) + SM.Length) % SM.Length;
         inputting = true;
-        delay = 0.25f;
+        delay = 0.3f;
     }
 
     public void Joystick(InputAction.CallbackContext ctx) {
         joystick = ctx.ReadValue<Vector2>();
-        if (ctx.performed) Input();
+        if (ctx.performed && !inputting) Input(joystick.y);
     }
     public void Keypad(InputAction.CallbackContext ctx) {
         keyboard = ctx.ReadValue<Vector2>();
-        if (ctx.performed) Input();
+        if (ctx.performed && !inputting) Input(keyboard.y);
     }
     public void DPad(InputAction.CallbackContext ctx) {
         dirpad = ctx.ReadValue<Vector2>();
-        if (ctx.performed) Input();
+        if (ctx.performed && !inputting) Input(dirpad.y);
     }
     public void Confirm(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed && !inputting) {
-            Debug.Log(menuUp ? MM[Mathf.Abs(vertical)].name : "No");
-            Input();
+        if (ctx.performed) {
+            Debug.Log(menuUp ? MM[vertical].name : "No");
         }
     }
     public void Cancel(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed && !inputting) Input();
+        if (ctx.performed) {
+            Debug.Log("Back");
+        }
     }
 }
