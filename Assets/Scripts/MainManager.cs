@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
@@ -33,11 +32,13 @@ public class MainManager : MonoBehaviour
     private Vector2 dirpad;
     public Vector2 _direction;
     private bool inputting;
-    public int horizontal;
-    public int vertical;
+    private int horizontal;
+    private int vertical;
+    public float sensitivity;
     public GameObject[] MM;
+    public GameObject[] MMO;
     public GameObject[] SM;
-    public GameObject outline;
+    public GameObject[] SMO;
     private float delay;
 
     void Awake()
@@ -58,6 +59,7 @@ public class MainManager : MonoBehaviour
         SetValues();
         Title.SetActive(true);
         Options.SetActive(false);
+        UIOverlays();
     }
 
     //Event system because it never works
@@ -68,13 +70,41 @@ public class MainManager : MonoBehaviour
         if (_direction.magnitude > 0.167f) inputting = true;
         delay = Mathf.Clamp01(delay - Time.deltaTime);
         if (inputting) {
+            UIOverlays();
             if (delay == 0) {
-                vertical = (vertical - (int)(1.25f * _direction.y)) % (menuUp ? MM.Length : SM.Length);
+                if (menuUp) {
+                    vertical = (vertical - (int)(sensitivity * _direction.y) + MM.Length) % MM.Length;
+                } else {
+                    vertical = (vertical - (int)(sensitivity * _direction.y) + SM.Length) % SM.Length;
+                    //Special cases for different UI elements
+                    switch (vertical) {
+                        case 0:
+                            horizontal = volume;
+                            horizontal = Mathf.Clamp(horizontal + (int)(sensitivity * _direction.x), 0, 100);
+                            volumeLvl.value = horizontal;
+                            break;
+                        case 2:
+                            if ((int)(sensitivity * _direction.x) != 0) {
+                                ChangeSpeed((int)(sensitivity * _direction.x));
+                                horizontal = txtSpd;
+                            }
+                            break;
+                        case 3:
+                            if ((int)(1.5f * _direction.x) != 0) vertical = 4;
+                            break;
+                        case 4:
+                            if ((int)(sensitivity * _direction.x) != 0) vertical = 3;
+                            break;
+                        default:
+                            horizontal = 0;
+                            break;
+                    }
+                }
                 delay = 0.2f;
                 inputting = false;
             }
         }
-        outline.transform.localPosition = (menuUp ? MM[vertical].transform.localPosition : SM[vertical].transform.localPosition);
+        //outline.transform.localPosition = (menuUp ? MM[vertical].transform.localPosition : SM[vertical].transform.localPosition);
     }
 
     //Write the vales to the save data & file
@@ -104,6 +134,7 @@ public class MainManager : MonoBehaviour
         Title.SetActive(menuUp);
         Options.SetActive(!menuUp);
         vertical = 0;
+        UIOverlays();
     }
 
     //Volume of 100%
@@ -167,12 +198,20 @@ public class MainManager : MonoBehaviour
         }
     }
 
+    //UI indicators
+    private void UIOverlays()
+    {
+        if (menuUp) for (int i = 0; i < MMO.Length; i++) MMO[i].SetActive(i == vertical);
+        else for (int i = 0; i < SMO.Length; i++) SMO[i].SetActive(i == vertical);
+    }
+
+    //First input with larger delay
     private void Input(float y)
     {
         if (menuUp) vertical = (vertical - (int)(1.7f * y) + MM.Length) % MM.Length;
         else vertical = (vertical - (int)(1.7f * y) + SM.Length) % SM.Length;
         inputting = true;
-        delay = 0.3f;
+        delay = 0.333f;
     }
 
     public void Joystick(InputAction.CallbackContext ctx) {
@@ -190,13 +229,28 @@ public class MainManager : MonoBehaviour
     public void Confirm(InputAction.CallbackContext ctx)
     {
         if (ctx.performed) {
-            Debug.Log(menuUp ? MM[vertical].name : "No");
+            if (menuUp) {
+                MM[vertical].GetComponent<Button>().onClick.Invoke();
+            } else {
+                switch (vertical) {
+                    case 0:
+                        break;
+                    case 1:
+                        toggle.isOn = !toggle.isOn;
+                        break;
+                    case 2:
+                        break;
+                    default:
+                        SM[vertical].GetComponent<Button>().onClick.Invoke();
+                        break;
+                }
+            }
         }
     }
     public void Cancel(InputAction.CallbackContext ctx)
     {
         if (ctx.performed) {
-            Debug.Log("Back");
+            if (!menuUp) ChangeMenu();
         }
     }
 }
