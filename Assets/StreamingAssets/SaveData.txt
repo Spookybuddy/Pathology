@@ -1,9 +1,10 @@
   ;
   ;
-!016"999#303$014%001
+0 0 
+%500
 000
 000
-000003
+100102
 
 Lines 1 & 2 = Character Dialog Line Indices
 Line 3 = Last Player Position
