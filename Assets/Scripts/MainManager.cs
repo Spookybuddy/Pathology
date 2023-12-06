@@ -51,10 +51,6 @@ public class MainManager : MonoBehaviour
 
     void Awake()
     {
-        //Start with shader full
-        transition = 0.87f;
-        StartCoroutine(Shade(false));
-
         //Read file data
         filename = Application.streamingAssetsPath + "/SaveData.txt";
         data = File.ReadAllLines(filename);
@@ -66,6 +62,11 @@ public class MainManager : MonoBehaviour
     //Read in and set all the values from the save file
     void Start()
     {
+        //Start with shader full
+        transition = 0.87f;
+        StartCoroutine(Shade(false));
+
+        //Try reading the save file
         if (!int.TryParse(settings, out int result)) settings = "100100";
         volume = int.Parse(settings.Substring(0, 3));
         clickMove = settings[3].Equals('1');
