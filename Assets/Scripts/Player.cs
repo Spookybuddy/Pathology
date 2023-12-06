@@ -50,6 +50,13 @@ public class Player : MonoBehaviour
     private bool loading;
     private bool stepping;
 
+    //Animator states
+    public Animator animate;
+    public bool walkUp;
+    public bool walkDown;
+    public bool walkLeft;
+    public bool walkRight;
+
     private void Awake() { manager = GameObject.FindWithTag("GameController").GetComponent<GameManager>(); }
 
     void Start()
@@ -99,6 +106,21 @@ public class Player : MonoBehaviour
                 //Mouse collision detection
                 if (Physics.Raycast(transform.position, (targeted - transform.position).normalized, 1)) mouseControlled = false;
 
+                //Walk animation
+                if (mouseControlled) {
+                    if (Vector3.Distance(transform.position, targeted) > 0.1f) {
+                        Walking(targeted - transform.position);
+                    } else {
+                        StopWalk();
+                    }
+                } else {
+                    if (direction.magnitude > 0) {
+                        Walking(direction);
+                    } else {
+                        StopWalk();
+                    }
+                }
+
                 //Move if not going to collide
                 if (!colliding) {
                     //Play sound
@@ -110,9 +132,13 @@ public class Player : MonoBehaviour
                     //Move by mouse or controls
                     if (mouseControlled) {
                         transform.position = Vector3.MoveTowards(transform.position, targeted, Time.deltaTime * moveSpd * (sprinting ? 2 : 1));
-                        if (Vector3.Distance(transform.position, targeted) < 0.1f) mouseControlled = false;
+                        if (Vector3.Distance(transform.position, targeted) < 0.1f) {
+                            mouseControlled = false;
+                            StopWalk();
+                        }
+                    } else {
+                        transform.position = Vector3.MoveTowards(transform.position, offset, Time.deltaTime * moveSpd * (sprinting ? 2 : 1));
                     }
-                    else transform.position = Vector3.MoveTowards(transform.position, offset, Time.deltaTime * moveSpd * (sprinting ? 2 : 1));
                 }
             }
         }
@@ -244,6 +270,35 @@ public class Player : MonoBehaviour
         miniCam.orthographicSize = mapScale * 5 + 5;
         manager.SetMinimap(mapScale);
         zoomStop = true;
+    }
+
+    //Update the animator & walking states
+    public void Walking(Vector3 moving)
+    {
+        if (Mathf.Abs(moving.z) > Mathf.Abs(moving.x)) {
+            if (moving.z > 0) UpdateWalk(true, false, false, false);
+            else if (moving.z < 0) UpdateWalk(false, true, false, false);
+        } else {
+            if (moving.x > 0) UpdateWalk(false, false, true, false);
+            else if (moving.x < 0) UpdateWalk(false, false, false, true);
+        }
+    }
+
+    public void StopWalk()
+    {
+        UpdateWalk(false, false, false, false);
+    }
+
+    public void UpdateWalk(bool U, bool D, bool R, bool L)
+    {
+        walkUp = U;
+        walkDown = D;
+        walkRight = R;
+        walkLeft = L;
+        animate.SetBool("Back", U);
+        animate.SetBool("Front", D);
+        animate.SetBool("Right", R);
+        animate.SetBool("Left", L);
     }
 
     //Update the menus with given bools
