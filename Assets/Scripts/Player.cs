@@ -1,28 +1,36 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
+    //Requirements
     public GameManager manager;
     public Camera mainCam;
     public Camera miniCam;
     public AudioSource source;
     public AudioClip[] sounds;
+    public Animator animate;
+
+    //UI
     public GameObject dialogOverlay;
     public GameObject inventoryOverlay;
     public GameObject minimapOverlay;
     public GameObject pauseOverlay;
+    public GameObject[] menuOverlays;
+    public GameObject[] pauseButtons;
+    private int vertical;
 
     private Vector2 keypad;
     private Vector2 joystick;
     private Vector2 dirPad;
-    private Vector3 mousition;
+    public Vector3 mousition;
     private Vector2 _direction;
     private Vector3 direction;
     private Vector3 targeted;
     private Vector3 offset;
-    private readonly Vector3 fixedPos = new Vector3(450, 0, 0);
+    private readonly Vector3 fixedPos = new(450, 0, 0);
     private bool mouseControlled;
     private bool mouseMoved;
     private float mouseDecay;
@@ -50,13 +58,6 @@ public class Player : MonoBehaviour
     private bool loading;
     private bool stepping;
 
-    //Animator states
-    public Animator animate;
-    public bool walkUp;
-    public bool walkDown;
-    public bool walkLeft;
-    public bool walkRight;
-
     private void Awake() { manager = GameObject.FindWithTag("GameController").GetComponent<GameManager>(); }
 
     void Start()
@@ -70,10 +71,33 @@ public class Player : MonoBehaviour
     {
         //Move only when unpaused & not in a menu
         if (paused) {
+            //Set states
             Cursor.visible = true;
             dialogOpen = false;
             invenOpen = false;
             Menus(true, false, false, false);
+
+            //UI controls
+            _direction = VectorGreater(keypad, joystick);
+            if (_direction.magnitude > 0.2f && mouseDecay == 0) {
+                vertical = (vertical + (int)(1.4f * _direction.y) + menuOverlays.Length) % menuOverlays.Length;
+                mouseDecay = 0.2f;
+            }
+            mouseDecay = Mathf.Clamp01(mouseDecay - Time.deltaTime);
+
+            //Update outlines
+            for (int i = 0; i < menuOverlays.Length; i++) {
+                if (mousition.x > pauseButtons[i].transform.position.x - 120 && mousition.x < pauseButtons[i].transform.position.x + 120) {
+                    if (mousition.y > pauseButtons[i].transform.position.y - 30 && mousition.y < pauseButtons[i].transform.position.y + 30) {
+                        vertical = i;
+                    }
+                }
+                menuOverlays[i].SetActive(i == vertical);
+            }
+
+            //Inputs
+            if (confirm) pauseButtons[vertical].GetComponent<Button>().onClick.Invoke();
+            if (cancel) Unpause();
         } else {
             //Decay input delay
             inputDelay = Mathf.Clamp01(inputDelay - Time.deltaTime);
@@ -108,17 +132,11 @@ public class Player : MonoBehaviour
 
                 //Walk animation
                 if (mouseControlled) {
-                    if (Vector3.Distance(transform.position, targeted) > 0.1f) {
-                        Walking(targeted - transform.position);
-                    } else {
-                        StopWalk();
-                    }
+                    if (Vector3.Distance(transform.position, targeted) > 0.1f) Walking(targeted - transform.position);
+                    else UpdateWalk(false, false, false, false);
                 } else {
-                    if (direction.magnitude > 0) {
-                        Walking(direction);
-                    } else {
-                        StopWalk();
-                    }
+                    if (direction.magnitude > 0) Walking(direction);
+                    else UpdateWalk(false, false, false, false);
                 }
 
                 //Move if not going to collide
@@ -132,15 +150,12 @@ public class Player : MonoBehaviour
                     //Move by mouse or controls
                     if (mouseControlled) {
                         transform.position = Vector3.MoveTowards(transform.position, targeted, Time.deltaTime * moveSpd * (sprinting ? 2 : 1));
-                        if (Vector3.Distance(transform.position, targeted) < 0.1f) {
-                            mouseControlled = false;
-                            StopWalk();
-                        }
+                        if (Vector3.Distance(transform.position, targeted) < 0.1f) mouseControlled = false;
                     } else {
                         transform.position = Vector3.MoveTowards(transform.position, offset, Time.deltaTime * moveSpd * (sprinting ? 2 : 1));
                     }
                 }
-            }
+            } else UpdateWalk(false, false, false, false);
         }
     }
 
@@ -284,17 +299,9 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void StopWalk()
-    {
-        UpdateWalk(false, false, false, false);
-    }
-
+    //Set the animator boolean states
     public void UpdateWalk(bool U, bool D, bool R, bool L)
     {
-        walkUp = U;
-        walkDown = D;
-        walkRight = R;
-        walkLeft = L;
         animate.SetBool("Back", U);
         animate.SetBool("Front", D);
         animate.SetBool("Right", R);
@@ -324,29 +331,43 @@ public class Player : MonoBehaviour
     }
 
     //Input action functions
-    private void Check(InputAction.CallbackContext ctx) { manager.ControllerButtons(ctx.control.device.displayName); }
-    private void Veck(InputAction.CallbackContext ctx) { if (ctx.ReadValue<Vector2>() != Vector2.zero) Check(ctx); }
+    private void Check(InputAction.CallbackContext ctx) {
+        manager.ControllerButtons(ctx.control.device.displayName);
+    }
+
+    private void Veck(InputAction.CallbackContext ctx) {
+        if (ctx.ReadValue<Vector2>() != Vector2.zero) Check(ctx);
+    
+    }
     public void Arrows(InputAction.CallbackContext ctx) {
         keypad = ctx.ReadValue<Vector2>();
         Veck(ctx);
     }
+
     public void Stick(InputAction.CallbackContext ctx) {
         joystick = ctx.ReadValue<Vector2>();
         Veck(ctx);
     }
+
     public void Zoom(InputAction.CallbackContext ctx) {
         Map(Mathf.RoundToInt(ctx.ReadValue<Vector2>().y));
         if (Mathf.Abs(ctx.ReadValue<Vector2>().y) < 0.1f) zoomStop = false;
     }
+
     public void ZoomTab(InputAction.CallbackContext ctx) {
         if (ctx.performed && !zoomStop) Map();
         if (ctx.canceled && zoomStop) zoomStop = false;
     }
-    public void Dpad(InputAction.CallbackContext ctx) { dirPad = ctx.ReadValue<Vector2>(); }
+
+    public void Dpad(InputAction.CallbackContext ctx) {
+        dirPad = ctx.ReadValue<Vector2>();
+    }
+
     public void Sprint(InputAction.CallbackContext ctx) {
         sprinting = ctx.performed;
         Check(ctx);
     }
+
     public void Inventory(InputAction.CallbackContext ctx) {
         if (!paused && !dialogOpen) {
             opening = ctx.performed;
@@ -355,22 +376,44 @@ public class Player : MonoBehaviour
             Check(ctx);
         }
     }
+
     public void Next(InputAction.CallbackContext ctx) {
         confirm = ctx.performed;
         Check(ctx);
     }
+
     public void Back(InputAction.CallbackContext ctx) {
         cancel = ctx.performed;
         Check(ctx);
     }
-    public void Pause() { if (!dialogOpen) paused = true; }
-    public void Unpause() { paused = false; }
-    public void InvertPause() { paused = !paused; }
-    public void Mouse(InputAction.CallbackContext ctx) { if (ctx.performed) MouseClick(); }
-    public void MousePos(InputAction.CallbackContext ctx) { mousition = ctx.ReadValue<Vector2>(); }
+
+    public void Pause() {
+        if (!dialogOpen) paused = true;
+        vertical = 0;
+    }
+
+    public void Unpause() {
+        paused = false;
+    }
+
+    public void InvertPause() {
+        paused = !paused;
+    }
+
+    public void Mouse(InputAction.CallbackContext ctx) {
+        if (ctx.performed) MouseClick();
+    }
+
+    public void MousePos(InputAction.CallbackContext ctx) {
+        mousition = ctx.ReadValue<Vector2>();
+    }
+
     public void MouseDelta(InputAction.CallbackContext ctx) {
         mouseMoved = (ctx.ReadValue<Vector2>().magnitude > mouseSensitivity);
         mouseDecay = 0.4f;
     }
-    public void MouseScroll(InputAction.CallbackContext ctx) { if (invenOpen) manager.Scroll(-(int)(Mathf.Clamp(ctx.ReadValue<Vector2>().y, -1, 1))); }
+
+    public void MouseScroll(InputAction.CallbackContext ctx) {
+        if (invenOpen) manager.Scroll(-(int)(Mathf.Clamp(ctx.ReadValue<Vector2>().y, -1, 1)));
+    }
 }

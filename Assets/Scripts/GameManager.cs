@@ -65,6 +65,11 @@ public class GameManager : MonoBehaviour
     //Gets all the saved data at start of scene
     void Awake()
     {
+        //Start with shader full
+        transition = loadTimes - 0.001f;
+        StartCoroutine(Shade(false));
+
+        //Read file data
         filename = Application.streamingAssetsPath + "/SaveData.txt";
         itemCollection = Application.streamingAssetsPath + "/Catalog.txt";
         savedData = File.ReadAllLines(filename);
@@ -79,10 +84,6 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        //Start with shader full
-        transition = loadTimes - 0.001f;
-        StartCoroutine(Shade(false));
-
         //Read data depending on which scene is loaded
         ReadPosition();
         ReadInven();
@@ -525,6 +526,7 @@ public class GameManager : MonoBehaviour
     //Record position for both scenes & load desired scene
     public void Scene(string scene)
     {
+        if (transition != 0) return;
         loading = true;
         if (player != null) {
             WritePosition();
