@@ -64,12 +64,12 @@ public class MainManager : MonoBehaviour
     {
         _direction = VectorGreater(joystick, keyboard);
         _direction = VectorGreater(_direction, dirpad);
-        if (_direction.magnitude > 0.1f) inputting = true;
+        if (_direction.magnitude > 0.167f) inputting = true;
         delay = Mathf.Clamp01(delay - Time.deltaTime);
         if (inputting) {
             if (delay == 0) {
-                vertical = (int)(vertical + _direction.y) % (menuUp ? MM.Length : SM.Length);
-                delay = 0.167f;
+                vertical = (int)(vertical + (1.25 * _direction.y)) % (menuUp ? MM.Length : SM.Length);
+                delay = 0.25f;
                 inputting = false;
             }
         }
@@ -167,9 +167,9 @@ public class MainManager : MonoBehaviour
 
     private void Input()
     {
-        vertical = (int)(vertical + _direction.y) % (menuUp ? MM.Length : SM.Length);
+        vertical = (int)(vertical + (1.25 * _direction.y)) % (menuUp ? MM.Length : SM.Length);
         inputting = true;
-        delay = 0.25f;
+        delay = 0.4f;
     }
 
     public void Joystick(InputAction.CallbackContext ctx) {
