@@ -320,12 +320,14 @@ public class Player : MonoBehaviour
     //Play the step sound only when walking at set intervals
     private IEnumerator StepSound()
     {
+        /*
         if (mouseControlled || direction.magnitude > 0) {
             source.pitch = Random.Range(0.875f, 1.125f);
             if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit tile, 2)) {
                 if (tile.transform.CompareTag("Ground")) source.PlayOneShot(sounds[int.Parse(tile.transform.name)], manager.Sound());
             }
         }
+        */
         yield return new WaitForSeconds(sprinting ? 0.25f : 0.5f);
         stepping = false;
     }
