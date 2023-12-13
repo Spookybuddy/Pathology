@@ -362,7 +362,7 @@ public class Player : MonoBehaviour
     }
 
     public void Dpad(InputAction.CallbackContext ctx) {
-        dirPad = ctx.ReadValue<Vector2>();
+        //dirPad = ctx.ReadValue<Vector2>();
     }
 
     public void Sprint(InputAction.CallbackContext ctx) {
@@ -403,7 +403,10 @@ public class Player : MonoBehaviour
     }
 
     public void Mouse(InputAction.CallbackContext ctx) {
-        if (ctx.performed) MouseClick();
+        if (ctx.performed) {
+            MouseClick();
+            Check(ctx);
+        }
     }
 
     public void MousePos(InputAction.CallbackContext ctx) {

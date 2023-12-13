@@ -46,6 +46,7 @@ public class CharacterText : MonoBehaviour
 
         //Player continue
         if (confirmable) {
+            manager.ContinueArrow(false);
             confirmable = false;
             lineIndex++;
             PrintLine();
@@ -105,6 +106,7 @@ public class CharacterText : MonoBehaviour
     private void Continue()
     {
         confirmable = true;
+        manager.ContinueArrow(true);
         manager.MouseClick(true);
     }
 

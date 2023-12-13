@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     public Player player;
     public Interior inner;
     public Camera innerCam;
+    public AudioSource soundtrack;
     public CharacterText currentConvo;
     public CharacterText[] characterIDs;
     public CharacterText[] interiorChars;
@@ -35,8 +36,8 @@ public class GameManager : MonoBehaviour
     public RawImage playerPortrait;
     public Texture2D[] playerEmotes;
     public RawImage otherPortrait;
-    public GameObject[] buttonParents;
     public GameObject[] buttonIndicators;
+    public GameObject continuing;
     private int controllerType;
     public Button[] buttons;
     public GameObject[] nameplates;
@@ -471,22 +472,30 @@ public class GameManager : MonoBehaviour
     public void ControllerButtons(string controls)
     {
         //Xbox, Pro, Dual shock controllers
-        for (int i = 0; i < buttonParents.Length; i++) buttonParents[i].SetActive(false);
         switch (controls[0]) {
             case 'P':
-                controllerType = 0;
-                break;
+                ChangeControls(0); 
+                return;
             case 'X':
-                controllerType = 1;
-                break;
+                ChangeControls(1);
+                return;
             case 'D':
-                controllerType = 2;
-                break;
+                ChangeControls(2);
+                return;
             default:
                 controllerType = 3;
                 return;
         }
-        buttonParents[controllerType].SetActive(true);
+    }
+
+    //Update button display if the control layout changes
+    private void ChangeControls(int type)
+    {
+        if (controllerType != type) {
+            for (int i = 0; i < buttonIndicators.Length; i++) buttonIndicators[i].SetActive(false);
+            for (int i = 0; i < 4; i++) buttonIndicators[i + 4 * type].SetActive(true);
+            controllerType = type;
+        }
     }
 
     //Display text
@@ -507,6 +516,12 @@ public class GameManager : MonoBehaviour
     //Show/Hide buttons
     public void ButtonDisplay(int amount, bool input, bool cancel)
     {
+        if (!input && !cancel) Buttons(amount, input, cancel);
+        StartCoroutine(ButtonDelay(amount, input, cancel));
+    }
+
+    private void Buttons(int amount, bool input, bool cancel)
+    {
         for (int i = 0; i < 4; i++) buttons[i].gameObject.SetActive(false);
         if (input) {
             for (int i = 0; i < amount; i++) {
@@ -519,6 +534,8 @@ public class GameManager : MonoBehaviour
         buttons[3].transform.localPosition = new Vector3(0, -55 * amount - 160, 0);
         if (controllerType < 3) buttonIndicators[4 * controllerType + 3].SetActive(cancel);
     }
+
+    public void ContinueArrow(bool onOff) { continuing.SetActive(onOff); }
 
     //Player inputs are translated into whatever the current conversation is
     public void Advance(int EastNorthWest) { currentConvo.PlayerContinue(EastNorthWest); }
@@ -557,6 +574,13 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    //Button delay appearance
+    private IEnumerator ButtonDelay(int amount, bool input, bool cancel)
+    {
+        yield return new WaitForSeconds(0.25f);
+        Buttons(amount, input, cancel);
+    }
+
     //Pass the conversation update
     private IEnumerator ConvoDelay()
     {
@@ -564,7 +588,7 @@ public class GameManager : MonoBehaviour
         currentConvo.PrintLine();
     }
 
-    //Update the transition shader
+    //Update the transition shader & audio fade in
     private IEnumerator Shade(bool pos)
     {
         yield return new WaitForSeconds(Time.deltaTime);
@@ -572,9 +596,11 @@ public class GameManager : MonoBehaviour
             transition = Mathf.Clamp(transition + (pos ? Time.deltaTime : -Time.deltaTime), 0, loadTimes);
             shaderValue = Mathf.Pow(transition * (10 / loadTimes), 2);
             shader.SetFloat("_Scale", shaderValue);
+            if (soundtrack != null) soundtrack.volume = (loadTimes - transition) / loadTimes;
             StartCoroutine(Shade(pos));
         } else if (player != null) {
             player.Transitioning(false);
         }
+        if (transition >= loadTimes) shader.SetFloat("_Scale", 500);
     }
 }
