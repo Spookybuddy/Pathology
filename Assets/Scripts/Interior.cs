@@ -8,6 +8,7 @@ public class Interior : MonoBehaviour
     public Camera mainCam;
     public GameObject inventoryOverlay;
     public GameObject dialogOverlay;
+    public GameObject pauseOverlay;
     public GameObject itemObj;
     public GameObject currently;
     public Transform[] clickBounds;
@@ -21,7 +22,7 @@ public class Interior : MonoBehaviour
     private bool opening;
     private bool invenOpen;
     private bool dialogOpen;
-    private bool paused;
+    public bool paused;
     private bool confirm;
     private bool cancel;
     private bool sprinting;
@@ -51,13 +52,16 @@ public class Interior : MonoBehaviour
     {
         //Move only when unpaused & not in a menu
         if (paused) {
+            pauseOverlay.SetActive(true);
+            inventoryOverlay.SetActive(false);
         } else {
             //Decay input delay
             inputDelay = Mathf.Clamp01(inputDelay - Time.deltaTime);
             dialogOverlay.SetActive(dialogOpen);
-            if (opening) inventoryOverlay.transform.localPosition = fixedPos * 2;
-            if (invenOpen) inventoryOverlay.transform.localPosition = Vector3.MoveTowards(inventoryOverlay.transform.localPosition, fixedPos, Time.deltaTime * 1000);
+            if (invenOpen) inventoryOverlay.transform.localPosition = Vector3.MoveTowards(inventoryOverlay.transform.localPosition, fixedPos, Time.deltaTime * Mathf.Max(Vector3.Distance(inventoryOverlay.transform.localPosition, fixedPos), 10) * 10);
+            else inventoryOverlay.transform.localPosition = fixedPos * 2;
             inventoryOverlay.SetActive(invenOpen);
+            pauseOverlay.SetActive(false);
 
             //Inputting directions takes the highest magnitude, and overrides click navigation
             _direction = VectorGreater(dirPad, joystick);
@@ -189,6 +193,21 @@ public class Interior : MonoBehaviour
 
     public void ClickState(bool status) { canClick = status; }
 
+    //Invert pause status & gravity on items
+    public void Unpause() {
+        paused = !paused;
+        GameObject[] allActive = GameObject.FindGameObjectsWithTag("Item");
+        foreach (GameObject go in allActive) go.GetComponent<ItemCrafting>().Enable(!paused, !paused);
+    }
+
+    //Gather all active objects in scene, return them to inventory, and then exit scene
+    public void Collect()
+    {
+        GameObject[] allActive = GameObject.FindGameObjectsWithTag("Item");
+        foreach (GameObject go in allActive) go.GetComponent<ItemCrafting>().Store();
+        manager.Scene("Programming");
+    }
+
     private IEnumerator MouseUp()
     {
         yield return new WaitForSeconds(inputDelay);
@@ -268,5 +287,9 @@ public class Interior : MonoBehaviour
             manager.Scroll(-(int)(Mathf.Clamp(ctx.ReadValue<Vector2>().y, -1, 1)));
             lastIndex = manager.GetIndex();
         }
+    }
+    public void Pause(InputAction.CallbackContext ctx)
+    {
+        if (ctx.performed) Unpause();
     }
 }

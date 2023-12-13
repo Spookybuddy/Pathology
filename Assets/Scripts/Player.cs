@@ -30,7 +30,7 @@ public class Player : MonoBehaviour
     private Vector3 direction;
     private Vector3 targeted;
     private Vector3 offset;
-    private readonly Vector3 fixedPos = new(450, 0, 0);
+    private readonly Vector3 fixedPos = new(900, 0, 0);
     private bool mouseControlled;
     private bool mouseMoved;
     private float mouseDecay;
@@ -104,7 +104,8 @@ public class Player : MonoBehaviour
             Cursor.visible = (mouseMoved || mouseDecay > 0);
             mouseDecay = Mathf.Clamp01(mouseDecay - Time.deltaTime);
             Menus(false, invenOpen, !invenOpen && !dialogOpen, dialogOpen);
-            if (invenOpen) inventoryOverlay.transform.localPosition = Vector3.MoveTowards(inventoryOverlay.transform.localPosition, fixedPos, Time.deltaTime * 1000);
+            if (invenOpen) inventoryOverlay.transform.localPosition = Vector3.MoveTowards(inventoryOverlay.transform.localPosition, Vector3.zero, Time.deltaTime * Mathf.Max(Vector3.Distance(inventoryOverlay.transform.localPosition, Vector3.zero), 10) * 10);
+            else inventoryOverlay.transform.localPosition = fixedPos;
 
             //Inputting directions takes the highest magnitude, and overrides click navigation
             _direction = VectorGreater(keypad, joystick);
@@ -376,7 +377,6 @@ public class Player : MonoBehaviour
         if (!paused && !dialogOpen) {
             opening = ctx.performed;
             invenOpen ^= opening;
-            if (opening) inventoryOverlay.transform.localPosition = fixedPos * 2;
             Check(ctx);
         }
     }
