@@ -11,7 +11,7 @@ You will leave now or I'll kill you.
 @
 We have already called for a doctor. Your assistance is not required.
 >18 I'm the doctor.
-> Let me in...
+>15 Let me in...
 @
 !You need to let me in now.
 No. You will leave until the doctor arrives to cure the infected.

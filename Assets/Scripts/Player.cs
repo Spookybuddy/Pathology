@@ -30,7 +30,7 @@ public class Player : MonoBehaviour
     private Vector3 direction;
     private Vector3 targeted;
     private Vector3 offset;
-    private readonly Vector3 fixedPos = new(450, 0, 0);
+    private readonly Vector3 fixedPos = new(900, 0, 0);
     private bool mouseControlled;
     private bool mouseMoved;
     private float mouseDecay;
@@ -104,7 +104,8 @@ public class Player : MonoBehaviour
             Cursor.visible = (mouseMoved || mouseDecay > 0);
             mouseDecay = Mathf.Clamp01(mouseDecay - Time.deltaTime);
             Menus(false, invenOpen, !invenOpen && !dialogOpen, dialogOpen);
-            if (invenOpen) inventoryOverlay.transform.localPosition = Vector3.MoveTowards(inventoryOverlay.transform.localPosition, fixedPos, Time.deltaTime * 1000);
+            if (invenOpen) inventoryOverlay.transform.localPosition = Vector3.MoveTowards(inventoryOverlay.transform.localPosition, Vector3.zero, Time.deltaTime * Mathf.Max(Vector3.Distance(inventoryOverlay.transform.localPosition, Vector3.zero), 10) * 10);
+            else inventoryOverlay.transform.localPosition = fixedPos;
 
             //Inputting directions takes the highest magnitude, and overrides click navigation
             _direction = VectorGreater(keypad, joystick);
@@ -177,9 +178,11 @@ public class Player : MonoBehaviour
         if (trigger.CompareTag("NPC")) manager.currentConvo = trigger.GetComponent<CharacterText>();
         else if (trigger.CompareTag("Door")) {
             loading = true;
-            manager.Locate(int.Parse(trigger.gameObject.name));
-            //Change to build scenes
-            manager.Scene("Program Inner");
+            if (int.TryParse(trigger.name, out int door)) {
+                manager.Locate(door);
+                manager.DoorSound(door);
+                manager.Scene("Program Inner");
+            }
         } else if (trigger.CompareTag("Item")) {
             hoverItem = true;
             manager.nearbyItem = trigger.GetComponent<ItemScript>().Pickup();
@@ -362,7 +365,7 @@ public class Player : MonoBehaviour
     }
 
     public void Dpad(InputAction.CallbackContext ctx) {
-        dirPad = ctx.ReadValue<Vector2>();
+        //dirPad = ctx.ReadValue<Vector2>();
     }
 
     public void Sprint(InputAction.CallbackContext ctx) {
@@ -374,7 +377,6 @@ public class Player : MonoBehaviour
         if (!paused && !dialogOpen) {
             opening = ctx.performed;
             invenOpen ^= opening;
-            if (opening) inventoryOverlay.transform.localPosition = fixedPos * 2;
             Check(ctx);
         }
     }
@@ -403,7 +405,10 @@ public class Player : MonoBehaviour
     }
 
     public void Mouse(InputAction.CallbackContext ctx) {
-        if (ctx.performed) MouseClick();
+        if (ctx.performed) {
+            MouseClick();
+            Check(ctx);
+        }
     }
 
     public void MousePos(InputAction.CallbackContext ctx) {
