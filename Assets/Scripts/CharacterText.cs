@@ -295,7 +295,7 @@ public class CharacterText : MonoBehaviour
     {
         for (int i = 0; i < dialog[lineIndex + x].Length; i++) {
             if (char.IsWhiteSpace(dialog[lineIndex + x][i])) {
-                return dialog[lineIndex + x].Substring(i);
+                return dialog[lineIndex + x].Substring(i + 1);
             }
         }
         return ":(";

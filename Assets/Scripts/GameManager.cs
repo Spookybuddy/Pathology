@@ -35,7 +35,9 @@ public class GameManager : MonoBehaviour
     public RawImage playerPortrait;
     public Texture2D[] playerEmotes;
     public RawImage otherPortrait;
+    public GameObject[] buttonParents;
     public GameObject[] buttonIndicators;
+    private int controllerType;
     public Button[] buttons;
     public GameObject[] nameplates;
     public TextMeshProUGUI npcName;
@@ -469,21 +471,22 @@ public class GameManager : MonoBehaviour
     public void ControllerButtons(string controls)
     {
         //Xbox, Pro, Dual shock controllers
-        //Debug.Log(controls);
+        for (int i = 0; i < buttonParents.Length; i++) buttonParents[i].SetActive(false);
         switch (controls[0]) {
             case 'P':
-                //A X Y B
+                controllerType = 0;
                 break;
             case 'X':
-                //B Y X A
+                controllerType = 1;
                 break;
             case 'D':
-                //O ^ # X
-                Debug.Log("Playstation");
+                controllerType = 2;
                 break;
             default:
-                break;
+                controllerType = 3;
+                return;
         }
+        buttonParents[controllerType].SetActive(true);
     }
 
     //Display text
@@ -509,10 +512,12 @@ public class GameManager : MonoBehaviour
             for (int i = 0; i < amount; i++) {
                 buttons[i].gameObject.SetActive(true);
                 buttons[i].transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = currentConvo.DialogLine(i + 1);
+                if (controllerType < 3) buttonIndicators[4 * controllerType + i].SetActive(true);
             }
         }
         buttons[3].gameObject.SetActive(cancel);
-        buttons[3].transform.localPosition = new Vector3(-450, -60 * amount - 160, 0);
+        buttons[3].transform.localPosition = new Vector3(0, -55 * amount - 160, 0);
+        if (controllerType < 3) buttonIndicators[4 * controllerType + 3].SetActive(cancel);
     }
 
     //Player inputs are translated into whatever the current conversation is
