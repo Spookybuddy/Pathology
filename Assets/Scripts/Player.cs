@@ -177,9 +177,11 @@ public class Player : MonoBehaviour
         if (trigger.CompareTag("NPC")) manager.currentConvo = trigger.GetComponent<CharacterText>();
         else if (trigger.CompareTag("Door")) {
             loading = true;
-            manager.Locate(int.Parse(trigger.gameObject.name));
-            //Change to build scenes
-            manager.Scene("Program Inner");
+            if (int.TryParse(trigger.name, out int door)) {
+                manager.Locate(door);
+                manager.DoorSound(door);
+                manager.Scene("Program Inner");
+            }
         } else if (trigger.CompareTag("Item")) {
             hoverItem = true;
             manager.nearbyItem = trigger.GetComponent<ItemScript>().Pickup();

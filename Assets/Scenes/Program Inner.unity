@@ -4268,6 +4268,26 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 6a4917da-8c7c-4640-872b-dea6e6a71b0b
     m_ActionName: Actions/MapZoom[/Keyboard/tab]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 5688d73d-3940-4817-a27f-fb34a86293f8
+    m_ActionName: UI/Joystick[/SwitchProControllerHID/leftStick,/SwitchProControllerHID/rightStick]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 4543d016-9cb0-454c-af8e-c1f365ead0b5
+    m_ActionName: UI/Keyboard[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d,/Keyboard/upArrow,/Keyboard/downArrow,/Keyboard/leftArrow,/Keyboard/rightArrow]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 0ed0aa15-73c0-4528-a816-2ef2754da359
+    m_ActionName: UI/Select[/Keyboard/f,/Keyboard/enter,/SwitchProControllerHID/buttonEast]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 19c305f8-3934-42f2-a114-ff4867fbbc02
+    m_ActionName: UI/Return[/Keyboard/q,/Keyboard/escape,/SwitchProControllerHID/buttonSouth]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 021ce09b-81f3-412f-bbce-1bff800ef746
+    m_ActionName: UI/Mouse[/Mouse/position]
   m_NeverAutoSwitchControlSchemes: 1
   m_DefaultControlScheme: 
   m_DefaultActionMap: InScene
@@ -11149,6 +11169,9 @@ MonoBehaviour:
   player: {fileID: 0}
   inner: {fileID: 1080842845}
   innerCam: {fileID: 1334984482}
+  soundtrack: {fileID: 0}
+  doorSFX: []
+  doors: {fileID: 0}
   currentConvo: {fileID: 0}
   characterIDs:
   - {fileID: 0}
@@ -11282,8 +11305,8 @@ MonoBehaviour:
   playerPortrait: {fileID: 710214612}
   playerEmotes: []
   otherPortrait: {fileID: 1095775194}
-  buttonParents: []
   buttonIndicators: []
+  continuing: {fileID: 0}
   buttons:
   - {fileID: 757365018}
   - {fileID: 1781591244}
@@ -11294,7 +11317,7 @@ MonoBehaviour:
   - {fileID: 73262710}
   npcName: {fileID: 191070940}
   shader: {fileID: 2100000, guid: a40b4a75a9cf0c1488ac3021a4f3c774, type: 2}
-  loadTimes: 0.5
+  loadTimes: 0.8
 --- !u!4 &1903538950
 Transform:
   m_ObjectHideFlags: 0

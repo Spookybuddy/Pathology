@@ -12,6 +12,8 @@ public class GameManager : MonoBehaviour
     public Interior inner;
     public Camera innerCam;
     public AudioSource soundtrack;
+    public AudioClip[] doorSFX;
+    public AudioSource doors;
     public CharacterText currentConvo;
     public CharacterText[] characterIDs;
     public CharacterText[] interiorChars;
@@ -70,6 +72,7 @@ public class GameManager : MonoBehaviour
     {
         //Start with shader full
         transition = loadTimes - 0.001f;
+        shader.SetFloat("_Scale", 500);
         StartCoroutine(Shade(false));
 
         //Read file data
@@ -96,7 +99,10 @@ public class GameManager : MonoBehaviour
             player.Transitioning(true);
 
             //Move the player down to exit doors, but raycast first to prevent clipping
-            if (Physics.Raycast(position, Vector3.forward, 2)) player.transform.position = position + Vector3.back;
+            if (Physics.Raycast(position, Vector3.forward, 2)) {
+                player.transform.position = position + Vector3.back;
+                doors.PlayOneShot(doorSFX[2], 1);
+            }
             else player.transform.position = position;
             ReadData(characterIDs, 0);
         } else {
@@ -513,6 +519,13 @@ public class GameManager : MonoBehaviour
         type.PlayOneShot(type.clip, 1);
     }
 
+    //Play the right door sounds
+    public void DoorSound(int index)
+    {
+        if (index == 0) doors.PlayOneShot(doorSFX[0], 1);
+        else doors.PlayOneShot(doorSFX[1], 1);
+    }
+
     //Show/Hide buttons
     public void ButtonDisplay(int amount, bool input, bool cancel)
     {
@@ -596,7 +609,7 @@ public class GameManager : MonoBehaviour
             transition = Mathf.Clamp(transition + (pos ? Time.deltaTime : -Time.deltaTime), 0, loadTimes);
             shaderValue = Mathf.Pow(transition * (10 / loadTimes), 2);
             shader.SetFloat("_Scale", shaderValue);
-            if (soundtrack != null) soundtrack.volume = (loadTimes - transition) / loadTimes;
+            if (soundtrack != null) soundtrack.volume = (loadTimes - transition) / (2 * loadTimes);
             StartCoroutine(Shade(pos));
         } else if (player != null) {
             player.Transitioning(false);

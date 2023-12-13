@@ -47,10 +47,15 @@ public class MainManager : MonoBehaviour
     public Vector2[] specialPadding;
     private float delay;
     private Vector2 Mpos;
-    private readonly Vector2 padding = new Vector2(170, 50);
+    private readonly Vector2 padding = new Vector2(170, 40);
 
     void Awake()
     {
+        //Start with shader full
+        transition = 0.799f;
+        shader.SetFloat("_Scale", 500);
+        StartCoroutine(Shade(false));
+
         //Read file data
         filename = Application.streamingAssetsPath + "/SaveData.txt";
         data = File.ReadAllLines(filename);
@@ -62,10 +67,6 @@ public class MainManager : MonoBehaviour
     //Read in and set all the values from the save file
     void Start()
     {
-        //Start with shader full
-        transition = 0.87f;
-        StartCoroutine(Shade(false));
-
         //Try reading the save file
         if (!int.TryParse(settings, out int result)) settings = "100100";
         volume = int.Parse(settings.Substring(0, 3));
@@ -124,17 +125,13 @@ public class MainManager : MonoBehaviour
         if (menuUp) {
             for (int i = 0; i < MM.Length; i++) {
                 if (Mpos.x > MM[i].transform.position.x - padding.x && Mpos.x < MM[i].transform.position.x + padding.x) {
-                    if (Mpos.y > MM[i].transform.position.y - padding.y && Mpos.y < MM[i].transform.position.y + padding.y) {
-                        vertical = i;
-                    }
+                    if (Mpos.y > MM[i].transform.position.y - padding.y && Mpos.y < MM[i].transform.position.y + padding.y) vertical = i;
                 }
             }
         } else {
             for (int i = 0; i < SM.Length; i++) {
                 if (Mpos.x > SM[i].transform.position.x - specialPadding[i].x && Mpos.x < SM[i].transform.position.x + specialPadding[i].x) {
-                    if (Mpos.y > SM[i].transform.position.y - specialPadding[i].y && Mpos.y < SM[i].transform.position.y + specialPadding[i].y) {
-                        vertical = i;
-                    }
+                    if (Mpos.y > SM[i].transform.position.y - specialPadding[i].y && Mpos.y < SM[i].transform.position.y + specialPadding[i].y) vertical = i;
                 }
             }
         }
@@ -205,8 +202,7 @@ public class MainManager : MonoBehaviour
     public void Quit()
     {
         if (transition != 0) return;
-        Save();
-        Application.Quit();
+        StartCoroutine(ExitShade());
     }
 
     //Load scene
@@ -224,7 +220,7 @@ public class MainManager : MonoBehaviour
         transition = 0.001f;
         StartCoroutine(Shade(true));
         while (!asyncLoad.isDone) {
-            if (asyncLoad.progress >= 0.9f && transition >= 0.875f) asyncLoad.allowSceneActivation = true;
+            if (asyncLoad.progress >= 0.9f && transition >= 0.8f) asyncLoad.allowSceneActivation = true;
             yield return null;
         }
     }
@@ -233,11 +229,27 @@ public class MainManager : MonoBehaviour
     private IEnumerator Shade(bool pos)
     {
         yield return new WaitForSeconds(Time.deltaTime);
-        if (0 < transition && transition < 0.875f) {
-            transition = Mathf.Clamp(transition + (pos ? Time.deltaTime : -Time.deltaTime), 0, 0.875f);
-            shaderValue = Mathf.Pow(transition * (10 / 0.875f), 2);
+        if (0 < transition && transition < 0.8f) {
+            transition = Mathf.Clamp(transition + (pos ? Time.deltaTime : -Time.deltaTime), 0, 0.8f);
+            shaderValue = Mathf.Pow(transition * (10 / 0.8f), 2);
             shader.SetFloat("_Scale", shaderValue);
             StartCoroutine(Shade(pos));
+        }
+    }
+
+    //Shader for exiting the game
+    private IEnumerator ExitShade()
+    {
+        yield return new WaitForSeconds(Time.deltaTime);
+        if (transition < 0.8f) {
+            transition = Mathf.Clamp(transition + Time.deltaTime, 0, 0.8f);
+            shaderValue = Mathf.Pow(transition * (10 / 0.8f), 2);
+            shader.SetFloat("_Scale", shaderValue);
+            if (transition == 0.8f) {
+                shader.SetFloat("_Scale", 500);
+                Save();
+                Application.Quit();
+            } else StartCoroutine(ExitShade());
         }
     }
 
