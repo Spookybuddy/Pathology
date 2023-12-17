@@ -5281,8 +5281,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 0.8547088, z: 1}
-  m_Center: {x: 0, y: 0.07289763, z: -0.018012732}
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!4 &303279621 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8456286140964525059, guid: 605937c6e69f0ed45bf36604401bdf01, type: 3}
@@ -17715,6 +17715,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player Components 3
       objectReference: {fileID: 0}
+    - target: {fileID: 7992758106202205279, guid: 76df85fdebc1f014fb373db245c4285e, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -20801,8 +20805,6 @@ GameObject:
   - component: {fileID: 1158161408}
   - component: {fileID: 1158161407}
   - component: {fileID: 1158161406}
-  - component: {fileID: 1158161410}
-  - component: {fileID: 1158161409}
   m_Layer: 0
   m_Name: Stone Archway
   m_TagString: Untagged
@@ -20877,48 +20879,6 @@ Transform:
   - {fileID: 1386730106}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 30, y: 0, z: 0}
---- !u!65 &1158161409
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1158161404}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.4941488, y: 0.72172, z: 0.000000029802333}
-  m_Center: {x: 0.21560772, y: 0.13913982, z: 0.00000016693365}
---- !u!65 &1158161410
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1158161404}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.31171095, y: 0.72552025, z: 0.000000029802305}
-  m_Center: {x: -0.34414336, y: 0.13723968, z: 0.000000116414085}
 --- !u!4 &1161819525 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3947793397305791666, guid: 80375ef5b7411fd4dac3174cdabe3218, type: 3}
@@ -24393,8 +24353,8 @@ Transform:
   m_GameObject: {fileID: 1386730105}
   serializedVersion: 2
   m_LocalRotation: {x: -0.258819, y: 0, z: 0, w: 0.9659259}
-  m_LocalPosition: {x: -0.346, y: 0.005, z: 0.011}
-  m_LocalScale: {x: 0.2870073, y: 0.50759745, z: 0.1249648}
+  m_LocalPosition: {x: -0.32, y: 0, z: -0.04}
+  m_LocalScale: {x: 0.25, y: 1, z: 0.125}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1158161408}
@@ -24418,8 +24378,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.7859552, y: 0.8650867, z: 1}
-  m_Center: {x: 0.120983295, y: 0.06769066, z: -0.01672611}
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &1386987891
 PrefabInstance:
   m_ObjectHideFlags: 0
