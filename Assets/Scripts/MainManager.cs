@@ -29,9 +29,8 @@ public class MainManager : MonoBehaviour
 
     //Menu sounds
     public AudioSource sounds;
-    public AudioSource ambient;
-    public AudioClip up;
-    public AudioClip down;
+    public AudioClip next;
+    public AudioClip back;
     public AudioClip click;
 
     //Shader
@@ -178,7 +177,7 @@ public class MainManager : MonoBehaviour
     public void ChangeMenu(int to)
     {
         if (transition != 0) return;
-        sounds.PlayOneShot(to == 0 ? down : up, 0.7f);
+        sounds.PlayOneShot(to == 0 ? back : next, 0.7f);
         menuUp = to;
         Title.SetActive(menuUp == 0);
         Options.SetActive(menuUp == 1);
@@ -222,7 +221,7 @@ public class MainManager : MonoBehaviour
     public void Quit()
     {
         if (transition != 0) return;
-        sounds.PlayOneShot(down, 0.7f);
+        sounds.PlayOneShot(back, 0.7f);
         StartCoroutine(ExitShade());
     }
 
@@ -331,7 +330,7 @@ public class MainManager : MonoBehaviour
                     case 2:
                         break;
                     case 1:
-                        sounds.PlayOneShot(toggle.isOn ? up : down, 0.6f);
+                        sounds.PlayOneShot(toggle.isOn ? next : back, 0.6f);
                         toggle.isOn = !toggle.isOn;
                         break;
                     default:

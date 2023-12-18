@@ -2366,9 +2366,8 @@ MonoBehaviour:
   toggle: {fileID: 1638332499}
   speed: {fileID: 1346085854}
   sounds: {fileID: 1071333806}
-  ambient: {fileID: 1087388821}
-  up: {fileID: 8300000, guid: b010c7145856f504d8272ef2bc94aa7d, type: 3}
-  down: {fileID: 8300000, guid: 28a767e8a0914f5489adab8485692eb0, type: 3}
+  next: {fileID: 8300000, guid: b010c7145856f504d8272ef2bc94aa7d, type: 3}
+  back: {fileID: 8300000, guid: 28a767e8a0914f5489adab8485692eb0, type: 3}
   click: {fileID: 8300000, guid: d5c6f354e20c8ca48a7497905be5383f, type: 3}
   shader: {fileID: 2100000, guid: a40b4a75a9cf0c1488ac3021a4f3c774, type: 2}
   sensitivity: 1.4
@@ -3560,15 +3559,15 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 754b0f18896dcad45b32f9232d95baaa, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
-  m_Pitch: 1
+  m_Volume: 0.2
+  m_Pitch: 0.95
   Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
-  Priority: 128
+  Priority: 140
   DopplerLevel: 1
   MinDistance: 1
   MaxDistance: 500
