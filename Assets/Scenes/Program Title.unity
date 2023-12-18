@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -241,7 +241,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &34111299
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1342,9 +1342,28 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Amanita Defeo\nJames Livingstone\nKatlyn \nLilly Woodger\nAlan Tadiello\n\nMallow
-    Chu and Petar Sarkanjac\r\nAnwen Borgo\r\nCameron Woody, Gage Willson, and Phuwit
-    Sangudomlert\n"
+  m_text: 'Amanita DeFeo
+
+    James Livingstone
+
+    Katlyn Athanas, Amanita DeFeo
+
+    Amanita
+    DeFeo
+
+    Lilly Woodger
+
+    Alan Tadiello
+
+
+    Mallow Chu and Petar Sarkanjac
+
+    Anwen
+    Borgo
+
+    Cameron Woody, Gage Willson, and Phuwit Sangudomlert
+
+'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -4990,8 +5009,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Credits:\n\nProducer - \nProgrammer - \nArt - \nNarrative - \nLevel Design
-    - \n\nAudio Producer - \nMusic - \nSFX - \n\n\n"
+  m_text: "Credits:\n\nProducer - \nProgrammer - \nArt - \nUI -\nNarrative - \nLevel
+    Design - \n\nAudio Producer - \nMusic - \nSFX - \n\n\n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
