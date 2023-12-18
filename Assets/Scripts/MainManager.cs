@@ -20,11 +20,18 @@ public class MainManager : MonoBehaviour
     //Menu visuals
     public GameObject Title;
     public GameObject Options;
-    private bool menuUp;
+    public GameObject Credits;
+    private int menuUp;
     public Slider volumeLvl;
     public Toggle toggle;
     public TextMeshProUGUI speed;
     private readonly string[] texts = new string[] { "Slow", "Normal", "Fast", "Instant" };
+
+    //Menu sounds
+    public AudioSource sounds;
+    public AudioClip next;
+    public AudioClip back;
+    public AudioClip click;
 
     //Shader
     public Material shader;
@@ -47,7 +54,7 @@ public class MainManager : MonoBehaviour
     public Vector2[] specialPadding;
     private float delay;
     private Vector2 Mpos;
-    private readonly Vector2 padding = new Vector2(170, 40);
+    private readonly Vector2 padding = new Vector2(170, 35);
 
     void Awake()
     {
@@ -60,7 +67,7 @@ public class MainManager : MonoBehaviour
         filename = Application.streamingAssetsPath + "/SaveData.txt";
         data = File.ReadAllLines(filename);
         settings = data[6];
-        menuUp = true;
+        menuUp = 0;
         clickToggle = false;
     }
 
@@ -75,6 +82,7 @@ public class MainManager : MonoBehaviour
         SetValues();
         Title.SetActive(true);
         Options.SetActive(false);
+        Credits.SetActive(false);
         UIOverlays();
     }
 
@@ -88,9 +96,11 @@ public class MainManager : MonoBehaviour
         UIOverlays();
         if (inputting) {
             if (delay == 0) {
-                if (menuUp) {
+                if (menuUp == 0) {
+                    if (Mathf.Abs(_direction.y) > 0.714f) sounds.PlayOneShot(click, 0.7f);
                     vertical = (vertical - (int)(sensitivity * _direction.y) + MM.Length) % MM.Length;
-                } else {
+                } else if (menuUp == 1) {
+                    if (Mathf.Abs(_direction.y) > 0.714f) sounds.PlayOneShot(click, 0.7f);
                     vertical = (vertical - (int)(sensitivity * _direction.y) + SM.Length) % SM.Length;
                     //Special cases for different UI elements
                     switch (vertical) {
@@ -122,16 +132,22 @@ public class MainManager : MonoBehaviour
         }
         
         //Mouse over
-        if (menuUp) {
+        if (menuUp == 0) {
             for (int i = 0; i < MM.Length; i++) {
                 if (Mpos.x > MM[i].transform.position.x - padding.x && Mpos.x < MM[i].transform.position.x + padding.x) {
-                    if (Mpos.y > MM[i].transform.position.y - padding.y && Mpos.y < MM[i].transform.position.y + padding.y) vertical = i;
+                    if (Mpos.y > MM[i].transform.position.y - padding.y && Mpos.y < MM[i].transform.position.y + padding.y) {
+                        if (vertical != i) sounds.PlayOneShot(click, 0.7f);
+                        vertical = i;
+                    }
                 }
             }
-        } else {
+        } else if (menuUp == 1) {
             for (int i = 0; i < SM.Length; i++) {
                 if (Mpos.x > SM[i].transform.position.x - specialPadding[i].x && Mpos.x < SM[i].transform.position.x + specialPadding[i].x) {
-                    if (Mpos.y > SM[i].transform.position.y - specialPadding[i].y && Mpos.y < SM[i].transform.position.y + specialPadding[i].y) vertical = i;
+                    if (Mpos.y > SM[i].transform.position.y - specialPadding[i].y && Mpos.y < SM[i].transform.position.y + specialPadding[i].y) {
+                        if (vertical != i) sounds.PlayOneShot(click, 0.7f);
+                        vertical = i;
+                    }
                 }
             }
         }
@@ -158,12 +174,14 @@ public class MainManager : MonoBehaviour
     }
 
     //Changes the menu displaying
-    public void ChangeMenu()
+    public void ChangeMenu(int to)
     {
         if (transition != 0) return;
-        menuUp = !menuUp;
-        Title.SetActive(menuUp);
-        Options.SetActive(!menuUp);
+        sounds.PlayOneShot(to == 0 ? back : next, 0.7f);
+        menuUp = to;
+        Title.SetActive(menuUp == 0);
+        Options.SetActive(menuUp == 1);
+        Credits.SetActive(menuUp == 2);
         vertical = 0;
         UIOverlays();
     }
@@ -175,7 +193,7 @@ public class MainManager : MonoBehaviour
         Save();
     }
 
-    //Toggle click movement active - BUG: Called when toggle display is changed; Fix soon
+    //Toggle click movement active
     public void ToggleClick() {
         if (clickToggle) clickMove = !clickMove;
         Save();
@@ -184,6 +202,7 @@ public class MainManager : MonoBehaviour
     //Text speed value
     public void ChangeSpeed(int value)
     {
+        sounds.PlayOneShot(click, 0.7f);
         txtSpd = (txtSpd + value + 4) % 4;
         speed.text = texts[txtSpd];
         Save();
@@ -202,6 +221,7 @@ public class MainManager : MonoBehaviour
     public void Quit()
     {
         if (transition != 0) return;
+        sounds.PlayOneShot(back, 0.7f);
         StartCoroutine(ExitShade());
     }
 
@@ -268,58 +288,66 @@ public class MainManager : MonoBehaviour
     //UI indicators
     private void UIOverlays()
     {
-        if (menuUp) for (int i = 0; i < MMO.Length; i++) MMO[i].SetActive(i == vertical);
-        else for (int i = 0; i < SMO.Length; i++) SMO[i].SetActive(i == vertical);
+        if (menuUp == 0) for (int i = 0; i < MMO.Length; i++) MMO[i].SetActive(i == vertical);
+        else if (menuUp == 1) for (int i = 0; i < SMO.Length; i++) SMO[i].SetActive(i == vertical);
     }
 
     //First input with larger delay
     private void Input(float y)
     {
-        if (menuUp) vertical = (vertical - (int)(1.7f * y) + MM.Length) % MM.Length;
-        else vertical = (vertical - (int)(1.7f * y) + SM.Length) % SM.Length;
+        if (inputting || delay > 0) return;
+        if (Mathf.Abs(y) > 0.588f) sounds.PlayOneShot(click, 0.7f);
+        if (menuUp == 0) vertical = (vertical - (int)(1.7f * y) + MM.Length) % MM.Length;
+        else if (menuUp == 1) vertical = (vertical - (int)(1.7f * y) + SM.Length) % SM.Length;
         inputting = true;
-        delay = 0.333f;
+        delay = 0.35f;
     }
 
     public void Joystick(InputAction.CallbackContext ctx) {
+        //BUG - Double inputting when stick wiggle
         joystick = ctx.ReadValue<Vector2>();
         if (ctx.performed && !inputting) Input(joystick.y);
     }
+
     public void Keypad(InputAction.CallbackContext ctx) {
         keyboard = ctx.ReadValue<Vector2>();
         if (ctx.performed && !inputting) Input(keyboard.y);
     }
+
     public void DPad(InputAction.CallbackContext ctx) {
         dirpad = ctx.ReadValue<Vector2>();
         if (ctx.performed && !inputting) Input(dirpad.y);
     }
+
     public void Confirm(InputAction.CallbackContext ctx)
     {
         if (ctx.performed) {
-            if (menuUp) {
+            if (menuUp == 0) {
                 MM[vertical].GetComponent<Button>().onClick.Invoke();
-            } else {
+            } else if (menuUp == 1) {
                 switch (vertical) {
                     case 0:
+                    case 2:
                         break;
                     case 1:
+                        sounds.PlayOneShot(toggle.isOn ? next : back, 0.6f);
                         toggle.isOn = !toggle.isOn;
-                        break;
-                    case 2:
                         break;
                     default:
                         SM[vertical].GetComponent<Button>().onClick.Invoke();
                         break;
                 }
-            }
+            } else ChangeMenu(0);
         }
     }
+
     public void Cancel(InputAction.CallbackContext ctx)
     {
         if (ctx.performed) {
-            if (!menuUp) ChangeMenu();
+            if (menuUp > 0) ChangeMenu(0);
         }
     }
+
     public void MousePosition(InputAction.CallbackContext ctx)
     {
         Mpos = ctx.ReadValue<Vector2>();

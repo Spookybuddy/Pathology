@@ -9,6 +9,9 @@ TagManager:
   - Item
   - Grab
   - Ground
+  - Grass
+  - Dirt
+  - Stone
   layers:
   - Default
   - TransparentFX
@@ -16,7 +19,7 @@ TagManager:
   - Map Only
   - Water
   - UI
-  - 
+  - Map Both
   - 
   - 
   - 

@@ -259,7 +259,7 @@ public class Player : MonoBehaviour
             inputDelay = delay;
         } else if (CMEnabled) {
             if (Physics.Raycast(mainCam.ScreenPointToRay(mousition), out RaycastHit hit, 100) && !dialogOpen) {
-                if (hit.transform.CompareTag("Ground")) {
+                if (hit.transform.CompareTag("Ground") || hit.transform.CompareTag("Grass") || hit.transform.CompareTag("Stone") || hit.transform.CompareTag("Dirt")) {
                     mouseControlled = true;
                     targeted = new Vector3(hit.point.x, 0, hit.point.z);
                     inputDelay = delay;
@@ -323,14 +323,24 @@ public class Player : MonoBehaviour
     //Play the step sound only when walking at set intervals
     private IEnumerator StepSound()
     {
-        /*
         if (mouseControlled || direction.magnitude > 0) {
-            source.pitch = Random.Range(0.875f, 1.125f);
             if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit tile, 2)) {
-                if (tile.transform.CompareTag("Ground")) source.PlayOneShot(sounds[int.Parse(tile.transform.name)], manager.Sound());
+                switch (tile.transform.tag) {
+                    case "Grass":
+                        source.PlayOneShot(sounds[0], manager.Sound());
+                        break;
+                    case "Dirt":
+                        source.PlayOneShot(sounds[0], manager.Sound());
+                        break;
+                    case "Stone":
+                        source.PlayOneShot(sounds[0], manager.Sound());
+                        break;
+                    default:
+                        source.PlayOneShot(sounds[0], manager.Sound());
+                        break;
+                }
             }
         }
-        */
         yield return new WaitForSeconds(sprinting ? 0.25f : 0.5f);
         stepping = false;
     }

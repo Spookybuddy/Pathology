@@ -33,8 +33,8 @@ public class ItemScript : MonoBehaviour
     private Item item;
 
     //Visual aid
-    private Renderer visibility;
-    private GameObject glow;
+    public Renderer visibility;
+    public GameObject glow;
     private float lerp;
     private float delta;
     private Vector3 start;
@@ -59,7 +59,6 @@ public class ItemScript : MonoBehaviour
         item = manager.ParseCatalog(itemId, itemAmount);
 
         //Update visual aspects: Outline, Image, Bob
-        visibility = GetComponent<Renderer>();
         visibility.material = itemIcons[item.Id];
         glow = transform.GetChild(0).gameObject;
         glow.SetActive(false);
