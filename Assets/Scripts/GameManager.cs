@@ -235,8 +235,17 @@ public class GameManager : MonoBehaviour
                     if (char.IsWhiteSpace(catalog[ID][i])) {
                         switch (x) {
                             case 0:
-                                add.Vitamin = int.Parse(stat);
-                                stat = "";
+                                //Error catch, returns 0 values and empty item
+                                if (int.TryParse(stat, out int val)) {
+                                    add.Vitamin = val;
+                                    stat = "";
+                                } else {
+                                    add.Vitamin = 0;
+                                    add.Mineral = 0;
+                                    add.Enzymes = 0;
+                                    add.Name = name;
+                                    return add;
+                                }
                                 break;
                             case 1:
                                 add.Mineral = int.Parse(stat);
