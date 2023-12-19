@@ -1,7 +1,11 @@
-0 Indexed list of each item & their stats. First Item is empty. Format by Name | Category (A-Z) | Attributes to be determined
-Testing ! 1 2 3 
-Second " 5 0 0 
-Finale # 9 9 9 
-Gift   0 0 0 
-Potato * -1 8 -1 
-exclusive U 1 1 1 
+0 Indexed list of each item & their stats. First Item is empty. Format by Name | Category (A-Z) | Attributes used in respective crafting stations
+Grave Dirt ! 0 1 0
+Strained Grave Dirt " 0 10 0
+Hyssop # 1 0 0
+Ground Hyssop $ 0 3 0
+Hyssop Mixture % 0 10 0
+Yellow Archangel & 0 0 1
+Boiled Archangel ' 0 4 0
+Cure ( 0 0 0
+Empty Vial ) -1 -1 -1
+Bird * 2 2 2
