@@ -140,7 +140,7 @@ public class Interior : MonoBehaviour
     //Exit the scene
     public void Exit()
     {
-        manager.Scene("Programming");
+        manager.Scene("Main Scene");
     }
 
     //Mouse position from screen to determine click and drag
@@ -205,7 +205,7 @@ public class Interior : MonoBehaviour
     {
         GameObject[] allActive = GameObject.FindGameObjectsWithTag("Item");
         foreach (GameObject go in allActive) go.GetComponent<ItemCrafting>().Store();
-        manager.Scene("Programming");
+        manager.Scene("Main Scene");
     }
 
     private IEnumerator MouseUp()
