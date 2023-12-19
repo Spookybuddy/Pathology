@@ -39,7 +39,6 @@ public class ItemScript : MonoBehaviour
     private float delta;
     private Vector3 start;
     private Vector3 end;
-    public Material[] itemIcons;
 
     //To be modified by the level design
     public int saveIndex;
@@ -58,8 +57,7 @@ public class ItemScript : MonoBehaviour
         //Get the item from the catalog using the manager
         item = manager.ParseCatalog(itemId, itemAmount);
 
-        //Update visual aspects: Outline, Image, Bob
-        visibility.material = itemIcons[item.Id];
+        //Update visual aspects: Outline, Bob
         glow = transform.GetChild(0).gameObject;
         glow.SetActive(false);
         start = new Vector3(transform.position.x, transform.position.y + 0.2f, transform.position.z);

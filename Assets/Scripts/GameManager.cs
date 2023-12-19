@@ -80,8 +80,10 @@ public class GameManager : MonoBehaviour
         itemCollection = Application.streamingAssetsPath + "/Catalog.txt";
         savedData = File.ReadAllLines(filename);
         catalog = File.ReadAllLines(itemCollection);
-        EXChars = savedData[0].Length / 2;
-        INChars = savedData[1].Length / 2;
+        EXChars = 1;
+        INChars = 3;
+        //EXChars = savedData[0].Length / 2;
+        //INChars = savedData[1].Length / 2;
         volume = int.Parse(savedData[6].Substring(0, 3));
         CMEnabled = (savedData[6].Substring(3, 1)).Equals("1");
         txtSpd = int.Parse(savedData[6].Substring(4, 1));
@@ -132,7 +134,7 @@ public class GameManager : MonoBehaviour
         WriteInven();
         WritePosition();
         WriteSettings();
-        ClearData();
+        //ClearData();
     }
     
     //Convert all character indicies into chars
@@ -301,14 +303,14 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < INChars; i++) clearline += "  ";
         savedData[1] = clearline + ";";
         clearline = "";
-        //savedData[2] = "0.00 0.00";
-        //savedData[3] = " 000";
+        savedData[2] = "0.00 0.00";
+        savedData[3] = " 000";
         for (int i = 0; i < savedData[4].Length; i++) clearline += "0";
         savedData[4] = clearline;
         clearline = "";
         for (int i = 0; i < savedData[5].Length; i++) clearline += "0";
         savedData[5] = clearline;
-        //savedData[6] = "100112";
+        savedData[6] = "100101";
         File.WriteAllLines(filename, savedData);
     }
 
