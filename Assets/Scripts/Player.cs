@@ -325,20 +325,26 @@ public class Player : MonoBehaviour
     {
         if (mouseControlled || direction.magnitude > 0) {
             if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit tile, 2)) {
+                //Random from stepping sounds
+                source.PlayOneShot(sounds[Random.Range(0, sounds.Length)], manager.Sound() * 0.8f);
+                /*
+                 * Specific sounds for different ground materials
+                source.pitch = Random.Range(0.9f, 1.1f);
                 switch (tile.transform.tag) {
                     case "Grass":
                         source.PlayOneShot(sounds[0], manager.Sound());
                         break;
                     case "Dirt":
-                        source.PlayOneShot(sounds[0], manager.Sound());
+                        source.PlayOneShot(sounds[1], manager.Sound());
                         break;
                     case "Stone":
-                        source.PlayOneShot(sounds[0], manager.Sound());
+                        source.PlayOneShot(sounds[2], manager.Sound() * 0.7f);
                         break;
                     default:
-                        source.PlayOneShot(sounds[0], manager.Sound());
+                        source.PlayOneShot(sounds[1], manager.Sound());
                         break;
                 }
+                */
             }
         }
         yield return new WaitForSeconds(sprinting ? 0.25f : 0.5f);

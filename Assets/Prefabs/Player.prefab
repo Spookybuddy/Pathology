@@ -1017,7 +1017,12 @@ MonoBehaviour:
   miniCam: {fileID: 7527585070246613844}
   source: {fileID: 5010870557859845191}
   sounds:
-  - {fileID: 8300000, guid: 083d62e3112109449bcea4fc7dd1a663, type: 3}
+  - {fileID: 8300000, guid: 200dd7c19c53b0848bc67dbff57b53d4, type: 3}
+  - {fileID: 8300000, guid: 52dfe691712c668408c2a8ff30420db8, type: 3}
+  - {fileID: 8300000, guid: 65f0cff9303ce49429d9f68d6d6c3535, type: 3}
+  - {fileID: 8300000, guid: 96090b296ad80d745b15c5e512ab6f93, type: 3}
+  - {fileID: 8300000, guid: b5176c721ea3a094a808eeb608105d67, type: 3}
+  - {fileID: 8300000, guid: 6c5fc7327a1d6a549b5d0a6b5c368884, type: 3}
   animate: {fileID: 1704274909124009921}
   dialogOverlay: {fileID: 5277292916369579647}
   inventoryOverlay: {fileID: 5478334784599209947}
