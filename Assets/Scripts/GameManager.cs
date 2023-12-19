@@ -35,8 +35,8 @@ public class GameManager : MonoBehaviour
     //Dialog data
     public AudioSource type;
     public TextMeshProUGUI textbox;
-    public RawImage playerPortrait;
-    public Texture2D[] playerEmotes;
+    public Image playerPortrait;
+    public Sprite[] playerEmotes;
     public RawImage otherPortrait;
     public GameObject[] buttonIndicators;
     public GameObject continuing;
@@ -386,7 +386,7 @@ public class GameManager : MonoBehaviour
     //Change the portaits for player
     public void PortraitPlayer(int state)
     {
-        playerPortrait.texture = playerEmotes[state];
+        playerPortrait.sprite = playerEmotes[state];
     }
 
     //Change the portraits for npc

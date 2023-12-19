@@ -181,7 +181,7 @@ public class Player : MonoBehaviour
             if (int.TryParse(trigger.name, out int door)) {
                 manager.Locate(door);
                 manager.DoorSound(door);
-                manager.Scene("Program Inner");
+                manager.Scene("Inner Scene");
             }
         } else if (trigger.CompareTag("Item")) {
             hoverItem = true;
