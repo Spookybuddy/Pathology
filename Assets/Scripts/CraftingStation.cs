@@ -17,6 +17,8 @@ public class CraftingStation : MonoBehaviour
     public Vector3 spawn;
     public Vector3 goal;
 
+    public bool forceAnimate;
+
     [Header("Prodce Item of ID when Threshold value is met")]
     public int[] threshold;
     public int[] productID;

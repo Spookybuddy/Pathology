@@ -2007,6 +2007,7 @@ MonoBehaviour:
   anime: {fileID: 0}
   spawn: {x: 0, y: 2, z: 0}
   goal: {x: 0, y: 6, z: 0}
+  forceAnimate: 0
   threshold: 0a000000
   productID: 06000000
 --- !u!1 &498042651
@@ -3184,7 +3185,7 @@ PrefabInstance:
     - target: {fileID: -5184343385732450973, guid: 5a503a751d4103c4489c01b25b213785, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 4289543f1e95bdc43a363ad3847e79d4, type: 2}
+      objectReference: {fileID: 2100000, guid: acd65cfc9fa8f0c44a1ab911fe31f474, type: 2}
     - target: {fileID: -3216829078811336496, guid: 5a503a751d4103c4489c01b25b213785, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
@@ -3282,7 +3283,7 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: d11df7cc2e9af4f4db104de1b6747c7b, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 1481f7bb06a8600419e9b4b788410720, type: 2}
+      objectReference: {fileID: 2100000, guid: 7ca0c1d6b41fac2408c041568119072a, type: 2}
     - target: {fileID: 919132149155446097, guid: d11df7cc2e9af4f4db104de1b6747c7b, type: 3}
       propertyPath: m_Name
       value: Cauldron
@@ -4570,6 +4571,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 3ea42860041f4b748a726e02e4614323, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 901a35a27fecf17459d31d0687708cb8, type: 2}
     - target: {fileID: 919132149155446097, guid: 3ea42860041f4b748a726e02e4614323, type: 3}
       propertyPath: m_Name
       value: Table
@@ -9820,7 +9825,7 @@ Transform:
   m_GameObject: {fileID: 1334984480}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 18, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -10361,14 +10366,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.4627451, g: 0.3647059, b: 0.25882354, a: 1}
+  m_Color: {r: 0.8627451, g: 0.8235294, b: 0.78431374, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 0}
+  m_Texture: {fileID: 2800000, guid: b8e45d4012068e04887cfa0995e86390, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -11021,6 +11026,10 @@ PrefabInstance:
     - target: {fileID: 1906366390632812333, guid: 4c35984a44acf7a4e9ff5b1a2db6d329, type: 3}
       propertyPath: m_Name
       value: Canvas System
+      objectReference: {fileID: 0}
+    - target: {fileID: 1906366390632812333, guid: 4c35984a44acf7a4e9ff5b1a2db6d329, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3420940981126865191, guid: 4c35984a44acf7a4e9ff5b1a2db6d329, type: 3}
       propertyPath: m_AnchorMax.x
@@ -11794,6 +11803,7 @@ MonoBehaviour:
   anime: {fileID: 0}
   spawn: {x: 0, y: 2, z: 0}
   goal: {x: 0, y: 6, z: 0}
+  forceAnimate: 0
   threshold: 01000000
   productID: 05000000
 --- !u!1 &1979486689
@@ -11987,6 +11997,7 @@ MonoBehaviour:
   anime: {fileID: 1231325001}
   spawn: {x: -2, y: 2, z: 0}
   goal: {x: -2, y: 6, z: 0}
+  forceAnimate: 0
   threshold: ffffffff06000000
   productID: 0200000003000000
 --- !u!1 &2050897359
@@ -12246,7 +12257,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f26cf7fbd0dcecc4ab6aebdc52ddfe6b, type: 2}
+  - {fileID: 2100000, guid: 4c9cf92dfc041624ea3225d4175ae7f8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -12386,7 +12397,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f26cf7fbd0dcecc4ab6aebdc52ddfe6b, type: 2}
+  - {fileID: 2100000, guid: 8fa26f08fb0c8504fa8827c02df73647, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -12443,7 +12454,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 1481f7bb06a8600419e9b4b788410720, type: 2}
+  - {fileID: 2100000, guid: dea66409752ebda46a38022b1606b0eb, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -12551,7 +12562,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 1183aa018e5719442acfe3566280709c, type: 2}
+  - {fileID: 2100000, guid: 97cdfd32bdb6d7048a25721ec0741485, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -12659,7 +12670,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 1481f7bb06a8600419e9b4b788410720, type: 2}
+  - {fileID: 2100000, guid: 1e125ab132e93f9468adbee37efdeead, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
