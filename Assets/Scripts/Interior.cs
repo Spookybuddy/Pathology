@@ -218,16 +218,20 @@ public class Interior : MonoBehaviour
     private void Check(InputAction.CallbackContext ctx) {
         manager.ControllerButtons(ctx.control.device.displayName);
     }
+
     private void Veck(InputAction.CallbackContext ctx) {
         if (ctx.ReadValue<Vector2>() != Vector2.zero) Check(ctx);
     }
+
     public void Stick(InputAction.CallbackContext ctx) {
         joystick = ctx.ReadValue<Vector2>();
         Veck(ctx);
     }
+
     public void Dpad(InputAction.CallbackContext ctx) {
         dirPad = ctx.ReadValue<Vector2>();
     }
+
     public void Inventory(InputAction.CallbackContext ctx) {
         if (canCraft) {
             opening = ctx.performed;
@@ -235,26 +239,32 @@ public class Interior : MonoBehaviour
             Check(ctx);
         }
     }
+
     public void Sprint(InputAction.CallbackContext ctx) {
         sprinting = ctx.performed;
         Check(ctx);
     }
+
     public void Next(InputAction.CallbackContext ctx) {
         confirm = ctx.performed;
         Check(ctx);
     }
+
     public void Back(InputAction.CallbackContext ctx) {
         cancel = ctx.performed;
         Check(ctx);
     }
+
     public void Left(InputAction.CallbackContext ctx) {
         IndexState(ctx.performed, false, 2);
         IndexState(ctx.canceled, true, 0);
     }
+
     public void Right(InputAction.CallbackContext ctx) {
         IndexState(ctx.performed, false, 1);
         IndexState(ctx.canceled, true, 0);
     }
+
     public void Mouse(InputAction.CallbackContext ctx) {
         if (ctx.performed) MouseClick();
         if (ctx.canceled) {
@@ -266,6 +276,7 @@ public class Interior : MonoBehaviour
             }
         }
     }
+
     public void MousePos(InputAction.CallbackContext ctx) {
         mousition = ctx.ReadValue<Vector2>();
         if (mainCam != null) {
@@ -279,17 +290,20 @@ public class Interior : MonoBehaviour
             }
         }
     }
+
     public void MouseDelta(InputAction.CallbackContext ctx) {
         mouseMoved = (ctx.ReadValue<Vector2>().magnitude > mouseSensitivity);
     }
+
     public void MouseScroll(InputAction.CallbackContext ctx) {
         if (invenOpen) {
             manager.Scroll(-(int)(Mathf.Clamp(ctx.ReadValue<Vector2>().y, -1, 1)));
             lastIndex = manager.GetIndex();
         }
     }
+
     public void Pause(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed) Unpause();
+        if (ctx.performed && canCraft) Unpause();
     }
 }

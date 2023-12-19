@@ -104,6 +104,12 @@ public class GameManager : MonoBehaviour
                 doors.PlayOneShot(doorSFX[2], 1);
             }
             else player.transform.position = position;
+
+            //Player out of bounds safety check
+            if (player.transform.position.x < -10 || player.transform.position.x > 66 || player.transform.position.z < -6 || player.transform.position.z > 71) {
+                position = Vector3.zero;
+                player.transform.position = position;
+            }
             ReadData(characterIDs, 0);
         } else {
             innerCam.transform.position = cameraLocations[location];
