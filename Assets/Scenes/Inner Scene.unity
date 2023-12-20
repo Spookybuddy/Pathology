@@ -238,8 +238,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: fd845672800cbd04fbcc97dfbd52ddc9, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -9533,7 +9533,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 757189459712343218, guid: 4c35984a44acf7a4e9ff5b1a2db6d329, type: 3}
       propertyPath: m_text
-      value: Exit Lab
+      value: Resume
       objectReference: {fileID: 0}
     - target: {fileID: 1463225849114626137, guid: 4c35984a44acf7a4e9ff5b1a2db6d329, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -9589,7 +9589,7 @@ PrefabInstance:
       objectReference: {fileID: 1080842845}
     - target: {fileID: 7454085056193804162, guid: 4c35984a44acf7a4e9ff5b1a2db6d329, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: Collect
+      value: Unpause
       objectReference: {fileID: 0}
     - target: {fileID: 7454085056193804162, guid: 4c35984a44acf7a4e9ff5b1a2db6d329, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
@@ -9647,13 +9647,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8678526161900852343, guid: 4c35984a44acf7a4e9ff5b1a2db6d329, type: 3}
+      propertyPath: m_text
+      value: Exit Lab
+      objectReference: {fileID: 0}
     - target: {fileID: 9110100068326283665, guid: 4c35984a44acf7a4e9ff5b1a2db6d329, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1080842845}
     - target: {fileID: 9110100068326283665, guid: 4c35984a44acf7a4e9ff5b1a2db6d329, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: Unpause
+      value: Collect
       objectReference: {fileID: 0}
     - target: {fileID: 9110100068326283665, guid: 4c35984a44acf7a4e9ff5b1a2db6d329, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
@@ -9661,7 +9665,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9174921971039642406, guid: 4c35984a44acf7a4e9ff5b1a2db6d329, type: 3}
       propertyPath: m_Name
-      value: Exit Lab
+      value: Resume
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
