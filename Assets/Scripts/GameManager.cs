@@ -121,6 +121,7 @@ public class GameManager : MonoBehaviour
                 inner.GameMode(true);
             } else {
                 currentConvo = interiorChars[(location - 1)];
+                PortraitNPC(0);
                 inner.GameMode(false);
                 StartCoroutine(ConvoDelay());
             }

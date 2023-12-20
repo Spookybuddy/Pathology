@@ -1,7 +1,7 @@
 0 Indexed list of each item & their stats. First Item is empty. Format by Name | Category (A-Z) | Attributes used in respective crafting stations
 Note   1 1 1
 Grave-Dirt " 0 1 0
-Fine-Dirt # 0 10 0
+Dust # 0 10 0
 Hyssop $ 1 0 0
 Ground-Hyssop % 0 3 0
 Hyssop-Mixture & 0 10 0
