@@ -1463,101 +1463,18 @@ MonoBehaviour:
   - {fileID: 4983227523255734620}
   - {fileID: 7057107069650111144}
   categories:
-  - {fileID: 10900, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 2800000, guid: 638b893da16e7db429e702a1033df050, type: 3}
-  - {fileID: 2800000, guid: 82b44f99726f5774da94104135429278, type: 3}
-  - {fileID: 2800000, guid: dffef66376be4fa480fb02b19edbe903, type: 3}
-  - {fileID: 10309, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 10300, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 2800000, guid: 8d33c1958504881409e69a33a2775913, type: 3}
+  - {fileID: 2800000, guid: 8d33c1958504881409e69a33a2775913, type: 3}
+  - {fileID: 2800000, guid: 2979aa445c6137e468f5a5a271356532, type: 3}
+  - {fileID: 2800000, guid: 153e52ee9b5224d49b585870ad72542d, type: 3}
+  - {fileID: 2800000, guid: 408c6c96e46a905478030868d218cf48, type: 3}
+  - {fileID: 2800000, guid: da9c824e65ef5b342adf44cd138557a4, type: 3}
+  - {fileID: 2800000, guid: 51e5c70b4866aca4799f7888649ed093, type: 3}
+  - {fileID: 2800000, guid: ca94ffda3b7e7764a98f3d310db653ae, type: 3}
+  - {fileID: 2800000, guid: 9f43af7de1a989147bc0a49509acf844, type: 3}
+  - {fileID: 2800000, guid: d36ab80e9506d73478e1c3d12a80c7dc, type: 3}
+  - {fileID: 2800000, guid: 8599ef69b0593474da49f99f318a5d45, type: 3}
+  - {fileID: 2800000, guid: 451a4d5789ff3244daca2f4c55e08455, type: 3}
   type: {fileID: 2341894799314637824}
   textbox: {fileID: 1514683956752313672}
   playerPortrait: {fileID: 0}

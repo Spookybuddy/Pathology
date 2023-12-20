@@ -7,7 +7,7 @@ public class CraftingStation : MonoBehaviour
     public int mixValue;
     public GameObject itemPrefab;
     public Animator anime;
-    private bool close;
+    public AudioSource addSound;
     private GameObject current;
     private string file = "/Catalog.txt";
     private string[] catalog;
@@ -16,8 +16,6 @@ public class CraftingStation : MonoBehaviour
     private bool moving;
     public Vector3 spawn;
     public Vector3 goal;
-
-    public bool forceAnimate;
 
     [Header("Prodce Item of ID when Threshold value is met")]
     public int[] threshold;
@@ -45,19 +43,18 @@ public class CraftingStation : MonoBehaviour
 
     public void OnTriggerEnter(Collider other)
     {
-        mixValue += other.GetComponent<ItemCrafting>().GetData(Station);
+        int add = other.GetComponent<ItemCrafting>().GetData(Station);
+        mixValue += add;
+        if (add != 0) addSound.Play();
+        if (anime != null && add != 0) anime.SetBool("Boiling", true);
         Destroy(other.gameObject);
         for (int i = 0; i < threshold.Length; i++) {
-            if (!close) close = (mixValue - threshold[i] < 4 && mixValue - threshold[i] > -4);
-            if (anime != null) anime.SetBool("Boiling", close);
-
             if (mixValue == threshold[i]) {
                 current = Instantiate(itemPrefab, spawn, Quaternion.identity);
                 current.GetComponent<ItemCrafting>().Create(ParseCatalog(productID[i]), false, true);
                 moving = true;
                 mixValue = 0;
-                close = false;
-                anime.SetBool("Boiling", close);
+                if (anime != null) anime.SetBool("Boiling", false);
             }
         }
     }

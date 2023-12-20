@@ -35,6 +35,8 @@ public class ItemScript : MonoBehaviour
     //Visual aid
     public Renderer visibility;
     public GameObject glow;
+    public GameObject icon;
+    public GameObject shadow;
     private float lerp;
     private float delta;
     private Vector3 start;
@@ -88,6 +90,8 @@ public class ItemScript : MonoBehaviour
     //Call function when picked up
     void OnDestroy()
     {
+        Destroy(shadow);
+        Destroy(icon);
         if (spawn) manager.WriteBool(4, saveIndex, '1');
     }
 }
