@@ -147,109 +147,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   materials:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 2100000, guid: c466d1b54cf1b3f47974bb1cce01437c, type: 2}
-  - {fileID: 2100000, guid: ba2137cc81da84c4ab7280c119cea28b, type: 2}
-  - {fileID: 2100000, guid: 50e9132d07bde4043bff40d65edc877a, type: 2}
-  - {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 2100000, guid: 9f7388037ed6d9c4aaef720f9040355c, type: 2}
+  - {fileID: 2100000, guid: 9f7388037ed6d9c4aaef720f9040355c, type: 2}
+  - {fileID: 2100000, guid: dece5a8c87d769948b327fbf4c652414, type: 2}
+  - {fileID: 2100000, guid: e4760fa7d0a7267478182bbdd073cac9, type: 2}
+  - {fileID: 2100000, guid: 5ef7225d93678644dbfbe8bc1ff7f367, type: 2}
+  - {fileID: 2100000, guid: 4a5995467f882a9428fff98d5aebb982, type: 2}
+  - {fileID: 2100000, guid: 4a92a48d2d92a114aa4238bb0374efbd, type: 2}
+  - {fileID: 2100000, guid: 91a3e64955c5cc4439cd452466fccc01, type: 2}
+  - {fileID: 2100000, guid: cb7eac379c7a90e43802c1388f09b5f7, type: 2}
+  - {fileID: 2100000, guid: 2c9e42d3abeaf2d47861305492cf057e, type: 2}
+  - {fileID: 2100000, guid: 8572153a2499608459ca9a62ad037faf, type: 2}
+  - {fileID: 2100000, guid: 6c97b07f99b2a3f41a72371da678f6d4, type: 2}
   rigid: {fileID: 5662166224401839155}
   render: {fileID: 4853329719199713180}
   hitbox: {fileID: 1191270964875139339}
-  item:
-    Id: 0
-    Name: 
-    Category: 49
-    Quantity: 0
-    Vitamin: 0
-    Mineral: 0
-    Enzymes: 0

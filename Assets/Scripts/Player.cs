@@ -175,8 +175,10 @@ public class Player : MonoBehaviour
     //Get character you're talking to
     private void OnTriggerEnter(Collider trigger)
     {
-        if (trigger.CompareTag("NPC")) manager.currentConvo = trigger.GetComponent<CharacterText>();
-        else if (trigger.CompareTag("Door")) {
+        if (trigger.CompareTag("NPC")) {
+            manager.currentConvo = trigger.GetComponent<CharacterText>();
+            manager.PortraitNPC(0);
+        } else if (trigger.CompareTag("Door")) {
             loading = true;
             if (int.TryParse(trigger.name, out int door)) {
                 manager.Locate(door);

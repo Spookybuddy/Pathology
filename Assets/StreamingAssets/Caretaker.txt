@@ -76,8 +76,8 @@ Have you talked with our priest yet?
 Have you concocted a cure?
 >85 No, not yet
 >83 Almost there, not quite ready
-$3
->80 Yes, I have it here
+>79 Yes, I have it here
+$9
 Oh thank you, please give it here
 Ellis! Ellis you're saved!
 *88
