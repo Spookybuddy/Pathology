@@ -1,0 +1,17 @@
+Use 'WASD' or Arrow keys to move.
+>3 Any other controls?
+>10 I'm using a controller.
+You can open your inventory with 'E' or 'I'. Interact with NPCs and items with 'F'.
+Sprint with 'Left Shift', and adjust the map with 'Tab'.
+>7 Is that all?
+@
+Enter your caravan to craft using items from your inventory.
+Good luck.
+*13
+In that case, move with Left Stick. Inventory is the North button, and interact is East button.
+Use the Right Stick to zoom in and out on the map, and West button to sprint.
++7
+Do you need a reminder?
+>3 Keyboard and mouse.
+>10 Controllers.
+@

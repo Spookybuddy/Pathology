@@ -11,6 +11,7 @@ public class Item
     public int Vitamin;
     public int Mineral;
     public int Enzymes;
+    public string Description;
 
     public void Copy(Item i)
     {
@@ -21,6 +22,7 @@ public class Item
         Vitamin = i.Vitamin;
         Mineral = i.Mineral;
         Enzymes = i.Enzymes;
+        Description = i.Description;
     }
 }
 
