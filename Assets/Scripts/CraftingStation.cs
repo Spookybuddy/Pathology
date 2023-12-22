@@ -6,8 +6,9 @@ public class CraftingStation : MonoBehaviour
     public int Station;
     public int mixValue;
     public GameObject itemPrefab;
-    public Animator anime;
     public AudioSource addSound;
+    public AudioSource finalSound;
+    public AudioSource rejectSound;
     private GameObject current;
     private string file = "/Catalog.txt";
     private string[] catalog;
@@ -36,7 +37,7 @@ public class CraftingStation : MonoBehaviour
     void Update()
     {
         if (moving) {
-            if (current.transform.position.y < goal.y) current.transform.position = Vector3.MoveTowards(current.transform.position, goal, Time.deltaTime * 7.5f);
+            if (current.transform.position.y < goal.y && current != null) current.transform.position = Vector3.MoveTowards(current.transform.position, goal, Time.deltaTime * 7.5f);
             else moving = false;
         }
     }
@@ -45,17 +46,25 @@ public class CraftingStation : MonoBehaviour
     {
         int add = other.GetComponent<ItemCrafting>().GetData(Station);
         mixValue += add;
-        if (add != 0) addSound.Play();
-        if (anime != null && add != 0) anime.SetBool("Boiling", true);
-        Destroy(other.gameObject);
-        for (int i = 0; i < threshold.Length; i++) {
-            if (mixValue == threshold[i]) {
-                current = Instantiate(itemPrefab, spawn, Quaternion.identity);
-                current.GetComponent<ItemCrafting>().Create(ParseCatalog(productID[i]), false, true);
-                moving = true;
-                mixValue = 0;
-                if (anime != null) anime.SetBool("Boiling", false);
+
+        //Only add object if it has value, return it otherwise
+        if (add != 0) {
+            addSound.Play();
+            Destroy(other.gameObject);
+            for (int i = 0; i < threshold.Length; i++) {
+                if (mixValue == threshold[i]) {
+                    current = Instantiate(itemPrefab, spawn, Quaternion.identity);
+                    current.GetComponent<ItemCrafting>().Create(ParseCatalog(productID[i]), false, true);
+                    moving = true;
+                    if (mixValue == 20 && finalSound != null) finalSound.Play();
+                    mixValue = 0;
+                }
             }
+        } else {
+            rejectSound.Play();
+            moving = true;
+            other.GetComponent<ItemCrafting>().Enable(false, true);
+            current = other.gameObject;
         }
     }
 
@@ -75,8 +84,18 @@ public class CraftingStation : MonoBehaviour
                     if (char.IsWhiteSpace(catalog[ID][i])) {
                         switch (x) {
                             case 0:
-                                add.Vitamin = int.Parse(stat);
-                                stat = "";
+                                //Error catch, returns 0 values and empty item
+                                if (int.TryParse(stat, out int val)) {
+                                    add.Vitamin = val;
+                                    stat = "";
+                                } else {
+                                    add.Vitamin = 777;
+                                    add.Mineral = 777;
+                                    add.Enzymes = 777;
+                                    add.Description = "Something went wrong";
+                                    add.Name = name;
+                                    return add;
+                                }
                                 break;
                             case 1:
                                 add.Mineral = int.Parse(stat);
@@ -84,11 +103,15 @@ public class CraftingStation : MonoBehaviour
                                 break;
                             case 2:
                                 add.Enzymes = int.Parse(stat);
+                                stat = "";
+                                break;
+                            default:
                                 break;
                         }
                         x++;
                     } else stat += catalog[ID][i];
                 }
+                add.Description = stat;
                 break;
             } else name += catalog[ID][j];
         }

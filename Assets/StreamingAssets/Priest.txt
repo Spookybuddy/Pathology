@@ -9,12 +9,12 @@ There was another doctor who tried to help, but I believe he was too late
 >10 Where is this other physician now?
 >14 What methods did this other doctor employ?
 Oh he moved on to the next town, left behind some scrapped notes though
-&1 
+&13 
 Here, they may do you good
 +80
 I’m afraid I didn’t understand most of it…
 However, he did leave behind some writing
-&1 
+&13 
 Here, they might be some help
 +80
 They worked together for some time, I recall Ellis visiting his gravestone
@@ -25,25 +25,25 @@ But he had traveled on before Ellis showed any signs of illness
 >26 Another physician was here?
 >30 What was this physician’s name?
 Why yes, in fact, I do believe he left some interesting information
-&1 
+&13 
 Here, I couldn’t make heads or tails of it, but you might
 +80
 He introduced himself as Doctor Herel, older fellow
 In fact, he did leave some of his notes with me.
-&1 
+&13 
 You’d likely know what to do with them
 +80
 There was another physician like you, but he arrived too late to help
 >38 Is he still here?
 >42 Was he too late, or did he not understand it?
 No no he left after the first farmer died.
-&1 
+&13 
 He did leave something however… here, it may help
 +80
 Oh he seemed quite competent
 It was storming when he arrived, I believe that delayed him
 He did get something out of it though, left a few notes of research
-&1 
+&13 
 Here, it’s yours
 +80
 A doctor like you said something similar not long ago
@@ -55,11 +55,11 @@ He was too late though, and now he’s not here for Ellis, so I bless the Lord y
 >60 What did this fellow physician do?
 For all our sakes, I hope so
 Here, I almost forgot, the other physician left something before he departed
-&1 
+&13 
 You may find some use from it
 +80
 I’m not quite sure, but he did leave some written notes
-&1 
+&13 
 Here, they’ll do you more good than I
 +80
 No he left just before Ellis got sick, having tried to treat another villager
@@ -70,16 +70,16 @@ He arrived too late unfortunately, I laid the dead to rest not long ago
 >70 Did the doctor’s treatments not work?
 He didn’t complete his concoction…
 He did however leave his notes with me, perhaps they’ll do you good
-&1 
+&13 
 I couldn’t make heads or tails of them
 +80
 Buried not far from here I’m afraid, the good doctor arrived too late
 However, before he left, he did leave something with me
-&1 
+&13 
 Perhaps it’ll do you good
 +80
-Farewell
 =1
+Farewell
 *83
 Any news?
 *85

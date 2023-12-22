@@ -55,6 +55,7 @@ public class MainManager : MonoBehaviour
     private float delay;
     private Vector2 Mpos;
     private readonly Vector2 padding = new Vector2(170, 35);
+    private readonly string[] baseSaveFile = { "    ;", "      ;", "0.00 0.00", "*005.001", "0000000000", "00000", "100101" };
 
     void Awake()
     {
@@ -75,7 +76,7 @@ public class MainManager : MonoBehaviour
     void Start()
     {
         //Try reading the save file
-        if (!int.TryParse(settings, out int result)) settings = "100100";
+        if (!int.TryParse(settings, out int result)) settings = "100101";
         volume = int.Parse(settings.Substring(0, 3));
         clickMove = settings[3].Equals('1');
         txtSpd = int.Parse(settings.Substring(4, 1));
@@ -169,8 +170,13 @@ public class MainManager : MonoBehaviour
     //Erases the save data
     public void Reset()
     {
-        data = new string[6];
-        Save();
+        volume = 100;
+        clickMove = true;
+        txtSpd = 0;
+        settings = "100101";
+        data[6] = settings;
+        File.WriteAllLines(filename, baseSaveFile);
+        SetValues();
     }
 
     //Changes the menu displaying

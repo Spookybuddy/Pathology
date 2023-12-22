@@ -37,7 +37,7 @@ public class Interior : MonoBehaviour
     private Vector3 mousition;
     private Vector2 _direction;
     private Vector3 direction;
-    private readonly Vector3 fixedPos = new Vector3(450, 0, 0);
+    private readonly Vector3 fixedPos = new Vector3(400, 0, 0);
     private bool mouseMoved;
     private bool mouseDown;
     private float inputDelay;

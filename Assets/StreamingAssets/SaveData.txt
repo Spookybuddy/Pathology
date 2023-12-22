@@ -1,14 +1,7 @@
-  ;
-       ;
-0.00 0.00
-*010+005
-000000000
-00000
-100102
-
-Lines 1 & 2 = Character Dialog Line Indices
-Line 3 = Last Player Position
-Line 4 = Player Inventory
-Line 5 = Overworld Item State
-Line 6 = Event Flag State
-Line 7 = Save File Settings
+    ;
+      ;
+34.37 10.65 
+%001&001(002)001*005+975-001.001
+0000000000
+01000
+100001

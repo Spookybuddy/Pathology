@@ -104,17 +104,22 @@ public class Player : MonoBehaviour
             Cursor.visible = (mouseMoved || mouseDecay > 0);
             mouseDecay = Mathf.Clamp01(mouseDecay - Time.deltaTime);
             Menus(false, invenOpen, !invenOpen && !dialogOpen, dialogOpen);
-            if (invenOpen) inventoryOverlay.transform.localPosition = Vector3.MoveTowards(inventoryOverlay.transform.localPosition, Vector3.zero, Time.deltaTime * Mathf.Max(Vector3.Distance(inventoryOverlay.transform.localPosition, Vector3.zero), 10) * 10);
-            else inventoryOverlay.transform.localPosition = fixedPos;
 
             //Inputting directions takes the highest magnitude, and overrides click navigation
             _direction = VectorGreater(keypad, joystick);
 
             //Pass movement data to inventory when opened
-            if (invenOpen && _direction.magnitude != 0 && inputDelay == 0) {
-                inputDelay = delay / 2;
-                manager.Scroll(-(int)(Mathf.Clamp(_direction.y, -1, 1)));
+            if (invenOpen) {
+                inventoryOverlay.transform.localPosition = Vector3.MoveTowards(inventoryOverlay.transform.localPosition, Vector3.zero, Time.deltaTime * Mathf.Max(Vector3.Distance(inventoryOverlay.transform.localPosition, Vector3.zero), 10) * 10);
+                if (_direction.magnitude != 0 && inputDelay == 0) {
+                    inputDelay = delay / 2;
+                    manager.Scroll(-(int)(Mathf.Clamp(_direction.y, -1, 1)));
+                }
+
+                if (confirm) manager.ClickInven();
+                if (cancel) invenOpen = false;
             }
+            else inventoryOverlay.transform.localPosition = fixedPos;
 
             //Player controls when not in menus
             if (!opening && !invenOpen && !dialogOpen && !loading) {
@@ -195,6 +200,9 @@ public class Player : MonoBehaviour
     private void OnTriggerStay(Collider trigger)
     {
         if (trigger.CompareTag("NPC")) {
+            //Inventory open & pause menu safety net
+            if (invenOpen || paused || loading) return;
+
             //Open dialog when close enough
             if (!dialogOpen && confirm && inputDelay == 0) {
                 dialogOpen = true;
@@ -259,7 +267,7 @@ public class Player : MonoBehaviour
         if (dialogOpen && canClick && inputDelay == 0) {
             manager.Advance(-1);
             inputDelay = delay;
-        } else if (CMEnabled) {
+        } else if (CMEnabled && !invenOpen && !paused) {
             if (Physics.Raycast(mainCam.ScreenPointToRay(mousition), out RaycastHit hit, 100) && !dialogOpen) {
                 if (hit.transform.CompareTag("Ground") || hit.transform.CompareTag("Grass") || hit.transform.CompareTag("Stone") || hit.transform.CompareTag("Dirt")) {
                     mouseControlled = true;
@@ -327,26 +335,7 @@ public class Player : MonoBehaviour
     {
         if (mouseControlled || direction.magnitude > 0) {
             if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit tile, 2)) {
-                //Random from stepping sounds
                 source.PlayOneShot(sounds[Random.Range(0, sounds.Length)], manager.Sound() * 0.8f);
-                /*
-                 * Specific sounds for different ground materials
-                source.pitch = Random.Range(0.9f, 1.1f);
-                switch (tile.transform.tag) {
-                    case "Grass":
-                        source.PlayOneShot(sounds[0], manager.Sound());
-                        break;
-                    case "Dirt":
-                        source.PlayOneShot(sounds[1], manager.Sound());
-                        break;
-                    case "Stone":
-                        source.PlayOneShot(sounds[2], manager.Sound() * 0.7f);
-                        break;
-                    default:
-                        source.PlayOneShot(sounds[1], manager.Sound());
-                        break;
-                }
-                */
             }
         }
         yield return new WaitForSeconds(sprinting ? 0.25f : 0.5f);
@@ -395,6 +384,7 @@ public class Player : MonoBehaviour
         if (!paused && !dialogOpen) {
             opening = ctx.performed;
             invenOpen ^= opening;
+            manager.ClearDescrip();
             Check(ctx);
         }
     }

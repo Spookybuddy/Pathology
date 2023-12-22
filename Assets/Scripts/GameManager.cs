@@ -27,6 +27,9 @@ public class GameManager : MonoBehaviour
     public GameObject pointer;
     public Slider slider;
     public RawImage[] icons;
+    public GameObject[] areas;
+    public TextMeshProUGUI description;
+    public GameObject popup;
     public Texture2D[] categories;
     private int deltaSlide;
     private int indexedItem;
@@ -44,6 +47,7 @@ public class GameManager : MonoBehaviour
     public Button[] buttons;
     public GameObject[] nameplates;
     public TextMeshProUGUI npcName;
+    public GameObject offset;
     private readonly Vector4 shade = new Vector4(0.3f, 0.3f, 0.3f, 1);
 
     //Shader
@@ -59,8 +63,6 @@ public class GameManager : MonoBehaviour
     private string[] catalog;
     private static Vector3 position;
     private static int location;
-    private static int EXChars;
-    private static int INChars;
     private static int volume;
     private static bool CMEnabled;
     private static int txtSpd;
@@ -80,10 +82,6 @@ public class GameManager : MonoBehaviour
         itemCollection = Application.streamingAssetsPath + "/Catalog.txt";
         savedData = File.ReadAllLines(filename);
         catalog = File.ReadAllLines(itemCollection);
-        EXChars = 1;
-        INChars = 3;
-        //EXChars = savedData[0].Length / 2;
-        //INChars = savedData[1].Length / 2;
         volume = int.Parse(savedData[6].Substring(0, 3));
         CMEnabled = (savedData[6].Substring(3, 1)).Equals("1");
         txtSpd = int.Parse(savedData[6].Substring(4, 1));
@@ -102,7 +100,7 @@ public class GameManager : MonoBehaviour
 
             //Move the player down to exit doors, but raycast first to prevent clipping
             if (Physics.Raycast(position, Vector3.forward, 2)) {
-                player.transform.position = position + Vector3.back;
+                player.transform.position = position + new Vector3(0, 0, -1.5f);
                 doors.PlayOneShot(doorSFX[2], 1);
             }
             else player.transform.position = position;
@@ -129,13 +127,13 @@ public class GameManager : MonoBehaviour
         loading = false;
     }
 
+    //Save and quit
     void OnApplicationQuit()
     {
         loading = true;
         WriteInven();
         WritePosition();
         WriteSettings();
-        //ClearData();
     }
     
     //Convert all character indicies into chars
@@ -241,7 +239,7 @@ public class GameManager : MonoBehaviour
                 int x = 0;
                 string stat = "";
                 for (int i = j + 3; i < catalog[ID].Length; i++) {
-                    if (char.IsWhiteSpace(catalog[ID][i])) {
+                    if (char.IsWhiteSpace(catalog[ID][i]) && x < 3) {
                         switch (x) {
                             case 0:
                                 //Error catch, returns 0 values and empty item
@@ -249,9 +247,10 @@ public class GameManager : MonoBehaviour
                                     add.Vitamin = val;
                                     stat = "";
                                 } else {
-                                    add.Vitamin = 0;
-                                    add.Mineral = 0;
-                                    add.Enzymes = 0;
+                                    add.Vitamin = 777;
+                                    add.Mineral = 777;
+                                    add.Enzymes = 777;
+                                    add.Description = "Something went wrong";
                                     add.Name = name;
                                     return add;
                                 }
@@ -262,11 +261,15 @@ public class GameManager : MonoBehaviour
                                 break;
                             case 2:
                                 add.Enzymes = int.Parse(stat);
+                                stat = "";
+                                break;
+                            default:
                                 break;
                         }
                         x++;
                     } else stat += catalog[ID][i];
                 }
+                add.Description = stat;
                 break;
             } else name += catalog[ID][j];
         }
@@ -294,27 +297,6 @@ public class GameManager : MonoBehaviour
         position = new Vector3(x, 0, z);
     }
 
-    //Resets all character indexes to 00
-    private void ClearData()
-    {
-        string clearline = "";
-        for (int i = 0; i < EXChars; i++) clearline += "  ";
-        savedData[0] = clearline + ";";
-        clearline = "";
-        for (int i = 0; i < INChars; i++) clearline += "  ";
-        savedData[1] = clearline + ";";
-        clearline = "";
-        savedData[2] = "0.00 0.00";
-        savedData[3] = " 000";
-        for (int i = 0; i < savedData[4].Length; i++) clearline += "0";
-        savedData[4] = clearline;
-        clearline = "";
-        for (int i = 0; i < savedData[5].Length; i++) clearline += "0";
-        savedData[5] = clearline;
-        savedData[6] = "100101";
-        File.WriteAllLines(filename, savedData);
-    }
-
     //Pass settings data
     public float Sound() { return (volume / 100.0f); }
     public float TextSpeed() { return (txtSpd / -31f + 0.1f); }
@@ -326,6 +308,12 @@ public class GameManager : MonoBehaviour
         //Check if polayer already has that item ID in their inventory. If they do, add to its quantity. If not add to list
         if (Inventory.Exists(x => x.Id == nearbyItem.Id)) Inventory.Find(x => x.Id == nearbyItem.Id).Quantity = Mathf.Clamp(Inventory.Find(x => x.Id == nearbyItem.Id).Quantity + nearbyItem.Quantity, 1, 999);
         else Inventory.Add(nearbyItem);
+
+        //Indicator to tell player what they picked up
+        if (player != null) {
+            GameObject p = Instantiate(popup, player.transform.position, Quaternion.identity);
+            p.GetComponent<Popup>().Create(nearbyItem.Quantity, nearbyItem.Name);
+        }
         InventorySort(false);
     }
 
@@ -426,6 +414,19 @@ public class GameManager : MonoBehaviour
         InventoryText();
     }
 
+    //Inventory button to give a small description of the item from the item catalog
+    public void ClickInven(int button)
+    {
+        int limit = Mathf.Min(Mathf.Max(Inventory.Count - 10, 0), indexedItem);
+        description.text = Inventory[limit + button].Description;
+        Debug.Log(Inventory[limit + button].Description);
+    }
+
+    //Inventory contoller button
+    public void ClickInven() { ClickInven(indexedItem - Mathf.Min(Mathf.Max(Inventory.Count - 10, 0), indexedItem)); }
+
+    public void ClearDescrip() { description.text = " "; }
+
     //Returns Indexed item
     public int GetIndex() { return indexedItem; }
 
@@ -441,12 +442,16 @@ public class GameManager : MonoBehaviour
     //Update the text so that only 10 items are shown at a time
     private void InventoryText()
     {
-        for (int i = 0; i < icons.Length; i++) icons[i].gameObject.SetActive(false);
+        for (int i = 0; i < icons.Length; i++) {
+            icons[i].gameObject.SetActive(false);
+            if (player != null) areas[i].SetActive(false);
+        }
         inventoryListing.text = "";
         for (int i = Mathf.Min(Mathf.Max(Inventory.Count - 10, 0), indexedItem); i < Mathf.Min(Inventory.Count, indexedItem + 10); i++) {
             inventoryListing.text += "x" + Inventory[i].Quantity + " " + Inventory[i].Name + "\n";
             icons[i].texture = categories[(int)(Inventory[i].Category - 32)];
             icons[i].gameObject.SetActive(true);
+            if (player != null) areas[i].SetActive(true);
         }
         slider.maxValue = Mathf.Max(Inventory.Count - 1, 0);
     }
@@ -508,6 +513,7 @@ public class GameManager : MonoBehaviour
                 return;
             default:
                 controllerType = 3;
+                for (int i = 0; i < buttonIndicators.Length; i++) buttonIndicators[i].SetActive(false);
                 return;
         }
     }
@@ -551,8 +557,15 @@ public class GameManager : MonoBehaviour
         StartCoroutine(ButtonDelay(amount, input, cancel));
     }
 
+    //Show the correct amount of buttons, offsetting them if there is room
     private void Buttons(int amount, bool input, bool cancel)
     {
+        offset.transform.localPosition = Vector3.zero;
+        if ((amount < 3 && !cancel) || (amount < 2 && cancel)) {
+            if (textbox.text.Length > 50) {
+                offset.transform.localPosition = new Vector3(0, -55, 0);
+            }
+        }
         for (int i = 0; i < 4; i++) buttons[i].gameObject.SetActive(false);
         if (input) {
             for (int i = 0; i < amount; i++) {
@@ -617,6 +630,13 @@ public class GameManager : MonoBehaviour
     {
         yield return new WaitForSeconds(loadTimes);
         currentConvo.PrintLine();
+    }
+
+    //Fade out description text
+    private IEnumerator TextFade()
+    {
+        yield return new WaitForSeconds(4);
+        description.text = " ";
     }
 
     //Update the transition shader & audio fade in

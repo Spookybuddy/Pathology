@@ -1,12 +1,16 @@
-0 Indexed list of each item & their stats. First Item is empty. Format by Name | Category (A-Z) | Attributes used in respective crafting stations
-Note   1 1 1
-Grave-Dirt " 0 1 0
-Dust # 0 10 0
-Hyssop $ 1 0 0
-Ground-Hyssop % 0 3 0
-Hyssop-Mixture & 0 10 0
-Yellow-Archangel ' 0 0 1
-Boiled-Archangel ( 0 4 0
-Cure ) 0 0 0
-Empty-Vial * -1 -1 -1
-Bird + 2 2 2
+0 Indexed list of each item & their stats. First Item is empty. Format by Name | Category (A-Z) | Attributes used in respective crafting stations | Pop-up description
+Base-Item   0 0 0 Basic item used for testing
+Grave-Dirt " 0 1 0 Stolen from the recently deceased
+Grave-Ashes # 0 10 0 Dirt with the pathogen isolated
+Hyssop $ 1 0 0 Flowers with medicinal properties
+Ground-Hyssop % 0 3 0 Crushed flowers
+Hyssop-Mixture & 0 10 0 A mixture of medicinal flowers
+Archangel-Roots ' 0 0 1 A heavenly flower's roots
+Boiled-Roots ( 0 4 0 Cooked roots
+Cure ) 20 20 20 Your finest work yet
+Empty-Vial * -1 -1 -1 Remove some crafting
+Bird + 2 2 2 A good friend
+Lost-Research   1 1 1 Research notes discussing Hyssops and grinding them up
+Past-Research   1 1 1 Research notes into boiling of roots in a beaker
+Your-Research   1 1 1 Your own notes about isolating pathogens from grave dirt in a cauldron
+Final-Research   1 1 1 An incomplete page about mixing boiled roots and crushed flowers in a cauldron
