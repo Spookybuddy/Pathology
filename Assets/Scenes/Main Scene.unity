@@ -32487,6 +32487,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 5884639832575040869, guid: 875fc7a281d45144782b3faaf306c1f4, type: 3}
     - target: {fileID: 4167541388529945310, guid: 3020799e293756b4ea230107374fe521, type: 3}
+      propertyPath: musicBase
+      value: 0.45
+      objectReference: {fileID: 0}
+    - target: {fileID: 4167541388529945310, guid: 3020799e293756b4ea230107374fe521, type: 3}
       propertyPath: description
       value: 
       objectReference: {fileID: 1204205421}
@@ -34872,7 +34876,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 0.60171586, z: 0.19999993}
+  m_Size: {x: 1, y: 0.60171586, z: 1}
   m_Center: {x: 0, y: -0.19914405, z: 0.9999831}
 --- !u!23 &1564973037
 MeshRenderer:
@@ -34933,7 +34937,7 @@ Transform:
   m_GameObject: {fileID: 1564973035}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.056, z: 0.03}
+  m_LocalPosition: {x: 0, y: -0.056, z: 0.5}
   m_LocalScale: {x: 0.2, y: 0.625, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
