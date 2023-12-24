@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
     public Interior inner;
     public Camera innerCam;
     public AudioSource soundtrack;
+    public float musicBase;
     public AudioClip[] doorSFX;
     public AudioSource doors;
     public CharacterText currentConvo;
@@ -49,6 +50,7 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI npcName;
     public GameObject offset;
     private readonly Vector4 shade = new Vector4(0.3f, 0.3f, 0.3f, 1);
+    private float percent;
 
     //Shader
     public Material shader;
@@ -90,6 +92,8 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        percent = volume / 100.0f;
+
         //Read data depending on which scene is loaded
         ReadPosition();
         ReadInven();
@@ -99,9 +103,9 @@ public class GameManager : MonoBehaviour
             player.Transitioning(true);
 
             //Move the player down to exit doors, but raycast first to prevent clipping
-            if (Physics.Raycast(position, Vector3.forward, 2)) {
+            if (Physics.Raycast(position, Vector3.forward, out RaycastHit hit, 2)) {
                 player.transform.position = position + new Vector3(0, 0, -1.5f);
-                doors.PlayOneShot(doorSFX[2], 1);
+                if (hit.collider.CompareTag("Door")) doors.PlayOneShot(doorSFX[2], 0.7f * percent);
             }
             else player.transform.position = position;
 
@@ -298,7 +302,7 @@ public class GameManager : MonoBehaviour
     }
 
     //Pass settings data
-    public float Sound() { return (volume / 100.0f); }
+    public float Sound() { return percent; }
     public float TextSpeed() { return (txtSpd / -31f + 0.1f); }
     public void SetMinimap(int scale) { minimap = scale; WriteSettings(); }
 
@@ -546,8 +550,8 @@ public class GameManager : MonoBehaviour
     //Play the right door sounds
     public void DoorSound(int index)
     {
-        if (index == 0) doors.PlayOneShot(doorSFX[0], 1);
-        else doors.PlayOneShot(doorSFX[1], 1);
+        if (index == 0) doors.PlayOneShot(doorSFX[0], 0.8f * percent);
+        else doors.PlayOneShot(doorSFX[1], 0.7f * percent);
     }
 
     //Show/Hide buttons
@@ -647,11 +651,15 @@ public class GameManager : MonoBehaviour
             transition = Mathf.Clamp(transition + (pos ? Time.deltaTime : -Time.deltaTime), 0, loadTimes);
             shaderValue = Mathf.Pow(transition * (10 / loadTimes), 2);
             shader.SetFloat("_Scale", shaderValue);
-            if (soundtrack != null) soundtrack.volume = (loadTimes - transition) / (2 * loadTimes);
+            soundtrack.volume = Mathf.Lerp(0, musicBase * percent, loadTimes - transition);
             StartCoroutine(Shade(pos));
         } else if (player != null) {
             player.Transitioning(false);
         }
-        if (transition >= loadTimes) shader.SetFloat("_Scale", 500);
+        if (transition >= loadTimes) {
+            shader.SetFloat("_Scale", 500);
+            soundtrack.volume = 0;
+        }
+        if (transition <= 0) soundtrack.volume = musicBase * percent;
     }
 }

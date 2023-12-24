@@ -10,7 +10,7 @@ public class MainManager : MonoBehaviour
 {
     //Save data settings
     private string filename;
-    private string[] data;
+    public string[] data;
     public string settings;
     private int volume;
     private bool clickMove;
@@ -23,11 +23,15 @@ public class MainManager : MonoBehaviour
     public GameObject Credits;
     private int menuUp;
     public Slider volumeLvl;
+    public TextMeshProUGUI percentage;
     public Toggle toggle;
     public TextMeshProUGUI speed;
     private readonly string[] texts = new string[] { "Slow", "Normal", "Fast", "Instant" };
 
     //Menu sounds
+    private float percent;
+    private const float baseSFX = 0.5f;
+    public AudioSource music;
     public AudioSource sounds;
     public AudioClip next;
     public AudioClip back;
@@ -97,11 +101,11 @@ public class MainManager : MonoBehaviour
         UIOverlays();
         if (inputting) {
             if (delay == 0) {
-                if (menuUp == 0) {
-                    if (Mathf.Abs(_direction.y) > 0.714f) sounds.PlayOneShot(click, 0.7f);
+                if (menuUp == 0 && transition == 0) {
+                    if (Mathf.Abs(_direction.y) > 0.714f) sounds.PlayOneShot(click, baseSFX * percent);
                     vertical = (vertical - (int)(sensitivity * _direction.y) + MM.Length) % MM.Length;
                 } else if (menuUp == 1) {
-                    if (Mathf.Abs(_direction.y) > 0.714f) sounds.PlayOneShot(click, 0.7f);
+                    if (Mathf.Abs(_direction.y) > 0.714f) sounds.PlayOneShot(click, baseSFX * percent);
                     vertical = (vertical - (int)(sensitivity * _direction.y) + SM.Length) % SM.Length;
                     //Special cases for different UI elements
                     switch (vertical) {
@@ -137,7 +141,7 @@ public class MainManager : MonoBehaviour
             for (int i = 0; i < MM.Length; i++) {
                 if (Mpos.x > MM[i].transform.position.x - padding.x && Mpos.x < MM[i].transform.position.x + padding.x) {
                     if (Mpos.y > MM[i].transform.position.y - padding.y && Mpos.y < MM[i].transform.position.y + padding.y) {
-                        if (vertical != i) sounds.PlayOneShot(click, 0.7f);
+                        if (vertical != i && transition == 0) sounds.PlayOneShot(click, baseSFX * percent);
                         vertical = i;
                     }
                 }
@@ -146,7 +150,7 @@ public class MainManager : MonoBehaviour
             for (int i = 0; i < SM.Length; i++) {
                 if (Mpos.x > SM[i].transform.position.x - specialPadding[i].x && Mpos.x < SM[i].transform.position.x + specialPadding[i].x) {
                     if (Mpos.y > SM[i].transform.position.y - specialPadding[i].y && Mpos.y < SM[i].transform.position.y + specialPadding[i].y) {
-                        if (vertical != i) sounds.PlayOneShot(click, 0.7f);
+                        if (vertical != i) sounds.PlayOneShot(click, baseSFX * percent);
                         vertical = i;
                     }
                 }
@@ -174,8 +178,7 @@ public class MainManager : MonoBehaviour
         clickMove = true;
         txtSpd = 0;
         settings = "100101";
-        data[6] = settings;
-        File.Delete(filename);
+        data = baseSaveFile;
         File.WriteAllLines(filename, baseSaveFile);
         SetValues();
     }
@@ -184,7 +187,7 @@ public class MainManager : MonoBehaviour
     public void ChangeMenu(int to)
     {
         if (transition != 0) return;
-        sounds.PlayOneShot(to == 0 ? back : next, 0.7f);
+        sounds.PlayOneShot(to == 0 ? back : next, baseSFX * percent);
         menuUp = to;
         Title.SetActive(menuUp == 0);
         Options.SetActive(menuUp == 1);
@@ -197,6 +200,9 @@ public class MainManager : MonoBehaviour
     public void ChangeVolume()
     {
         volume = (int)volumeLvl.value;
+        percent = volume / 100.0f;
+        music.volume = (0.16f * percent);
+        percentage.text = volume + "%";
         Save();
     }
 
@@ -209,7 +215,7 @@ public class MainManager : MonoBehaviour
     //Text speed value
     public void ChangeSpeed(int value)
     {
-        sounds.PlayOneShot(click, 0.7f);
+        sounds.PlayOneShot(click, baseSFX * percent);
         txtSpd = (txtSpd + value + 4) % 4;
         speed.text = texts[txtSpd];
         Save();
@@ -222,13 +228,16 @@ public class MainManager : MonoBehaviour
         volumeLvl.value = volume;
         speed.text = texts[txtSpd];
         clickToggle = true;
+        percent = volume / 100.0f;
+        music.volume = (0.16f * percent);
+        percentage.text = volume + "%";
     }
 
     //Exit the game
     public void Quit()
     {
         if (transition != 0) return;
-        sounds.PlayOneShot(back, 0.7f);
+        sounds.PlayOneShot(back, baseSFX * percent);
         StartCoroutine(ExitShade());
     }
 
@@ -260,7 +269,12 @@ public class MainManager : MonoBehaviour
             transition = Mathf.Clamp(transition + (pos ? Time.deltaTime : -Time.deltaTime), 0, 0.8f);
             shaderValue = Mathf.Pow(transition * (10 / 0.8f), 2);
             shader.SetFloat("_Scale", shaderValue);
+            if (pos) music.volume = Mathf.Lerp(0, 0.2f * percent, transition);
+            else music.volume = Mathf.Lerp(0, 0.2f * percent, 0.8f - transition);
             StartCoroutine(Shade(pos));
+        } else {
+            if (pos) music.volume = 0;
+            else music.volume = (0.16f * percent);
         }
     }
 
@@ -272,8 +286,10 @@ public class MainManager : MonoBehaviour
             transition = Mathf.Clamp(transition + Time.deltaTime, 0, 0.8f);
             shaderValue = Mathf.Pow(transition * (10 / 0.8f), 2);
             shader.SetFloat("_Scale", shaderValue);
+            music.volume = Mathf.Lerp(0, 0.2f * percent, 0.8f - transition);
             if (transition == 0.8f) {
                 shader.SetFloat("_Scale", 500);
+                music.volume = 0;
                 Save();
                 Application.Quit();
             } else StartCoroutine(ExitShade());
@@ -303,7 +319,7 @@ public class MainManager : MonoBehaviour
     private void Input(float y)
     {
         if (inputting || delay > 0) return;
-        if (Mathf.Abs(y) > 0.588f) sounds.PlayOneShot(click, 0.7f);
+        if (Mathf.Abs(y) > 0.588f) sounds.PlayOneShot(click, baseSFX * percent);
         if (menuUp == 0) vertical = (vertical - (int)(1.7f * y) + MM.Length) % MM.Length;
         else if (menuUp == 1) vertical = (vertical - (int)(1.7f * y) + SM.Length) % SM.Length;
         inputting = true;
@@ -335,9 +351,9 @@ public class MainManager : MonoBehaviour
                 switch (vertical) {
                     case 0:
                     case 2:
-                        break;
+                        return;
                     case 1:
-                        sounds.PlayOneShot(toggle.isOn ? next : back, 0.6f);
+                        sounds.PlayOneShot(toggle.isOn ? next : back, baseSFX * percent);
                         toggle.isOn = !toggle.isOn;
                         break;
                     default:
