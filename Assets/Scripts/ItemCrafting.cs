@@ -35,7 +35,7 @@ public class ItemCrafting : MonoBehaviour
     public void Create(Item i, bool g, bool c)
     {
         item = i;
-        render.material = materials[item.Id];
+        render.material = materials[Mathf.Clamp((int)item.Category - 32, 0, materials.Length)];
         Enable(g, c);
     }
 

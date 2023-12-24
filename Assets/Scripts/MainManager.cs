@@ -55,7 +55,7 @@ public class MainManager : MonoBehaviour
     private float delay;
     private Vector2 Mpos;
     private readonly Vector2 padding = new Vector2(170, 35);
-    private readonly string[] baseSaveFile = { "    ;", "      ;", "0.00 0.00", "*005.001", "0000000000", "00000", "100101" };
+    private readonly string[] baseSaveFile = { "    ;", "      ;", "0.00 0.00 ", "*005.001", "0000000000", "00000", "100101" };
 
     void Awake()
     {
@@ -175,6 +175,7 @@ public class MainManager : MonoBehaviour
         txtSpd = 0;
         settings = "100101";
         data[6] = settings;
+        File.Delete(filename);
         File.WriteAllLines(filename, baseSaveFile);
         SetValues();
     }
